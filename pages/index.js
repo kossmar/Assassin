@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import Link from 'next/link'
 
 export default function Home() {
   return (
@@ -30,7 +31,7 @@ export default function Home() {
 
             Menu open: "block", Menu closed: "hidden"
           --> */}
-          
+
                 <svg className="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
@@ -38,33 +39,52 @@ export default function Home() {
             </div>
 
             <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-              <div className="flex-shrink-0 flex items-center">
-                <img className="block h-10 w-auto" src="/images/assassin-logo-image.png" alt="Workflow" />
-                <img className="hidden lg:block h-10 w-auto ml-2" src="/images/assassin-logo-title.png" alt="Workflow" />
-              </div>
+              <Link href='#'>
+                <a>
+                  <div className="cursor-pointer flex-shrink-0 flex items-center">
+                    <img className="block h-10 w-auto" src="/images/assassin-logo-image.png" alt="Workflow" />
+                    <img className="hidden lg:block h-10 w-auto ml-2" src="/images/assassin-logo-title.png" alt="Workflow" />
+                  </div>
+                </a>
+
+              </Link>
               <div className="hidden sm:block sm:m-auto">
                 <div className="flex space-x-4">
                   {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-                  <a href="#" className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                  <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Team</a>
-                  <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Projects</a>
-                  <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Calendar</a>
+                  <Link href="#">
+                    <a className="text-gray-500 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      Rules
+                    </a>
+                  </Link>
+                  <Link href="#">
+                    <a className="bg-black shadow-md hover:bg-red-600 hover:shadow-xl-red text-white px-3 py-2 rounded-md text-sm font-medium">
+                      New Campaign
+                    </a>
+                  </Link>
+                  <Link href="#">
+                    <a className="text-gray-500 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                      About
+                    </a>
+                  </Link>
                 </div>
               </div>
             </div>
 
-              {/* <!-- Profile dropdown --> */}
-              <div className="ml-3 flex items-center justify-center">
+            {/* <!-- Profile dropdown --> */}
+            <button className="p-1 border-4 border-white rounded hover:border-black focus:border-black focus:outline-none">
+              <div className="ml-3 flex items-center justify-center ">
                 <div className="px-2">
-                  <p className="italic font-bold">MR. BIBBLZ</p>
+                  <div className="italic font-bold">MR. BIBBLZ</div>
                 </div>
                 <div className="px-2">
-                  <button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu" aria-haspopup="true">
+                  <button className="bg-gray-800 flex text-sm rounded-full ring-2 ring-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu" aria-haspopup="true">
                     <span className="sr-only">Open user menu</span>
                     <img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
                   </button>
                 </div>
-                {/* <!--
+              </div>
+
+              {/* <!--
             Profile dropdown panel, show/hide based on dropdown state.
 
             Entering: "transition ease-out duration-100"
@@ -74,12 +94,12 @@ export default function Home() {
               From: "transform opacity-100 scale-100"
               To: "transform opacity-0 scale-95"
           --> */}
-                {/* <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+              {/* <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</a>
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
           </div> */}
-              </div>
+            </button>
           </div>
         </div>
 
