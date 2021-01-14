@@ -1,4 +1,3 @@
-import Head from "next/head"
 import Layout from "../components/Layout"
 
 export default function Rules() {
@@ -7,8 +6,8 @@ export default function Rules() {
             <Head>
                 <title>Assassin/rules</title>
             </Head>
-            <Layout page="rules">
-                DICKS
+            <Layout page="about">
+                ABOUT
             </Layout>
         </div>
     )
