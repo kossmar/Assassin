@@ -12,8 +12,14 @@
 }
 
 @layer utilities {
-    .thing {
-        width: 16rem;
-        background-color: rgba(0, 0, 0, var(--tw-bg-opacity));
+    .bunk {
+        transition: max-height 0.15s;
+    }
+    .closed {
+        max-height: 0;
+    }
+    
+    .open {
+        max-height: 500px;
     }
 }

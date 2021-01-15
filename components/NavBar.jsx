@@ -117,29 +117,37 @@ export default function NavBar({ page }) {
                 </div>
 
                 {/* DROPDOWN MENUS */}
-                <div className="flex justify-between mx-auto">
+                    <div className={"flex justify-between mx-auto " + (menuDropdownOpen || profileDropdownOpen ? "transform origin-top duration-200 scale-y-100" : "transform origin-top duration-200 scale-y-0")}>
 
-                    {/* PROFILE Menu */}
-                    <div className={"sm:hidden " + (menuDropdownOpen ? "transition ease-in duration-100 transform opacity-100 scale-y-100 block" : "hidden transition ease-in duration-75 transform opacity-0 scale-y-0")}>
-                        <div className="px-2 pt-2 pb-3 space-y-1">
-                            <a href="/" className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">New Campaign</a>
-                            <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Rules</a>
-                            <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                        {/* NAV Menu */}
+                        <div className={"sm:hidden " + (menuDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                            <div className={"px-2 pt-2 pb-3 space-y-1 "}>
+                                <a href="/" className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">New Campaign</a>
+                                <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Rules</a>
+                                <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                            </div>
                         </div>
+
+                        {/* PROFILE Menu */}
+                        <div className={"relative sm:absolute right-0 mr-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                            <div className="px-2 pt-2 pb-3 space-y-1">
+                                <a href="/" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Profile</a>
+                                <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
+                                <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sign Out</a>
+                            </div>
+                        </div>
+
                     </div>
 
-                    {/* NAV Menu */}
-                    <div className={"relative sm:absolute right-0 mr-0 ml-auto text-right " + (profileDropdownOpen ? "transition ease-in duration-100 transform opacity-100 scale-y-100 block" : "hidden transition ease-in duration-75 transform opacity-0 scale-y-0")}>
-                        <div className="px-2 pt-2 pb-3 space-y-1">
-                            <a href="/" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Profile</a>
-                            <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
-                            <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sign Out</a>
-                        </div>
-                    </div>
-
-                </div>
 
             </nav>
         </div>
     )
+
+    //     Entering: "transition ease-out duration-100"
+    //     From: "transform opacity-0 scale-95"
+    //     To: "transform opacity-100 scale-100"
+    //   Leaving: "transition ease-in duration-75"
+    //     From: "transform opacity-100 scale-100"
+    //     To: "transform opacity-0 scale-95"
 }
