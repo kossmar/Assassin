@@ -14,6 +14,9 @@ export default function Home() {
         <div className="flex justify-center py-20">
           <img className="max-w-xs sm:max-w-sm lg:max-w-md" src="/images/the-assassin-game-logo.png" />
         </div>
+        <div className="flex justify-center">
+          <img className="max-w-xs sm:max-w-sm lg:max-w-md" src="/images/assassin-circle.png" />
+        </div>
       </Layout>
     </div>
   )
