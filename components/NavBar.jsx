@@ -1,12 +1,22 @@
 import Head from 'next/head'
 import Link from 'next/link'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
-export default function NavBar({page}) {
+
+export default function NavBar({ page }) {
+
+    const [dropdownOpen, setDropdownOpen] = useState(false)
 
     const thing = useEffect(() => {
-        console.log(page)
+        console.log(dropdownOpen)
     }, [])
+
+    function handleClick() {
+        console.log("clicked")
+        setDropdownOpen(prevValue => {
+            return (prevValue ? false : true)
+        })
+    }
 
     return (
         <div>
@@ -62,12 +72,12 @@ export default function NavBar({page}) {
                                             Rules
                     </a>
                                     </Link>
-                                    <Link href="#">
+                                    <Link href="/">
                                         <a className="bg-black shadow-md hover:bg-red-600 hover:shadow-xl-red text-white px-3 py-2 rounded-md text-sm font-medium">
                                             New Campaign
                     </a>
                                     </Link>
-                                    <Link href="#">
+                                    <Link href="/about">
                                         <a className="text-gray-500 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                             About
                     </a>
@@ -77,16 +87,18 @@ export default function NavBar({page}) {
                         </div>
 
                         {/* <!-- Profile dropdown --> */}
-                        <button className="p-1 border-4 border-white rounded hover:border-black focus:border-black focus:outline-none">
-                            <div className="ml-3 flex items-center justify-center ">
-                                <div className="px-2 hidden md:block">
-                                    <div className="italic font-bold">MR. BIBBLZ</div>
-                                </div>
-                                <div className="px-2">
-                                    <button className="bg-gray-800 flex text-sm rounded-full ring-2 ring-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu" aria-haspopup="true">
-                                        <span className="sr-only">Open user menu</span>
-                                        <img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-                                    </button>
+                        <div>
+                            <div onClick={handleClick} className={"w-48 p-1 border-4 rounded " + (dropdownOpen ? "border-black outline-none rounded-b-none" : "border-white hover:border-black")}>
+                                <div className="ml-3 flex items-center justify-center ">
+                                    <div className="px-2 hidden md:block">
+                                        <div className="italic font-bold">MR. BIBBLZ</div>
+                                    </div>
+                                    <div className="px-2">
+                                        <div className="bg-gray-800 flex text-sm rounded-full ring-2 ring-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu" aria-haspopup="true">
+                                            <span className="sr-only">Open user menu</span>
+                                            <img className="h-8 w-8 rounded-full" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -100,12 +112,12 @@ export default function NavBar({page}) {
               From: "transform opacity-100 scale-100"
               To: "transform opacity-0 scale-95"
           --> */}
-                            {/* <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Your Profile</a>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Settings</a>
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Sign out</a>
-          </div> */}
-                        </button>
+                            <div className={"border-4 border-t-0 rounded-b-2xl border-black origin-top-right absolute right-0 w-48 shadow-lg bg-white ring-1 ring-black ring-opacity-5" + (dropdownOpen ? "transition ease-in duration-100 transform opacity-100 scale-y-100" : "transition ease-in duration-75 transform opacity-0 scale-y-0")} role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                                <a href="#" className="block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem">Settings</a>
+                                <a href="#" className="block px-4 py-2 text-sm text-gray-700 border-t-4 border-black hover:bg-gray-100" role="menuitem">Your Profile</a>
+                                <a href="#" className="block rounded-b-2xl px-4 py-2 text-sm text-gray-700 border-t-4 border-black hover:bg-gray-100" role="menuitem">Sign out</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

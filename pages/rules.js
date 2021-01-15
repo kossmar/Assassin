@@ -1,5 +1,6 @@
 import Head from "next/head"
 import Layout from "../components/Layout"
+import { thing } from "../constants"
 
 export default function Rules() {
     return (
@@ -7,7 +8,7 @@ export default function Rules() {
             <Head>
                 <title>Assassin/rules</title>
             </Head>
-            <Layout page="rules">
+            <Layout page={thing.rules}>
                 DICKS
             </Layout>
         </div>
