@@ -13,13 +13,23 @@
 
 @layer utilities {
     .bunk {
-        transition: max-height 0.15s;
+        transition: max-height 0.35s;
     }
-    .closed {
+    .close {
+        transition: max-height 0.15s;
         max-height: 0;
     }
     
     .open {
         max-height: 500px;
     }
+
+    .text-vw {
+        font-size: 0.5vw;
+    }
+
+    .no-resize, .resize {
+        font-size: 15px
+    }
+
 }

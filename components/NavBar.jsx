@@ -11,6 +11,21 @@ export default function NavBar({ page }) {
 
     const thing = useEffect(() => {
         console.log(profileDropdownOpen)
+
+        let size_div = document.querySelector("#font_size");
+        let div = document.querySelector("#fixed");
+
+        while (div.scrollHeight > div.clientHeight) {
+            let style = window.getComputedStyle(div, null).getPropertyValue('font-size');
+            let fontSize = parseFloat(style);
+
+            if (fontSize <= 1) {
+                break;
+            }
+
+            div.style.fontSize = "" + (fontSize - 1) + "px";
+            size_div.innerHTML = "&nbsp;" + div.style.fontSize;
+        }
     }, [])
 
     function handleProfileClick() {
@@ -71,7 +86,7 @@ export default function NavBar({ page }) {
                             </Link>
 
                             {/* NAV LINKS */}
-                            <div className="hidden sm:block sm:m-auto pl-20 md:pl-44 lg:pl-14">
+                            <div className="hidden sm:block sm:m-auto pl-16 md:pl-44 lg:pl-14">
                                 <div className="flex space-x-4">
                                     <Link href="/rules">
                                         <a className="text-gray-500 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -98,8 +113,8 @@ export default function NavBar({ page }) {
                             <div className="flex items-center justify-center">
 
                                 {/* Profile NAME */}
-                                <div className="px-2 hidden md:block">
-                                    <div className={"italic font-bold " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>MR. BIBBLZ</div>
+                                <div className="w-32 overflow-auto px-2 hidden md:block">
+                                    <div id="fixed" className={"text-right italic font-bold " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>MR. BIBBLZ THE SILLY DOG</div>
                                 </div>
 
                                 {/* Profile IMAGE */}
@@ -117,7 +132,8 @@ export default function NavBar({ page }) {
                 </div>
 
                 {/* DROPDOWN MENUS */}
-                    <div className={"flex justify-between mx-auto " + (menuDropdownOpen || profileDropdownOpen ? "transform origin-top duration-200 scale-y-100" : "transform origin-top duration-200 scale-y-0")}>
+                <div className="relative overflow-auto">
+                    <div className={"bunk flex justify-between mx-auto " + (menuDropdownOpen || profileDropdownOpen ? "open" : "close")}>
 
                         {/* NAV Menu */}
                         <div className={"sm:hidden " + (menuDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
@@ -136,8 +152,13 @@ export default function NavBar({ page }) {
                                 <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sign Out</a>
                             </div>
                         </div>
-
                     </div>
+
+                </div>
+
+
+
+
 
 
             </nav>
