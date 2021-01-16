@@ -24,7 +24,7 @@ export default function NavBar({ page }) {
             }
 
             div.style.fontSize = "" + (fontSize - 1) + "px";
-            size_div.innerHTML = "&nbsp;" + div.style.fontSize;
+            // size_div.innerHTML = "&nbsp;" + div.style.fontSize;
         }
     }, [])
 
@@ -113,8 +113,8 @@ export default function NavBar({ page }) {
                             <div className="flex items-center justify-center">
 
                                 {/* Profile NAME */}
-                                <div className="w-32 overflow-auto px-2 hidden md:block">
-                                    <div id="fixed" className={"text-right italic font-bold " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>MR. BIBBLZ THE SILLY DOG</div>
+                                <div id="fixed" className="justify-end items-center w-32 h-10 px-2 hidden md:flex">
+                                    <div className={"h-auto text-right italic font-bold " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>MR. BIBBLZ BIBZ MAN 2.0</div>
                                 </div>
 
                                 {/* Profile IMAGE */}
@@ -132,7 +132,7 @@ export default function NavBar({ page }) {
                 </div>
 
                 {/* DROPDOWN MENUS */}
-                <div className="relative overflow-auto">
+                <div className="overflow-auto">
                     <div className={"bunk flex justify-between mx-auto " + (menuDropdownOpen || profileDropdownOpen ? "open" : "close")}>
 
                         {/* NAV Menu */}
@@ -145,7 +145,7 @@ export default function NavBar({ page }) {
                         </div>
 
                         {/* PROFILE Menu */}
-                        <div className={"relative sm:absolute right-0 mr-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                        <div className={"sm:absolute right-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className="px-2 pt-2 pb-3 space-y-1">
                                 <a href="/" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Profile</a>
                                 <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
