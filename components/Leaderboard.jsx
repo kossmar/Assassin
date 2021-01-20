@@ -4,14 +4,15 @@ import AssassinIcon from './AssassinIcon'
 export default function Leaderboard({ props }) {
 
     const [assassinList, setAssassinList] = useState(assassinsArr)
+    const displayKills = true
 
     return (
         <div>
             <div className='mt-8 grid grid-cols-5 w-4/6 mx-auto'>
                 {assassinList.sort((a, b) => {
                     return b.kills - a.kills
-                }).map((assassin) => {
-                    return (<AssassinIcon key={assassin.name} name={assassin.name} image={assassin.image} kills={assassin.kills} />)
+                }).map((assassin, index) => {
+                    return (<AssassinIcon key={assassin.name} name={assassin.name} image={assassin.image} kills={assassin.kills} displayKills={displayKills} isWinning={(index===0 ? true : false)} />)
                 })}
             </div>
         </div>
@@ -22,7 +23,7 @@ const assassinsArr = [
     {
         name: "Fucknibz",
         image: "/images/bubz.jpeg",
-        kills: "3"
+        kills: "2"
     },
     {
         name: "Gundle Bunk",
