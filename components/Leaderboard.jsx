@@ -4,7 +4,7 @@ import AssassinIcon from './AssassinIcon'
 export default function Leaderboard({ props }) {
 
     const [assassinList, setAssassinList] = useState(assassinsArr)
-    const displayKills = true
+    const displayKills = false
 
     return (
         <div>

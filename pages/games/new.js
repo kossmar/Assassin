@@ -12,17 +12,33 @@ export default function Rules() {
                 <title>Assassin/new</title>
             </Head>
             <Layout page={page.rules}>
+            
                 <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
                     Murder and mayhem awaits...
                 </div>
+
                 <EditCampaignDetails />
+
+                {/* ASSASSINS */}
                 <div>
-                    <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>Assassins</div>
+                    <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
+                        Assassins
+                    </div>
                     <Leaderboard />
                 </div>
+
+                {/* INVITES */}
                 <div>
-                    <Invite />
+                    <div>
+                        <Invite />
+                    </div>
+                    <div>
+                        <Invite isForAssassins={false} />
+                    </div>
                 </div>
+
+
+                {/* BUTTONS */}
                 <div className='w-2/5 mx-auto space-y-4 my-8'>
                     <div>
                         <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>SAVE</button>
