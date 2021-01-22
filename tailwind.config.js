@@ -19,10 +19,13 @@ module.exports = {
     },
     minWidth: {
       '2xs': '10rem'
-    }
+    },
   },
   variants: {
-    extend: {},
+    extend: {
+      borderWidth: ['hover'],
+      margin:['hover']
+    },
   },
   plugins: [],
 }
