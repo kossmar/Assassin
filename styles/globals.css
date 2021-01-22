@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 .noSelect {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
@@ -9,6 +10,10 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.dingle {
+    margin-left: -100%;
 }
 
 @layer utilities {

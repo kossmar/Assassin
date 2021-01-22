@@ -1,7 +1,7 @@
-const thing = {
+const page = {
     home: "home",
     about: "about",
     rules: "rules"
 }
 
-export { thing }
+export { page }

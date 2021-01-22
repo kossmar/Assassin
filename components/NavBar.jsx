@@ -41,11 +41,6 @@ export default function NavBar({ page }) {
 
     return (
         <div>
-            <Head>
-                <title>Assassin</title>
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-
             <nav className="bg-white">
                 <div className="mx-auto px-2">
                     <div className="relative flex items-center justify-between h-20">
@@ -75,7 +70,7 @@ export default function NavBar({ page }) {
                             {/* LOGO */}
                             <Link href='/'>
                                 <a>
-                                    <div className="cursor-pointer flex-shrink-0 flex items-center pl-16 sm:p-0">
+                                    <div className="cursor-pointer flex-shrink-0 flex items-center pl-10 sm:p-0">
                                         <img className="block h-10 w-auto" src="/images/assassin-logo-image.png" alt="Workflow" />
                                         <img className="hidden lg:block h-10 w-auto ml-2" src="/images/assassin-logo-title.png" alt="Workflow" />
                                     </div>
@@ -83,14 +78,14 @@ export default function NavBar({ page }) {
                             </Link>
 
                             {/* NAV LINKS */}
-                            <div className="hidden sm:block sm:m-auto pl-16 md:pl-44 lg:pl-14">
+                            <div className="hidden sm:block sm:m-auto pl-4 md:pl-36 lg:pl-4">
                                 <div className="flex space-x-4">
                                     <Link href="/rules">
                                         <a className="text-gray-500 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                             Rules
                                         </a>
                                     </Link>
-                                    <Link href="/">
+                                    <Link href="/games/new">
                                         <a className="bg-black shadow-md hover:bg-red-600 hover:shadow-xl-red text-white px-3 py-2 rounded-md text-sm font-medium">
                                             New Campaign
                                         </a>
