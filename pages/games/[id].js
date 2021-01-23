@@ -4,7 +4,6 @@ import EditCampaignDetails from '../../components/EditCampaignDetails'
 import { page } from "../../constants"
 import Leaderboard from "../../components/Leaderboard"
 import Invite from "../../components/Invite"
-import RoleSelect from "../../components/RoleSelect"
 import Link from "next/link"
 
 export default function Rules() {
@@ -21,9 +20,6 @@ export default function Rules() {
                 </div>
 
                 <EditCampaignDetails />
-
-                {/* CHOOSE ROLE */}
-                <RoleSelect />
 
                 {/* ASSASSINS */}
                 <div>
