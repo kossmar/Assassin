@@ -4,4 +4,11 @@ const page = {
     rules: "rules"
 }
 
-export { page }
+const gameStatus = {
+    CREATED: 'CREATED',
+    ACTIVE: 'ACTIVE',
+    PAUSED: 'PAUSED',
+    COMPLETE: 'COMPLETE'
+}
+
+export { page, gameStatus }

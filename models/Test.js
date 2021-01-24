@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const TestSchema = new mongoose.Schema({
-    name: {
+    game_name: {
         type: String,
         required: true
     }

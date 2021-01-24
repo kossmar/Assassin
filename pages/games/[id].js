@@ -1,13 +1,49 @@
+import React, { useState, useEffect } from 'react'
 import Head from "next/head"
 import Layout from "../../components/Layout"
-import EditCampaignDetails from '../../components/EditCampaignDetails'
+import EditGameDetails from '../../components/EditGameDetails'
 import { page } from "../../constants"
 import Leaderboard from "../../components/Leaderboard"
 import Invite from "../../components/Invite"
 import Link from "next/link"
+import ChooseRole from '../../components/ChooseRole'
 
-export default function Rules() {
+
+export default function Game() {
     const id = "test"
+
+    const [selectedRole, setSelectedRole] = useState('')
+    const [gameDetails, setGameDetails] = useState({
+        gameName: '',
+        weapons: '',
+        safeZones: ''
+    })
+
+    useEffect(() => {
+        console.log("DEETS: " + JSON.stringify(gameDetails))
+        console.log("ROLE: " + selectedRole)
+    })
+
+    function handleRoleSelect(id) {
+        const name = id
+        setSelectedRole(name)
+    }
+
+    function updateDetails(e) {
+        const target = e.target
+
+        const value = target.value
+        const name = target.name
+
+        setGameDetails({
+            ...gameDetails,
+            [name]: value
+        })
+    }
+
+    function handleSave() {
+        console.log("SAVE")
+    }
     return (
         <div>
             <Head>
@@ -19,7 +55,11 @@ export default function Rules() {
                     Murder and mayhem awaits...
                 </div>
 
-                <EditCampaignDetails />
+                {/* EDIT GAME DETAILS */}
+                <EditGameDetails onChange={updateDetails} details={gameDetails} />
+
+                {/* CHOOSE ROLE */}
+                <ChooseRole onClick={handleRoleSelect} selectedRole={selectedRole} />
 
                 {/* ASSASSINS */}
                 <div>
