@@ -87,7 +87,7 @@ export default function NavBar({ page }) {
                                     </Link>
                                     <Link href="/games/new">
                                         <a className="bg-black shadow-md hover:bg-red-600 hover:shadow-xl-red text-white px-3 py-2 rounded-md text-sm font-medium">
-                                            New Campaign
+                                            New Game
                                         </a>
                                     </Link>
                                     <Link href="/about">
@@ -130,7 +130,7 @@ export default function NavBar({ page }) {
                         {/* NAV Menu */}
                         <div className={"sm:hidden " + (menuDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className={"px-2 pt-2 pb-3 space-y-1 "}>
-                                <a href="/" className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">New Campaign</a>
+                                <a href="/" className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">New Game</a>
                                 <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Rules</a>
                                 <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
                             </div>
