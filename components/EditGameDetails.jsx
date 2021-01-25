@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export default function EditGamesDetails({ onChange, details}) {
+export default function EditGameDetails({ onChange, details}) {
 
     return (
         <div>

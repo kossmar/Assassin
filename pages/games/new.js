@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Head from "next/head"
 import Layout from "../../components/Layout"
-import EditGameDetails from '../../components/EditGamesDetails'
+import EditGameDetails from '../../components/EditGameDetails'
 import { page } from "../../constants"
 import Link from "next/link"
 import ChooseRole from '../../components/ChooseRole'
@@ -15,6 +15,9 @@ export default function NewGame() {
 
     const router = useRouter()
     const contentType = 'application/json'
+
+    const [errors, setErrors] = useState({})
+    const [message, setMessage] = useState('')
 
     const [selectedRole, setSelectedRole] = useState('')
     const [gameDetails, setGameDetails] = useState({
@@ -60,8 +63,9 @@ export default function NewGame() {
                 throw new Error(res.status)
             }
 
-            router.push('/')
+            router.push(`/games/${id}`)
         } catch (error) {
+            setMessage('Failed to add pet: \n' + errors)
             console.log('Failed to add game \n' + error)
         }
     }
@@ -79,28 +83,28 @@ export default function NewGame() {
 
         console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(newGame))
 
-        // const errs = formValidate()
-        // if (Object.keys(errs).length === 0) {
-        postData(newGame)
-        // } else {
-        //     setErrors({ errs })
-        // }
+        const errs = formValidate()
+        if (Object.keys(errs).length === 0) {
+            postData(newGame)
+        } else {
+            setErrors({ errs })
+            console.log(errs)
+        }
     }
 
-    /* Makes sure pet info is filled for pet name, owner name, species, and image url*/
+    /* Makes sure game info is filled for game name, allowed weapons, safe zones, and creator's role */
     const formValidate = () => {
         let err = {}
-        if (!form.name) err.name = 'Name is required'
-        if (!form.owner_name) err.owner_name = 'Owner is required'
-        if (!form.species) err.species = 'Species is required'
-        if (!form.image_url) err.image_url = 'Image URL is required'
+        if (!gameDetails.game_name) err.name = 'Game Name is required'
+        if (!gameDetails.weapons) err.owner_name = 'Weapons are required'
+        if (!gameDetails.safe_zones) err.species = 'Safe Zones are required'
+        if (!selectedRole) err.image_url = 'You must select a role for yourself'
         return err
     }
 
 
-
     return (
-        <div>
+        <>
             <Head>
                 <title>Assassin/new</title>
             </Head>
@@ -118,15 +122,19 @@ export default function NewGame() {
 
                 {/* BUTTONS */}
                 <div className='w-2/5 mx-auto space-y-4 my-8'>
-                    <div>
-                        <Link href={`/games/${id}`}>
-                            <button onClick={handleSave} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                                SAVE
-                            </button>
-                        </Link>
-                    </div>
+                    <button onClick={handleSave} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+                        SAVE
+                    </button>
+                </div>
+
+                {/* MESSAGES */}
+                <p>{message}</p>
+                <div>
+                    {Object.keys(errors).map((err, index) => (
+                        <li key={index}>{err}</li>
+                    ))}
                 </div>
             </Layout>
-        </div>
+        </>
     )
 }
