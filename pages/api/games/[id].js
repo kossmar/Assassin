@@ -23,20 +23,21 @@ export default async function handler(req, res) {
             }
             break
 
-        // case 'PUT' /* Edit a model by its ID */:
-        //     try {
-        //         const game = await Game.findByIdAndUpdate(id, req.body, {
-        //             new: true,
-        //             runValidators: true,
-        //         })
-        //         if (!game) {
-        //             return res.status(400).json({ success: false })
-        //         }
-        //         res.status(200).json({ success: true, data: game })
-        //     } catch (error) {
-        //         res.status(400).json({ success: false })
-        //     }
-        //     break
+        case 'PUT' /* Edit a model by its ID */:
+            try {
+                console.log("BODY @ PUT: " + req.body)
+                const game = await Game.findByIdAndUpdate(id, req.body, {
+                    new: true,
+                    runValidators: true,
+                })
+                if (!game) {
+                    return res.status(400).json({ success: false })
+                }
+                res.status(200).json({ success: true, data: game })
+            } catch (error) {
+                res.status(400).json({ success: false })
+            }
+            break
 
         //   case 'DELETE' /* Delete a model by its ID */:
         //     try {

@@ -12,8 +12,17 @@ import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
 
 export default function ThisGame({ game }) {
+    const contentType = 'application/json'
+
     const router = useRouter()
     const { id } = router.query
+
+    // Call this function whenever you want to
+    // refresh props!
+    const refreshData = () => {
+        router.replace(router.asPath);
+    }
+
 
     const [errors, setErrors] = useState({})
     const [message, setMessage] = useState('')
@@ -52,19 +61,25 @@ export default function ThisGame({ game }) {
     function handleSaveClick(e) {
         e.preventDefault()
 
-        const newGame = {
+        var updatedAssassinsArr = game.assassins.filter((assassin) => {
+            return assassin.user !== game.creator
+        })
+        console.log(updatedAssassinsArr)
+
+
+        const updatedGame = {
+            ...game,
             ...gameDetails,
-            creator: currentUser,
-            moderator: (selectedRole === 'moderator' ? currentUser : ''),
-            assassins: (selectedRole === 'assassin' ? [{ user: currentUser }] : []),
-            game_status: gameStatus.CREATED
+            creator_role: selectedRole,
+            moderator: (selectedRole === 'moderator' ? game.creator : ''),
+            assassins: (selectedRole === 'moderator' ? updatedAssassinsArr : game.assassins),
         }
 
-        console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(newGame))
+        console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(updatedGame))
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
-            postData(newGame)
+            putData(updatedGame)
         } else {
             setErrors({ errs })
             console.log(errs)
@@ -82,7 +97,7 @@ export default function ThisGame({ game }) {
         return err
     }
 
-    const putData = async (game) => {
+    const putData = async (updatedGame) => {
         // const { id } = router.query
 
         try {
@@ -92,7 +107,7 @@ export default function ThisGame({ game }) {
                     Accept: contentType,
                     'Content-Type': contentType,
                 },
-                body: JSON.stringify(game),
+                body: JSON.stringify(updatedGame),
             })
 
             // Throw error with status code in case Fetch API req failed
@@ -101,7 +116,8 @@ export default function ThisGame({ game }) {
             }
 
             const { data } = await res.json()
-            const id = data.data._id
+            console.log("DATA: " + data.creator_role)
+            refreshData()
 
         } catch (error) {
             setMessage('Failed to update game')
