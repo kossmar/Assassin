@@ -8,6 +8,7 @@ const GameSchema = new mongoose.Schema({
     moderator: String,
     assassins: [
         { 
+            _id: false,
             user: String,
             target: String,
             is_waiting: Boolean,

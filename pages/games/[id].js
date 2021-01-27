@@ -5,24 +5,37 @@ import EditGameDetails from '../../components/EditGameDetails'
 import { page } from "../../constants"
 import Leaderboard from "../../components/Leaderboard"
 import Invite from "../../components/Invite"
-import Link from "next/link"
 import ChooseRole from '../../components/ChooseRole'
+import dbConnect from '../../utils/dBConnect'
+import Game from '../../models/Game'
+import AssassinIcon from '../../components/AssassinIcon'
+import useSWR from 'swr'
+import {useRouter} from 'next/router'
 
 
-export default function Game() {
-    const id = "test"
+const fetcher = (url) =>
+fetch(url)
+    .then((res) => res.json())
+    .then((json) => json.data)
 
-    const [selectedRole, setSelectedRole] = useState('')
+export default function ThisGame({ game }) {
+    // const router = useRouter()
+    // const { id } = router.query
+    // console.log(id)
+    // const { data: game2, error } = useSWR(id ? `/api/games/${id}` : null, fetcher)
+    // console.log(game2)
+    // console.log("ERROR: " + error)
+
+    // if (error) return <p>Failed to load</p>
+    // if (!game2) return <p>Loading...</p>
+
+    const [selectedRole, setSelectedRole] = useState(!game.moderator ? 'assassin' : 'moderator')
     const [gameDetails, setGameDetails] = useState({
-        gameName: '',
-        weapons: '',
-        safeZones: ''
+        game_name: game.game_name,
+        weapons: game.game_name,
+        safe_zones: game.safe_zones
     })
-
-    useEffect(() => {
-        console.log("DEETS: " + JSON.stringify(gameDetails))
-        console.log("ROLE: " + selectedRole)
-    })
+    const [isEditing, setIsEditing] = useState(false)
 
     function handleRoleSelect(id) {
         const name = id
@@ -41,28 +54,112 @@ export default function Game() {
         })
     }
 
-    function handleSave() {
-        console.log("SAVE")
+    function handleEditClick() {
+        setIsEditing((prevValue) => {
+            return (prevValue ? false : true)
+        })
     }
+
+    function handleSaveClick() {
+        setIsEditing((prevValue) => {
+            return (prevValue ? false : true)
+        })
+    }
+
+    const putData = async (form) => {
+        const { id } = router.query
+
+        try {
+            const res = await fetch(`/api/pets/${id}`, {
+                method: 'PUT',
+                headers: {
+                    Accept: contentType,
+                    'Content-Type': contentType,
+                },
+                body: JSON.stringify(form),
+            })
+
+            // Throw error with status code in case Fetch API req failed
+            if (!res.ok) {
+                throw new Error(res.status)
+            }
+
+            const { data } = await res.json()
+
+            mutate(`/api/pets/${id}`, data, false) // Update the local data without a revalidation
+            router.push('/')
+        } catch (error) {
+            setMessage('Failed to update pet')
+        }
+    }
+
     return (
         <div>
             <Head>
                 <title>Assassin/new</title>
             </Head>
             <Layout page={page.rules}>
+                <section id="top">
 
+                </section>
                 <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
                     Murder and mayhem awaits...
                 </div>
 
-                {/* EDIT GAME DETAILS */}
-                <EditGameDetails onChange={updateDetails} details={gameDetails} />
 
-                {/* CHOOSE ROLE */}
-                <ChooseRole onClick={handleRoleSelect} selectedRole={selectedRole} />
+                {/* GAME DETAILS */}
+                <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
+                    <div>
+                        <div>
+                            NAME:
+                        </div>
+                        <div>
+                            {gameDetails.game_name}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            WEAPONS:
+                        </div>
+                        <div className='text-center'>
+                            {gameDetails.weapons}
+                        </div>
+                    </div>
+
+                    <div>
+                        <div>
+                            SAFE ZONES:
+                        </div>
+                        <div className='text-center'>
+                            {gameDetails.safe_zones}
+                        </div>
+                    </div>
+
+                    {/* MODERATOR */}
+                    <div className='my-10'>
+                        <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
+                            Moderator
+                    </div>
+                        <AssassinIcon name={game.moderator ? game.moderator : 'NO MODERATOR'} image='/images/moderator.png' />
+                    </div>
+
+                </div>
+
+
+                {/* EDIT GAME DETAILS */}
+                <div className={(isEditing ? 'block' : 'hidden')}>
+
+                    {/* Name, Weapons, Safe Zones */}
+                    <EditGameDetails onChange={updateDetails} details={gameDetails} />
+
+                    {/* CHOOSE ROLE */}
+                    <ChooseRole onClick={handleRoleSelect} selectedRole={selectedRole} />
+
+                </div>
 
                 {/* ASSASSINS */}
-                <div>
+                <div className='my-10'>
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins
                     </div>
@@ -82,16 +179,31 @@ export default function Game() {
 
                 {/* BUTTONS */}
                 <div className='w-2/5 mx-auto space-y-4 my-8'>
-                    <div>
-                        <Link href={`/games/[${id}]`}>
-                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+
+                    {/* EDIT  */}
+                    <div className={(isEditing ? 'hidden' : 'block')}>
+                        <a href='#top'>
+                            <button onClick={handleEditClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+                                EDIT
+                            </button>
+                        </a>
+                    </div>
+
+                    {/* SAVE */}
+                    <div className={(isEditing ? 'block' : 'hidden')}>
+                        <a href='#top'>
+                            <button onClick={handleSaveClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
                                 SAVE
                             </button>
-                        </Link>
+                        </a>
                     </div>
+
+                    {/* BEGIN */}
                     <div>
                         <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'>BEGIN</button>
                     </div>
+
+                    {/* DELETE */}
                     <div>
                         <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>DELETE</button>
                     </div>
@@ -99,4 +211,14 @@ export default function Game() {
             </Layout>
         </div>
     )
+}
+
+export async function getServerSideProps({ params }) {
+    await dbConnect()
+
+    const gameData = await Game.findById(params.id)
+
+    const game = JSON.parse(JSON.stringify(gameData))
+
+    return { props: { game } }
 }

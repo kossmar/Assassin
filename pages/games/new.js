@@ -9,7 +9,6 @@ import ChooseRole from '../../components/ChooseRole'
 import { gameStatus } from '../../constants'
 
 export default function NewGame() {
-    const id = "test"
     const currentUser = "124567890"
     // var newGame
 
@@ -62,8 +61,13 @@ export default function NewGame() {
             if (!res.ok) {
                 throw new Error(res.status)
             }
+            
+            const data = await res.json()
+            const id = data.data._id
 
+            console.log("STATUS: " + res.status)
             router.push(`/games/${id}`)
+            
         } catch (error) {
             setMessage('Failed to add pet: \n' + errors)
             console.log('Failed to add game \n' + error)
@@ -77,7 +81,7 @@ export default function NewGame() {
             ...gameDetails,
             creator: currentUser,
             moderator: (selectedRole === 'moderator' ? currentUser : ''),
-            assassins: (selectedRole === 'assassin' ? [{ userId: currentUser }] : ''),
+            assassins: (selectedRole === 'assassin' ? [{ user: currentUser }] : []),
             game_status: gameStatus.CREATED
         }
 
