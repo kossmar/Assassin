@@ -30,10 +30,10 @@ export default function Home({ props }) {
   )
 }
 
-export async function getServerSideProps() {
+// export async function getServerSideProps() {
 
-  await dbConnect()
+//   await dbConnect()
 
 
-}
+// }
 

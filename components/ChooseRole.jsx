@@ -4,7 +4,7 @@ import AssassinIcon from './AssassinIcon'
 export default function ChooseRole({ selectedRole, onClick }) {
 
     function handleClick(id) {
-        onClick(id)
+        onChange(id)
     }
 
     return (

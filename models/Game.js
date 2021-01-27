@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 
 const GameSchema = new mongoose.Schema({
     creator: String,
+    creator_role: String,
     game_name: String,
     weapons: String,
     safe_zones: String,
