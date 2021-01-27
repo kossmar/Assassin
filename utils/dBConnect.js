@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import User from '../models/Test'
 
 async function dbConnect() {
   // check if we have a connection to the database or if it's currently

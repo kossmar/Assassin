@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export default function AssassinIcon({ name, image, kills, isWinning, displayKills, interactive = false, clickCallback, isSelected, id}) {
+export default function AssassinIcon({ name, image='/images/assassin.png', kills, isWinning, displayKills, interactive = false, clickCallback, isSelected, id}) {
     
     function handleClick() {
         clickCallback(id)
