@@ -1,38 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import Head from "next/head"
-import Layout from "../../components/Layout"
-import EditGameDetails from '../../components/EditGameDetails'
-import { page } from "../../constants"
-import Leaderboard from "../../components/Leaderboard"
-import Invite from "../../components/Invite"
-import ChooseRole from '../../components/ChooseRole'
-import dbConnect from '../../utils/dBConnect'
-import Game from '../../models/Game'
-import AssassinIcon from '../../components/AssassinIcon'
-import useSWR from 'swr'
-import {useRouter} from 'next/router'
-
-
-const fetcher = (url) =>
-fetch(url)
-    .then((res) => res.json())
-    .then((json) => json.data)
+import Layout from "../../../components/Layout"
+import EditGameDetails from '../../../components/EditGameDetails'
+import { page } from "../../../constants"
+import Leaderboard from "../../../components/Leaderboard"
+import Invite from "../../../components/Invite"
+import ChooseRole from '../../../components/ChooseRole'
+import dbConnect from '../../../utils/dbConnect'
+import Game from '../../../models/Game'
+import AssassinIcon from '../../../components/AssassinIcon'
+import { useRouter } from 'next/router'
 
 export default function ThisGame({ game }) {
-    // const router = useRouter()
-    // const { id } = router.query
-    // console.log(id)
-    // const { data: game2, error } = useSWR(id ? `/api/games/${id}` : null, fetcher)
-    // console.log(game2)
-    // console.log("ERROR: " + error)
+    const router = useRouter()
+    const { id } = router.query
 
-    // if (error) return <p>Failed to load</p>
-    // if (!game2) return <p>Loading...</p>
+    const [errors, setErrors] = useState({})
+    const [message, setMessage] = useState('')
 
-    const [selectedRole, setSelectedRole] = useState(!game.moderator ? 'assassin' : 'moderator')
+    const [selectedRole, setSelectedRole] = useState(game.creator_role)
     const [gameDetails, setGameDetails] = useState({
         game_name: game.game_name,
-        weapons: game.game_name,
+        weapons: game.weapons,
         safe_zones: game.safe_zones
     })
     const [isEditing, setIsEditing] = useState(false)
@@ -60,23 +49,50 @@ export default function ThisGame({ game }) {
         })
     }
 
-    function handleSaveClick() {
+    function handleSaveClick(e) {
+        e.preventDefault()
+
+        const newGame = {
+            ...gameDetails,
+            creator: currentUser,
+            moderator: (selectedRole === 'moderator' ? currentUser : ''),
+            assassins: (selectedRole === 'assassin' ? [{ user: currentUser }] : []),
+            game_status: gameStatus.CREATED
+        }
+
+        console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(newGame))
+
+        const errs = formValidate()
+        if (Object.keys(errs).length === 0) {
+            postData(newGame)
+        } else {
+            setErrors({ errs })
+            console.log(errs)
+        }
         setIsEditing((prevValue) => {
             return (prevValue ? false : true)
         })
     }
 
-    const putData = async (form) => {
-        const { id } = router.query
+    const formValidate = () => {
+        let err = {}
+        if (!gameDetails.game_name) err.name = 'Game Name is required'
+        if (!gameDetails.weapons) err.owner_name = 'Weapons are required'
+        if (!gameDetails.safe_zones) err.species = 'Safe Zones are required'
+        return err
+    }
+
+    const putData = async (game) => {
+        // const { id } = router.query
 
         try {
-            const res = await fetch(`/api/pets/${id}`, {
+            const res = await fetch(`/api/games/${game._id}`, {
                 method: 'PUT',
                 headers: {
                     Accept: contentType,
                     'Content-Type': contentType,
                 },
-                body: JSON.stringify(form),
+                body: JSON.stringify(game),
             })
 
             // Throw error with status code in case Fetch API req failed
@@ -85,11 +101,10 @@ export default function ThisGame({ game }) {
             }
 
             const { data } = await res.json()
+            const id = data.data._id
 
-            mutate(`/api/pets/${id}`, data, false) // Update the local data without a revalidation
-            router.push('/')
         } catch (error) {
-            setMessage('Failed to update pet')
+            setMessage('Failed to update game')
         }
     }
 
