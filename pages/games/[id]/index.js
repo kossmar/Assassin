@@ -6,26 +6,67 @@ import { page } from "../../../constants"
 import Leaderboard from "../../../components/Leaderboard"
 import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
-import dbConnect from '../../../utils/dbConnect'
-import Game from '../../../models/Game'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
+import useSWR, { mutate, trigger } from 'swr'
+import util from 'util'
 
-export default function ThisGame({ game }) {
-    const contentType = 'application/json'
+const fetcher = (url) =>
+    fetch(url)
+        .then((res) => res.json())
+        .then((json) => json.data)
+
+const ThisGame = () => {
 
     const router = useRouter()
     const { id } = router.query
 
-    // Call this function whenever you want to
-    // refresh props!
-    const refreshData = () => {
-        router.replace(router.asPath);
-    }
+
+    const { data: game, error } = useSWR(id ? `/api/games/6011e8d0d9ae4e35531d5616` : null, fetcher)
 
 
-    const [errors, setErrors] = useState({})
-    const [message, setMessage] = useState('')
+    if (error) return <p>Failed to load</p>
+    if (!game) return <p>Loading...</p>
+
+    console.log("GAME RENDER: " + JSON.stringify(game))
+
+    return (
+        <div>
+            <FuckShit gameShit={game} />
+        </div>
+    )
+}
+
+export default ThisGame
+
+// export async function getServerSideProps({ params }) {
+//     await dbConnect()
+
+//     const gameData = await Game.findById(params.id)
+
+//     const game = JSON.parse(JSON.stringify(gameData))
+
+//     return { props: { game } }
+// }
+
+const FuckShit = ({ gameShit }) => {
+
+    const contentType = 'application/json'
+
+    // useEffect(() => {
+    //     setGame(gameShit)
+    //     setSelectedRole(game.creator_role)
+    //     setGameDetails({
+    //         game_name: game.game_name,
+    //         weapons: game.weapons,
+    //         safe_zones: game.safe_zones
+    //     })
+    // }, [gameShit])
+
+    const [game, setGame] = useState(gameShit)
+    console.log("GAME as passed into FuckShit: " + JSON.stringify(game))
+    // console.log("Initial assassins: " + JSON.stringify(game.assassins))
+    const [isEditing, setIsEditing] = useState(false)
 
     const [selectedRole, setSelectedRole] = useState(game.creator_role)
     const [gameDetails, setGameDetails] = useState({
@@ -33,10 +74,10 @@ export default function ThisGame({ game }) {
         weapons: game.weapons,
         safe_zones: game.safe_zones
     })
-    const [isEditing, setIsEditing] = useState(false)
 
     function handleRoleSelect(id) {
         const name = id
+        console.log(name)
         setSelectedRole(name)
     }
 
@@ -58,21 +99,34 @@ export default function ThisGame({ game }) {
         })
     }
 
+
     function handleSaveClick(e) {
         e.preventDefault()
 
-        var updatedAssassinsArr = game.assassins.filter((assassin) => {
-            return assassin.user !== game.creator
-        })
-        console.log(updatedAssassinsArr)
-
+        const creatorAssassinObj = {
+            user: game.creator_role
+        }
 
         const updatedGame = {
             ...game,
             ...gameDetails,
             creator_role: selectedRole,
-            moderator: (selectedRole === 'moderator' ? game.creator : ''),
-            assassins: (selectedRole === 'moderator' ? updatedAssassinsArr : game.assassins),
+        }
+
+        if (selectedRole === 'moderator') {
+            updatedGame.moderator = game.creator
+
+            const newAssassins = game.assassins.filter((assassin) => {
+                console.log("FILTER assassin.user: " + assassin.user)
+                console.log("FILTER game.creator: " + game.creator)
+
+                return assassin.user != game.creator
+            })
+            updatedGame.assassins = newAssassins
+
+        } else {
+            updatedGame.moderator = ''
+            updatedGame.assassins = [{ user: game.creator, kills: [] }]
         }
 
         console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(updatedGame))
@@ -81,7 +135,7 @@ export default function ThisGame({ game }) {
         if (Object.keys(errs).length === 0) {
             putData(updatedGame)
         } else {
-            setErrors({ errs })
+            // setErrors({ errs })
             console.log(errs)
         }
         setIsEditing((prevValue) => {
@@ -116,11 +170,12 @@ export default function ThisGame({ game }) {
             }
 
             const { data } = await res.json()
-            console.log("DATA: " + data.creator_role)
-            refreshData()
+            mutate(`/api/games/6011e8d0d9ae4e35531d5616`, data, false)
+
 
         } catch (error) {
-            setMessage('Failed to update game')
+            console.log(error + "    failed to update game")
+            // setMessage('Failed to update game')
         }
     }
 
@@ -145,7 +200,7 @@ export default function ThisGame({ game }) {
                             NAME:
                         </div>
                         <div>
-                            {gameDetails.game_name}
+                            {game.game_name}
                         </div>
                     </div>
 
@@ -154,7 +209,7 @@ export default function ThisGame({ game }) {
                             WEAPONS:
                         </div>
                         <div className='text-center'>
-                            {gameDetails.weapons}
+                            {game.weapons}
                         </div>
                     </div>
 
@@ -163,7 +218,7 @@ export default function ThisGame({ game }) {
                             SAFE ZONES:
                         </div>
                         <div className='text-center'>
-                            {gameDetails.safe_zones}
+                            {game.safe_zones}
                         </div>
                     </div>
 
@@ -194,7 +249,7 @@ export default function ThisGame({ game }) {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins
                     </div>
-                    <Leaderboard />
+                    <Leaderboard assassins={game.assassins} />
                 </div>
 
                 {/* INVITES */}
@@ -242,14 +297,4 @@ export default function ThisGame({ game }) {
             </Layout>
         </div>
     )
-}
-
-export async function getServerSideProps({ params }) {
-    await dbConnect()
-
-    const gameData = await Game.findById(params.id)
-
-    const game = JSON.parse(JSON.stringify(gameData))
-
-    return { props: { game } }
 }
