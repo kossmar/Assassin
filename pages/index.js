@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
 import { page } from "../constants"
-import dbConnect from '../utils/dBConnect'
+import dbConnect from '../utils/dbConnect'
 import mongoose from 'mongoose'
 
 export default function Home({ props }) {
@@ -34,6 +34,6 @@ export default function Home({ props }) {
 
 //   await dbConnect()
 
-
+//   return null
 // }
 

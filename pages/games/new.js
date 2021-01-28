@@ -81,8 +81,9 @@ export default function NewGame() {
             ...gameDetails,
             creator: currentUser,
             moderator: (selectedRole === 'moderator' ? currentUser : ''),
-            assassins: (selectedRole === 'assassin' ? [{ user: currentUser }] : []),
-            game_status: gameStatus.CREATED
+            assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills:[] }] : []),
+            game_status: gameStatus.CREATED,
+            creator_role: selectedRole
         }
 
         console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(newGame))
