@@ -9,7 +9,6 @@ import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
 import useSWR, { mutate, trigger } from 'swr'
-import util from 'util'
 
 const fetcher = (url) =>
     fetch(url)
@@ -53,32 +52,24 @@ const FuckShit = ({ gameShit }) => {
 
     const contentType = 'application/json'
 
-    // useEffect(() => {
-    //     setGame(gameShit)
-    //     setSelectedRole(game.creator_role)
-    //     setGameDetails({
-    //         game_name: game.game_name,
-    //         weapons: game.weapons,
-    //         safe_zones: game.safe_zones
-    //     })
-    // }, [gameShit])
+    useEffect(() => {
+        setGame(gameShit)
+    }, [gameShit])
 
     const [game, setGame] = useState(gameShit)
-    console.log("GAME as passed into FuckShit: " + JSON.stringify(game))
-    // console.log("Initial assassins: " + JSON.stringify(game.assassins))
     const [isEditing, setIsEditing] = useState(false)
 
-    const [selectedRole, setSelectedRole] = useState(game.creator_role)
-    const [gameDetails, setGameDetails] = useState({
-        game_name: game.game_name,
-        weapons: game.weapons,
-        safe_zones: game.safe_zones
-    })
 
     function handleRoleSelect(id) {
         const name = id
         console.log(name)
-        setSelectedRole(name)
+
+        setGame((prevValues) => {
+            return({
+                ...prevValues,
+                creator_role: name
+            })
+        })
     }
 
     function updateDetails(e) {
@@ -87,9 +78,11 @@ const FuckShit = ({ gameShit }) => {
         const value = target.value
         const name = target.name
 
-        setGameDetails({
-            ...gameDetails,
-            [name]: value
+        setGame((prevValues) => {
+            return ({
+                ...prevValues,
+                [name]: value
+            })
         })
     }
 
@@ -103,17 +96,12 @@ const FuckShit = ({ gameShit }) => {
     function handleSaveClick(e) {
         e.preventDefault()
 
-        const creatorAssassinObj = {
-            user: game.creator_role
-        }
 
         const updatedGame = {
             ...game,
-            ...gameDetails,
-            creator_role: selectedRole,
         }
 
-        if (selectedRole === 'moderator') {
+        if (game.creator_role === 'moderator') {
             updatedGame.moderator = game.creator
 
             const newAssassins = game.assassins.filter((assassin) => {
@@ -145,14 +133,13 @@ const FuckShit = ({ gameShit }) => {
 
     const formValidate = () => {
         let err = {}
-        if (!gameDetails.game_name) err.name = 'Game Name is required'
-        if (!gameDetails.weapons) err.owner_name = 'Weapons are required'
-        if (!gameDetails.safe_zones) err.species = 'Safe Zones are required'
+        if (!game.game_name) err.name = 'Game Name is required'
+        if (!game.weapons) err.owner_name = 'Weapons are required'
+        if (!game.safe_zones) err.species = 'Safe Zones are required'
         return err
     }
 
     const putData = async (updatedGame) => {
-        // const { id } = router.query
 
         try {
             const res = await fetch(`/api/games/${game._id}`, {
@@ -195,32 +182,35 @@ const FuckShit = ({ gameShit }) => {
 
                 {/* GAME DETAILS */}
                 <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
-                    <div>
+                    <div className='bg-gray-100 space-y-10 py-10 rounded-xl'>
                         <div>
-                            NAME:
+                            <div className='font-bold'>
+                                NAME:
                         </div>
+                            <div>
+                                {game.game_name}
+                            </div>
+                        </div>
+
                         <div>
-                            {game.game_name}
+                            <div className='font-bold'>
+                                WEAPONS:
+                        </div>
+                            <div>
+                                {game.weapons}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className='font-bold'>
+                                SAFE ZONES:
+                        </div>
+                            <div>
+                                {game.safe_zones}
+                            </div>
                         </div>
                     </div>
 
-                    <div>
-                        <div>
-                            WEAPONS:
-                        </div>
-                        <div className='text-center'>
-                            {game.weapons}
-                        </div>
-                    </div>
-
-                    <div>
-                        <div>
-                            SAFE ZONES:
-                        </div>
-                        <div className='text-center'>
-                            {game.safe_zones}
-                        </div>
-                    </div>
 
                     {/* MODERATOR */}
                     <div className='my-10'>
@@ -237,10 +227,10 @@ const FuckShit = ({ gameShit }) => {
                 <div className={(isEditing ? 'block' : 'hidden')}>
 
                     {/* Name, Weapons, Safe Zones */}
-                    <EditGameDetails onChange={updateDetails} details={gameDetails} />
+                    <EditGameDetails onChange={updateDetails} details={game} />
 
                     {/* CHOOSE ROLE */}
-                    <ChooseRole onClick={handleRoleSelect} selectedRole={selectedRole} />
+                    <ChooseRole onClick={handleRoleSelect} selectedRole={game.creator_role} />
 
                 </div>
 
