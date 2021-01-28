@@ -8,26 +8,18 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import useSWR, { mutate, trigger } from 'swr'
-
-const fetcher = (url) =>
-    fetch(url)
-        .then((res) => res.json())
-        .then((json) => json.data)
+import useSWR, { mutate } from 'swr'
+import { saveGame, useGetGame } from '../../Helpers/requestHelper'
 
 const ThisGame = () => {
 
     const router = useRouter()
     const { id } = router.query
 
-
-    const { data: game, error } = useSWR(id ? `/api/games/6011e8d0d9ae4e35531d5616` : null, fetcher)
-
+    const { game, error } = useGetGame(id)
 
     if (error) return <p>Failed to load</p>
     if (!game) return <p>Loading...</p>
-
-    console.log("GAME RENDER: " + JSON.stringify(game))
 
     return (
         <div>
@@ -38,19 +30,7 @@ const ThisGame = () => {
 
 export default ThisGame
 
-// export async function getServerSideProps({ params }) {
-//     await dbConnect()
-
-//     const gameData = await Game.findById(params.id)
-
-//     const game = JSON.parse(JSON.stringify(gameData))
-
-//     return { props: { game } }
-// }
-
 const FuckShit = ({ gameShit }) => {
-
-    const contentType = 'application/json'
 
     useEffect(() => {
         setGame(gameShit)
@@ -61,27 +41,26 @@ const FuckShit = ({ gameShit }) => {
 
 
     function handleRoleSelect(id) {
-        const name = id
-        console.log(name)
+        const role = id
 
         setGame((prevValues) => {
-            return({
+            return ({
                 ...prevValues,
-                creator_role: name
+                creator_role: role
             })
         })
     }
 
     function updateDetails(e) {
-        const target = e.target
+        const detailInput = e.target
 
-        const value = target.value
-        const name = target.name
+        const detailContent = detailInput.value
+        const detailName = detailInput.name
 
         setGame((prevValues) => {
             return ({
                 ...prevValues,
-                [name]: value
+                [detailName]: detailContent
             })
         })
     }
@@ -96,32 +75,27 @@ const FuckShit = ({ gameShit }) => {
     function handleSaveClick(e) {
         e.preventDefault()
 
-
         const updatedGame = {
             ...game,
         }
 
         if (game.creator_role === 'moderator') {
-            updatedGame.moderator = game.creator
 
-            const newAssassins = game.assassins.filter((assassin) => {
-                console.log("FILTER assassin.user: " + assassin.user)
-                console.log("FILTER game.creator: " + game.creator)
-
+            const updatedAssassinsArr = game.assassins.filter((assassin) => {
                 return assassin.user != game.creator
             })
-            updatedGame.assassins = newAssassins
+
+            updatedGame.assassins = updatedAssassinsArr
+            updatedGame.moderator = game.creator
 
         } else {
-            updatedGame.moderator = ''
             updatedGame.assassins = [{ user: game.creator, kills: [] }]
+            updatedGame.moderator = ''
         }
-
-        console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(updatedGame))
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
-            putData(updatedGame)
+            saveGame(updatedGame)
         } else {
             // setErrors({ errs })
             console.log(errs)
@@ -137,33 +111,6 @@ const FuckShit = ({ gameShit }) => {
         if (!game.weapons) err.owner_name = 'Weapons are required'
         if (!game.safe_zones) err.species = 'Safe Zones are required'
         return err
-    }
-
-    const putData = async (updatedGame) => {
-
-        try {
-            const res = await fetch(`/api/games/${game._id}`, {
-                method: 'PUT',
-                headers: {
-                    Accept: contentType,
-                    'Content-Type': contentType,
-                },
-                body: JSON.stringify(updatedGame),
-            })
-
-            // Throw error with status code in case Fetch API req failed
-            if (!res.ok) {
-                throw new Error(res.status)
-            }
-
-            const { data } = await res.json()
-            mutate(`/api/games/6011e8d0d9ae4e35531d5616`, data, false)
-
-
-        } catch (error) {
-            console.log(error + "    failed to update game")
-            // setMessage('Failed to update game')
-        }
     }
 
     return (
