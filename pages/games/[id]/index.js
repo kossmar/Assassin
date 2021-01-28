@@ -13,6 +13,7 @@ import { saveGame, useGetGame } from '../../Helpers/requestHelper'
 
 const ThisGame = () => {
 
+    
     const router = useRouter()
     const { id } = router.query
 

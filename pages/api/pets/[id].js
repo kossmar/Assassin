@@ -1,4 +1,4 @@
-import dbConnect from '../../../utils/dBConnect'
+import dbConnect from '../../../utils/dbConnect'
 import Pet from '../../../models/Pet'
 
 export default async function handler(req, res) {

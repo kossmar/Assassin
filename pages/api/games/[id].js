@@ -7,7 +7,11 @@ export default async function handler(req, res) {
         method,
     } = req
 
-    await dbConnect()
+    try {
+        await dbConnect()
+    } catch (error) {
+        console.log(error)
+    }
 
     switch (method) {
         case 'GET' /* Get a model by its ID */:
