@@ -38,18 +38,9 @@ const Login = () => {
 
   return (
     <Layout>
-      <div className="login">
+      <div className="w-80 mx-auto my-16 p-4 border-gray-300 border rounded-sm">
         <Form isLogin errorMessage={errorMsg} onSubmit={handleSubmit} />
       </div>
-      <style jsx>{`
-        .login {
-          max-width: 21rem;
-          margin: 0 auto;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-      `}</style>
     </Layout>
   )
 }

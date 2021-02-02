@@ -5,11 +5,12 @@ import Layout from '../components/Layout'
 import { page } from "../constants"
 import dbConnect from '../utils/dbConnect'
 import mongoose from 'mongoose'
-import { useUser } from '../lib/hooks'
+import { useUser } from '../lib/hooks/useUser'
 
 export default function Home({ props }) {
   
   const user = useUser()
+
   console.log("USER: " + user)
 
   useEffect(() => {
@@ -22,7 +23,7 @@ export default function Home({ props }) {
         <title>Assassin</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Layout page={page.home}>
+      <Layout page={page.home} user={user}>
         <div className="flex justify-center py-20">
           <img className="max-w-xs sm:max-w-sm lg:max-w-md" src="/images/the-assassin-game-logo.png" />
         </div>

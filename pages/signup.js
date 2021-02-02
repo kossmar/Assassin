@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import Router from 'next/router'
-import { useUser } from '../lib/hooks'
+import { useUser } from '../lib/hooks/useUser'
 import Layout from '../components/Layout'
 import Form from '../components/form'
 
@@ -45,18 +45,9 @@ const Signup = () => {
 
   return (
     <Layout>
-      <div className="login">
+      <div className="w-80 mx-auto my-16 p-4 border-gray-300 border rounded-sm">
         <Form isLogin={false} errorMessage={errorMsg} onSubmit={handleSubmit} />
       </div>
-      <style jsx>{`
-        .login {
-          max-width: 21rem;
-          margin: 0 auto;
-          padding: 1rem;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-      `}</style>
     </Layout>
   )
 }
