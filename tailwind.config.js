@@ -1,5 +1,5 @@
 module.exports = {
-  purge: ['./pages/**/*.js', './components/**/*.js' ],
+  purge: ['./pages/**/*.js', './components/**/*.js'],
   darkMode: false, // or 'media' or 'class'
   theme: {
     boxShadow: {
@@ -20,11 +20,17 @@ module.exports = {
     minWidth: {
       '2xs': '10rem'
     },
+    maxWidth: {
+      '1/4': '25%',
+      '1/2': '50%',
+      '3/4': '75%',
+      '16': '4rem',
+    }
   },
   variants: {
     extend: {
       borderWidth: ['hover'],
-      margin:['hover']
+      margin: ['hover']
     },
   },
   plugins: [],

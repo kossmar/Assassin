@@ -1,13 +1,14 @@
-import Head from 'next/head'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import { useDetectOutsideClick } from '../lib/hooks/useDetectOutsideClick'
 
 
-export default function NavBar({ page }) {
 
-    const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
-    const [menuDropdownOpen, setMenuDropdownOpen] = useState(false)
+export default function NavBar({ page, user }) {
 
+    const dropdownRef = useRef(null)
+    const [profileDropdownOpen, setProfileDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
+    const [menuDropdownOpen, setMenuDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
 
     const thing = useEffect(() => {
 
@@ -70,7 +71,7 @@ export default function NavBar({ page }) {
                             {/* LOGO */}
                             <Link href='/'>
                                 <a>
-                                    <div className="cursor-pointer flex-shrink-0 flex items-center pl-10 sm:p-0">
+                                    <div className="cursor-pointer flex-shrink-0 flex items-center pl-44 sm:p-0">
                                         <img className="block h-10 w-auto" src="/images/assassin-logo-image.png" alt="Workflow" />
                                         <img className="hidden lg:block h-10 w-auto ml-2" src="/images/assassin-logo-title.png" alt="Workflow" />
                                     </div>
@@ -78,7 +79,7 @@ export default function NavBar({ page }) {
                             </Link>
 
                             {/* NAV LINKS */}
-                            <div className="hidden sm:block sm:m-auto pl-4 md:pl-36 lg:pl-4">
+                            <div className="hidden sm:block sm:m-auto pl-36 lg:pl-4">
                                 <div className="flex space-x-4">
                                     <Link href="/rules">
                                         <a className="text-gray-500 hover:bg-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
@@ -100,25 +101,44 @@ export default function NavBar({ page }) {
 
                         </div>
 
-                        {/* PROFILE BUTTON */}
-                        <div onClick={handleProfileClick} className={"p-1 rounded-full hover:bg-gray-400 hover:text-white " + (profileDropdownOpen ? "border-black outline-none" : "border-white hover:border-black")}>
-                            <div className="flex items-center justify-center">
+                        {/* PROFILE DROPDOWN */}
+                        <div className="w-48 flex justify-end cursor-pointer">
 
-                                {/* Profile NAME */}
-                                <div id="fixed" className="justify-end items-center w-32 h-10 px-2 hidden md:flex">
-                                    <div className={"h-auto text-right italic font-bold " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>MR. BIBBLZ BIBZ MAN 2.0</div>
-                                </div>
+                            {/* PROFILE BUTTON */}
+                            <div onClick={handleProfileClick} className={(user ? "flex" : "hidden") + " p-1 rounded-full hover:text-white hover:bg-gray-400 " + (profileDropdownOpen ? "border-black outline-none " : "border-white hover:border-black")}>
+                                <div className="flex items-center mr-0 ml-auto">
 
-                                {/* Profile IMAGE */}
-                                <div className="px-2">
-                                    <div className="bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
-                                        <span className="sr-only">Open user menu</span>
-                                        <img className={"h-8 w-8 rounded-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                    {/* Profile NAME */}
+                                    <div id="fixed" className="max-h-10 w-full px-2 justify-end md:flex">
+                                        <div className={"h-auto self-center text-right italic font-bold mr-0 " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>
+                                            {(user ? user.username : "no user")}
+                                        </div>
                                     </div>
-                                </div>
 
+                                    {/* Profile IMAGE */}
+                                    <div className="flex pl-2 self-center my-auto">
+                                        <div className="max-h-9 w-9 bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
+                                            <span className="sr-only">Open user menu</span>
+                                            <img className={"h-9 rounded-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
+
+                            {/* LOG IN BUTTON */}
+                            <div className={(user ? "hidden" : "flex") + " cursor-pointer place-self-center h-10 w-24 rounded-full hover:bg-gray-400 hover:text-white"}>
+                                <Link href="/login">
+                                    <a className="mx-auto place-self-center text-center font-bold ">
+                                        LOG IN
+                                    </a>
+                                </Link>
+                            </div>
+
+
+
                         </div>
+
 
                     </div>
                 </div>
@@ -128,7 +148,7 @@ export default function NavBar({ page }) {
                     <div className={"bunk flex justify-between mx-auto " + (menuDropdownOpen || profileDropdownOpen ? "open" : "close")}>
 
                         {/* NAV Menu */}
-                        <div className={"sm:hidden " + (menuDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                        <div ref={dropdownRef} className={"sm:hidden " + (menuDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className={"px-2 pt-2 pb-3 space-y-1 "}>
                                 <a href="/" className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">New Game</a>
                                 <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Rules</a>
@@ -137,7 +157,7 @@ export default function NavBar({ page }) {
                         </div>
 
                         {/* PROFILE Menu */}
-                        <div className={"sm:absolute right-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                        <div ref={dropdownRef} className={"sm:absolute right-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className="px-2 pt-2 pb-3 space-y-1">
                                 <a href="/" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Profile</a>
                                 <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
@@ -147,11 +167,6 @@ export default function NavBar({ page }) {
                     </div>
 
                 </div>
-
-
-
-
-
 
             </nav>
         </div>
