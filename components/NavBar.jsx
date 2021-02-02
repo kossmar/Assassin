@@ -1,13 +1,13 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useUser } from '../lib/hooks'
 
 
 export default function NavBar({ page }) {
 
     const [profileDropdownOpen, setProfileDropdownOpen] = useState(false)
     const [menuDropdownOpen, setMenuDropdownOpen] = useState(false)
-
 
     const thing = useEffect(() => {
 

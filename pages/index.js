@@ -5,8 +5,12 @@ import Layout from '../components/Layout'
 import { page } from "../constants"
 import dbConnect from '../utils/dbConnect'
 import mongoose from 'mongoose'
+import { useUser } from '../lib/hooks'
 
 export default function Home({ props }) {
+  
+  const user = useUser()
+  console.log("USER: " + user)
 
   useEffect(() => {
 

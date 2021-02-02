@@ -9,7 +9,7 @@ import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
 import useSWR, { mutate } from 'swr'
-import { saveGame, useGetGame } from '../../Helpers/requestHelper'
+import { saveGame, useGetGame } from '../../../lib/requestHelper'
 
 const ThisGame = () => {
 
