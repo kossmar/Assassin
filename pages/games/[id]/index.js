@@ -25,6 +25,7 @@ const ThisGame = () => {
 
     return (
         <div>
+        {/* change it */}
             <FuckShit gameShit={game} />
         </div>
     )

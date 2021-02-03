@@ -5,7 +5,10 @@ import findOrCreate from 'mongoose-findorcreate'
 const UserSchema = new mongoose.Schema({
     name: String,
     email: String,
-    // image: URL
+    profile_image: {
+        data: Buffer,
+        content_type: String
+    },
 })
 
 UserSchema.plugin(passportLocalMongoose)
