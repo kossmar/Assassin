@@ -28,16 +28,12 @@ export default function NavBar({ page, user }) {
 
     function handleProfileClick() {
         (menuDropdownOpen && setMenuDropdownOpen(false))
-        setProfileDropdownOpen(prevValue => {
-            return (prevValue ? false : true)
-        })
+        setProfileDropdownOpen(!profileDropdownOpen)
     }
 
     function handleMenuClick() {
         (profileDropdownOpen && setProfileDropdownOpen(false))
-        setMenuDropdownOpen(prevValue => {
-            return (prevValue ? false : true)
-        })
+        setMenuDropdownOpen(!menuDropdownOpen)
     }
 
     return (
@@ -150,18 +146,42 @@ export default function NavBar({ page, user }) {
                         {/* NAV Menu */}
                         <div ref={dropdownRef} className={"sm:hidden " + (menuDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className={"px-2 pt-2 pb-3 space-y-1 "}>
-                                <a href="/" className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">New Game</a>
-                                <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Rules</a>
-                                <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">About</a>
+                                <Link href="/games/new">
+                                    <a className="bg-gray-900 text-white hover:bg-red-600 hover:shadow-xl-red block px-3 py-2 rounded-md text-base font-medium">
+                                        New Game
+                                    </a>
+                                </Link>
+                                <Link href="/rules">
+                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                        Rules
+                                    </a>
+                                </Link>
+                                <Link href="/about">
+                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                        About
+                                    </a>
+                                </Link>
                             </div>
                         </div>
 
                         {/* PROFILE Menu */}
                         <div ref={dropdownRef} className={"sm:absolute right-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className="px-2 pt-2 pb-3 space-y-1">
-                                <a href="/" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Profile</a>
-                                <a href="/rules" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Settings</a>
-                                <a href="/about" className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Sign Out</a>
+                                <Link href="/">
+                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                        Profile
+                                    </a>
+                                </Link>
+                                <Link href="/">
+                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                        Settings
+                                    </a>
+                                </Link>
+                                <Link href="/api/logout">
+                                    <a className="text-red-400 hover:bg-red-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                        Sign Out
+                                    </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
