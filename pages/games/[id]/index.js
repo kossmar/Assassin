@@ -8,12 +8,13 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import useSWR, { mutate } from 'swr'
 import { saveGame, useGetGame } from '../../../lib/requestHelper'
+import { useUser } from '../../../lib/hooks/useUser'
 
 const ThisGame = () => {
 
-    
+    const user = useUser({ redirectTo: '/login' })
+
     const router = useRouter()
     const { id } = router.query
 
@@ -24,6 +25,7 @@ const ThisGame = () => {
 
     return (
         <div>
+        {/* change it */}
             <FuckShit gameShit={game} />
         </div>
     )
