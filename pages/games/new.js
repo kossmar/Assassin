@@ -7,8 +7,12 @@ import { page } from "../../constants"
 import Link from "next/link"
 import ChooseRole from '../../components/ChooseRole'
 import { gameStatus } from '../../constants'
+import { useUser } from '../../lib/hooks/useUser'
 
 export default function NewGame() {
+
+    const user = useUser({ redirectTo: '/login' })
+
     const currentUser = "124567890"
     // var newGame
 
@@ -61,13 +65,13 @@ export default function NewGame() {
             if (!res.ok) {
                 throw new Error(res.status)
             }
-            
+
             const data = await res.json()
             const id = data.data._id
 
             console.log("STATUS: " + res.status)
             router.push(`/games/${id}`)
-            
+
         } catch (error) {
             setMessage('Failed to add pet: \n' + errors)
             console.log('Failed to add game \n' + error)
@@ -81,7 +85,7 @@ export default function NewGame() {
             ...gameDetails,
             creator: currentUser,
             moderator: (selectedRole === 'moderator' ? currentUser : ''),
-            assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills:[] }] : []),
+            assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
         }
@@ -114,31 +118,33 @@ export default function NewGame() {
                 <title>Assassin/new</title>
             </Head>
             <Layout page={page.rules}>
-
-                <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
-                    Murder and mayhem awaits...
-                </div>
-
-                {/* EDIT GAME DETAILS */}
-                <EditGameDetails onChange={updateDetails} details={gameDetails} />
-
-                {/* CHOOSE ROLE */}
-                <ChooseRole onClick={handleRoleSelect} selectedRole={selectedRole} />
-
-                {/* BUTTONS */}
-                <div className='w-2/5 mx-auto space-y-4 my-8'>
-                    <button onClick={handleSave} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                        SAVE
-                    </button>
-                </div>
-
-                {/* MESSAGES */}
-                <p>{message}</p>
                 <div>
-                    {Object.keys(errors).map((err, index) => (
-                        <li key={index}>{err}</li>
-                    ))}
+                    <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
+                        Murder and mayhem awaits...
+                    </div>
+
+                    {/* EDIT GAME DETAILS */}
+                    <EditGameDetails onChange={updateDetails} details={gameDetails} />
+
+                    {/* CHOOSE ROLE */}
+                    <ChooseRole onClick={handleRoleSelect} selectedRole={selectedRole} />
+
+                    {/* BUTTONS */}
+                    <div className='w-2/5 mx-auto space-y-4 my-8'>
+                        <button onClick={handleSave} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+                            SAVE
+                    </button>
+                    </div>
+
+                    {/* MESSAGES */}
+                    <p>{message}</p>
+                    <div>
+                        {Object.keys(errors).map((err, index) => (
+                            <li key={index}>{err}</li>
+                        ))}
+                    </div>
                 </div>
+
             </Layout>
         </>
     )
