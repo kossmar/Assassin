@@ -49,7 +49,6 @@ export default function NewGame() {
     /* The POST method adds a new entry in the mongodb database. */
     const postData = async (newGame) => {
 
-        console.log("STRINGIFY @ postData: \n" + JSON.stringify(newGame))
 
         try {
             const res = await fetch('/api/games/new', {
@@ -69,7 +68,6 @@ export default function NewGame() {
             const data = await res.json()
             const id = data.data._id
 
-            console.log("STATUS: " + res.status)
             router.push(`/games/${id}`)
 
         } catch (error) {

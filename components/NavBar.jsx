@@ -6,9 +6,26 @@ import { useDetectOutsideClick } from '../lib/hooks/useDetectOutsideClick'
 
 export default function NavBar({ page, user }) {
 
+    console.log(user)
+
+    useEffect(() => {
+        if (user) {
+            if (user.hasOwnProperty('profile_image')) {
+                const string = "data:image/jpg;base64,"
+                const imgBuffer = Buffer(user.profile_image.data)
+                const imgBase64 = imgBuffer.toString('base64')
+                // console.log("returned IMAGE Base64: " + imgBase64)
+                const fullBase64Img = string + imgBase64
+                console.log("FULL BASE64: " + fullBase64Img)
+                setProfileImage(fullBase64Img)
+            }
+        }
+    })
+
     const dropdownRef = useRef(null)
     const [profileDropdownOpen, setProfileDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
     const [menuDropdownOpen, setMenuDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
+    const [profileImage, setProfileImage] = useState(null)
 
     const thing = useEffect(() => {
 
@@ -115,7 +132,7 @@ export default function NavBar({ page, user }) {
                                     <div className="flex pl-2 self-center my-auto">
                                         <div className="max-h-9 w-9 bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
                                             <span className="sr-only">Open user menu</span>
-                                            <img className={"h-9 rounded-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                            <img className={"h-9 rounded-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src={(profileImage ? profileImage : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80")} alt="" />
                                         </div>
                                     </div>
 

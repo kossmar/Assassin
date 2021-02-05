@@ -17,7 +17,7 @@ export default function AssassinIcon({ name, image = '/images/assassin.png', kil
                     </div>
                 </div>
                 <div onClick={(isProfile ? null : handleClick)} className={'rounded-full border-8 ' + (interactive ? (isSelected ? 'border-red-600' : 'border-transparent hover:border-red-400') : 'border-transparent')}>
-                    <div className={(isProfile ? "fixed cursor-pointer" : "hidden") + " content-center w-28 h-28 rounded-full bg-transparent text-transparent hover:text-white hover:bg-gray-200 hover:bg-opacity-75 "}>
+                    <div className={(isProfile ? "absolute cursor-pointer" : "hidden") + " content-center w-28 h-28 rounded-full bg-transparent text-transparent hover:text-white hover:bg-gray-200 hover:bg-opacity-75 "}>
                         <div className="place-self-center mt-10">
                             upload
                         </div>
