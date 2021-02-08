@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { useDetectOutsideClick } from '../lib/hooks/useDetectOutsideClick'
+import { completeBase64ImageURL } from '../lib/encoder'
 
 
 
@@ -11,12 +12,10 @@ export default function NavBar({ page, user }) {
     useEffect(() => {
         if (user) {
             if (user.hasOwnProperty('profile_image')) {
-                const string = "data:image/jpg;base64,"
-                const imgBuffer = Buffer(user.profile_image.data)
-                const imgBase64 = imgBuffer.toString('base64')
-                // console.log("returned IMAGE Base64: " + imgBase64)
-                const fullBase64Img = string + imgBase64
-                console.log("FULL BASE64: " + fullBase64Img)
+                    const string = "data:image/jpg;base64,"
+                    const imgBuffer = Buffer(user.profile_image.data)
+                    const imgBase64 = imgBuffer.toString('base64')
+                    const fullBase64Img = string + imgBase64
                 setProfileImage(fullBase64Img)
             }
         }
