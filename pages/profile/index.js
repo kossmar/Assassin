@@ -4,30 +4,41 @@ import { useUser } from '../../lib/hooks/useUser'
 import { useRef, useState, useEffect } from 'react'
 import axios from 'axios'
 import { imageToBase64URL, completeBase64ImageURL } from '../../lib/encoder'
+import useSWR, { mutate } from 'swr'
 
 const Profile = () => {
 
+
+    const fetcher = (url) =>
+        fetch(url)
+            .then((r) => r.json())
+            .then((data) => {
+                return { user: data?.user || null }
+            })
+    // const user = useUser()
+    // const { data, error } = useSWR('/api/user', fetcher)
+    // const user = data?.user
     const user = useUser({ redirectTo: '/login' })
+
 
     const inputRef = useRef()
     const canvasRef = useRef()
     // const [file, setFile] = useState(null)
     const [base64Image, setbase64Image] = useState(null)
-    const [ profileImage, setProfileImage ] = useState(null)
+    const [profileImage, setProfileImage] = useState(null)
 
     useEffect(() => {
+
         if (user) {
             // convert Buffer to Image
             if (user.hasOwnProperty('profile_image')) {
-                    const imageURL = completeBase64ImageURL(user.profile_image.data)
+                const imageURL = completeBase64ImageURL(user.profile_image.data)
                 setProfileImage(imageURL)
             }
         }
-    })
+    }, [user])
 
     async function handleSave() {
-
-        // await getDataURL(file)
         postData()
     }
 
@@ -42,7 +53,7 @@ const Profile = () => {
 
 
         const body = JSON.stringify({ user: user, image: base64Image })
-        console.log("BODY BEING SENT: " + body)
+
 
         try {
 
@@ -55,9 +66,17 @@ const Profile = () => {
                 body: body
             })
 
+            console.log(user)
+
             if (!res.ok) {
                 throw new Error(res.status)
             }
+
+            const { data } = await res.json()
+            console.log("RETURNED DATA: " + JSON.stringify(data))
+
+            mutate(`/api/user`)
+
         } catch (err) {
             console.log(err)
         }
