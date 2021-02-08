@@ -1,9 +1,9 @@
 import Layout from '../../components/Layout'
 import AssassinIcon from '../../components/AssassinIcon'
 import { useUser } from '../../lib/hooks/useUser'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import axios from 'axios'
-import { imageToBase64URL } from '../../lib/encoder'
+import { imageToBase64URL, completeBase64ImageURL } from '../../lib/encoder'
 
 const Profile = () => {
 
@@ -13,6 +13,17 @@ const Profile = () => {
     const canvasRef = useRef()
     // const [file, setFile] = useState(null)
     const [base64Image, setbase64Image] = useState(null)
+    const [ profileImage, setProfileImage ] = useState(null)
+
+    useEffect(() => {
+        if (user) {
+            // convert Buffer to Image
+            if (user.hasOwnProperty('profile_image')) {
+                    const imageURL = completeBase64ImageURL(user.profile_image.data)
+                setProfileImage(imageURL)
+            }
+        }
+    })
 
     async function handleSave() {
 
@@ -57,7 +68,7 @@ const Profile = () => {
             <form method="POST" enctype="multipart/form-data">
                 <div className="grid grid-cols-3 mx-auto">
                     <div className="mx-10">
-                        <AssassinIcon isProfile={true} />
+                        <AssassinIcon isProfile={true} image={(profileImage && profileImage)} />
 
                         <input onChange={handleImageUploaded} ref={inputRef} type="file" id="file" name="file" required></input>
 

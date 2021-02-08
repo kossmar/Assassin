@@ -11,12 +11,10 @@ export default function NavBar({ page, user }) {
 
     useEffect(() => {
         if (user) {
+            // convert Buffer to Image
             if (user.hasOwnProperty('profile_image')) {
-                    const string = "data:image/jpg;base64,"
-                    const imgBuffer = Buffer(user.profile_image.data)
-                    const imgBase64 = imgBuffer.toString('base64')
-                    const fullBase64Img = string + imgBase64
-                setProfileImage(fullBase64Img)
+                    const imageURL = completeBase64ImageURL(user.profile_image.data)
+                setProfileImage(imageURL)
             }
         }
     })
@@ -129,9 +127,9 @@ export default function NavBar({ page, user }) {
 
                                     {/* Profile IMAGE */}
                                     <div className="flex pl-2 self-center my-auto">
-                                        <div className="max-h-9 w-9 bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
+                                        <div className="overflow-hidden max-h-9 w-9 bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
                                             <span className="sr-only">Open user menu</span>
-                                            <img className={"h-9 rounded-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src={(profileImage ? profileImage : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80")} alt="" />
+                                            <img className={"object-cover place-self-center min-h-full min-w-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src={(profileImage ? profileImage : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80")} alt="" />
                                         </div>
                                     </div>
 

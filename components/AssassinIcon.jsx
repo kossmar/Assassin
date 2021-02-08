@@ -22,7 +22,9 @@ export default function AssassinIcon({ name, image = '/images/assassin.png', kil
                             upload
                         </div>
                     </div>
-                    <img src={image} className={'rounded-full border-4 border-black'} />
+                    <div className='flex rounded-full border-4 border-black overflow-hidden h-28'>
+                        <img src={image} className='object-cover place-self-center min-h-full min-w-full'/>
+                    </div>
                 </div>
                 <div className='font-bold italic'>{name}</div>
             </div>
