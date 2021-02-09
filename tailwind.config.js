@@ -25,6 +25,9 @@ module.exports = {
       '1/2': '50%',
       '3/4': '75%',
       '16': '4rem',
+    },
+    inset: {
+      '26': '6.5rem'
     }
   },
   variants: {

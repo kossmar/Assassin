@@ -189,7 +189,7 @@ export default function NavBar({ page, user }) {
                                 </Link>
                                 <Link href="/">
                                     <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                        Settings
+                                        My Games
                                     </a>
                                 </Link>
                                 <Link href="/api/logout">
