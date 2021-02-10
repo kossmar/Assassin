@@ -4,22 +4,13 @@ import multer from 'multer'
 import nextConnect from 'next-connect';
 import fs from 'fs'
 
-// export const config = {
-//     api: {
-//         bodyParser: false, // Disallow body parsing, consume as stream
-//     },
-// };
-
-// var storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, "./public/uploads")
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, file.originalname)
-//     },
-// })
-
-// var upload = multer({ storage: storage})
+export const config = {
+    api: {
+        bodyParser: {
+            sizeLimit: '10mb'
+        }
+    }
+}
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -34,20 +25,16 @@ const uploadMiddleware = upload.single('file')
 const handler = nextConnect()
     // .use(uploadMiddleware)
     .post(async (req, res) => {
-        // console.log("IMAGE BASE64: \n" + req.body.image + "\n")
         const imageBuffer = Buffer.from(req.body.image, "base64")
-        console.log("IMAGE BUFFER: \n" + JSON.stringify(imageBuffer.toJSON()) + "\n")
-        const updatedUser = {
-            ...req.body.user,
-            profile_image: {
-                data: imageBuffer,
-                content_type: 'image/jpg'
-            }
-        }
 
         try {
 
-            const user = await User.findByIdAndUpdate(req.body.user._id, updatedUser, {
+            const user = await User.findByIdAndUpdate(req.body.id, {
+                profile_image: {
+                    data: imageBuffer,
+                    content_type: 'image/jpg'
+                }
+            }, {
                 new: true,
                 runValidators: true,
             })
