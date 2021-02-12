@@ -132,18 +132,20 @@ const Profile = ({ games }) => {
                     </div>
 
                     {/* GAMES */}
-                    <div className='grid grid-cols-2 w-4/5 mx-auto my-16 text-center'>
-                        <div>
+                    <div className='grid grid-cols-2 mx-auto my-16 text-center'>
+                        {/* CURRENT */}
+                        <div className="mx-6">
                             <div className='font-bold mb-4'> CURRENT </div>
                             {games.current.map((game) => (
                                 <GameButton key={game._id} name={game.game_name} id={game._id} />
                             ))}
                         </div>
 
-                        <div>
+                        {/* PAST */}
+                        <div className="mx-6">
                             <div className='font-bold mb-4'> PAST </div>
                             {games.previous.map((game) => (
-                                <GameButton key={game._id} name={game.game_name} id={game._id} isComplete={true}/>
+                                <GameButton key={game._id} name={game.game_name} id={game._id} isComplete={true} />
                             ))}
                         </div>
                     </div>

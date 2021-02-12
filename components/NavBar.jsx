@@ -180,20 +180,20 @@ export default function NavBar({ page, user }) {
                         </div>
 
                         {/* PROFILE Menu */}
-                        <div ref={dropdownRef} className={"sm:absolute right-0 ml-auto float-right text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                        <div ref={dropdownRef} className={"sm:absolute right-0 ml-auto float-right text-right bg-white bg-opacity-90 rounded-md " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className="px-2 pt-2 pb-3 space-y-1">
                                 <Link href={(user ? `/profile/${user._id}` : '/login')}>
-                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                    <a className="text-gray-500 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                         Profile
                                     </a>
                                 </Link>
                                 <Link href="/">
-                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                    <a className="text-gray-500 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                         My Games
                                     </a>
                                 </Link>
                                 <Link href="/api/logout">
-                                    <a className="text-red-400 hover:bg-red-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                    <a className="text-red-500 hover:bg-red-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                         Sign Out
                                     </a>
                                 </Link>
