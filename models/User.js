@@ -3,15 +3,37 @@ import passportLocalMongoose from 'passport-local-mongoose'
 import findOrCreate from 'mongoose-findorcreate'
 
 const UserSchema = new mongoose.Schema({
-    name: String,
-    email: String,
-    profile_image: {
-        data: Buffer,
-        content_type: String
+    email: {
+        type: String,
+        // required: true
     },
+    display_name: {
+        type: String,
+        // required: true
+    },
+    profile_image: {
+        data: {
+            type: Buffer,
+            // required: true
+        },
+        content_type: {
+            type: String,
+            // required: true
+        }
+    },
+    games: {
+        current: {
+            type: [String],
+            default: []
+        },
+        previous: {
+            type: [String],
+            default: []
+        }
+    }
 })
 
-UserSchema.plugin(passportLocalMongoose)
+UserSchema.plugin(passportLocalMongoose, { usernameField: 'email' })
 UserSchema.plugin(findOrCreate)
 
 export default mongoose.models.User || mongoose.model('User', UserSchema)

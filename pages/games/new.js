@@ -13,7 +13,7 @@ export default function NewGame() {
 
     const user = useUser({ redirectTo: '/login' })
 
-    const currentUser = "124567890"
+    const currentUserId = user._id
     // var newGame
 
     const router = useRouter()
@@ -47,8 +47,9 @@ export default function NewGame() {
     }
 
     /* The POST method adds a new entry in the mongodb database. */
-    const postData = async (newGame) => {
+    const postNewGame = async (newGame) => {
 
+        const body = {game: JSON.stringify(newGame), userId: currentUserId}
 
         try {
             const res = await fetch('/api/games/new', {
@@ -68,6 +69,8 @@ export default function NewGame() {
             const data = await res.json()
             const id = data.data._id
 
+            // postAddGameToCurrent(id)
+
             router.push(`/games/${id}`)
 
         } catch (error) {
@@ -76,14 +79,24 @@ export default function NewGame() {
         }
     }
 
+    const postAddGameToCurrent = (gameId) => {
+
+    }
+
     const handleSave = (e) => {
         e.preventDefault()
 
+        if (selectedRole === 'assassin') usersArr.push({
+            user: currentUserId,
+            kills: []
+        })
+
         const newGame = {
             ...gameDetails,
-            creator: currentUser,
-            moderator: (selectedRole === 'moderator' ? currentUser : ''),
-            assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
+            creator: currentUserId,
+            moderator: (selectedRole === 'moderator' ? currentUserId : ''),
+            // assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
+            assassins: usersArr,
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
         }
@@ -92,7 +105,7 @@ export default function NewGame() {
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
-            postData(newGame)
+            postNewGame(newGame)
         } else {
             setErrors({ errs })
             console.log(errs)
@@ -149,5 +162,5 @@ export default function NewGame() {
 }
 
 const usersArr = [
-    
+
 ]

@@ -19,8 +19,12 @@ export default async function handler(req, res) {
         case 'POST':
             try {
                 const game = await Game.create(
-                    req.body
+                    req.body.game
                 ) /* create a new model in the database */
+                const user = await User.findByIdAndUpdate(req.body.userId, {current: game._id}, {
+                    new: true,
+                    runValidators: true,
+                })                
                 res.status(201).json({ success: true, data: game })
                 // res.json(game)
                 // console.log("RES JSON: " + res.json())

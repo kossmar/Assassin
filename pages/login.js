@@ -15,9 +15,11 @@ const Login = () => {
     if (errorMsg) setErrorMsg('')
 
     const body = {
-      username: e.currentTarget.username.value,
+      email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
     }
+
+    console.log("BODD: " + JSON.stringify(body))
 
     try {
       const res = await fetch('/api/login', {
@@ -26,6 +28,7 @@ const Login = () => {
         body: JSON.stringify(body),
       })
       if (res.status === 200) {
+        // If Redirect Cookie, pull out path, delete cookie redirect to path specified else :
         Router.push('/')
       } else {
         throw new Error(await res.text())

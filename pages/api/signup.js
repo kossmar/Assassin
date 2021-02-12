@@ -8,27 +8,23 @@ export default async function signup(req, res) {
 
   dbConnect()
 
-  const { username, password } = req.body
+  const { username, password, email } = req.body
+
+  //TODO: Change this weird promise situation so you can 
 
   let promise2 = new Promise((resolve, reject) => {
     // Check if e-mail address is registered
-    User.findOne({ username: username }, (err, foundUser) => {
+    User.findOne({ email: email }, (err, foundUser) => {
       if (foundUser) {
         console.log("email address already in use")
         reject()
       } else {
-        User.register({ username: username }, password, (err, user) => {
+        User.register(req.body, password, (err, user) => {
           if (err) {
             console.log(err);
           } else {
             resolve()
           }
-          // } else {
-          //   passport.authenticate("local")(req, res, function () {
-          //     console.log("successfully signed up")
-          //     res.redirect("/");
-          //   });
-          // }
         });
       }
     });

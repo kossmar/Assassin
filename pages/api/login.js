@@ -2,6 +2,7 @@ import passport from 'passport'
 import nextConnect from 'next-connect'
 import { localStrategy } from '../../lib/password-local'
 import { setLoginSession } from '../../lib/auth'
+import User from '../../models/User'
 
 const authenticate = (method, req, res) =>
   new Promise((resolve, reject) => {
@@ -14,6 +15,7 @@ const authenticate = (method, req, res) =>
     })(req, res)
   })
 
+// passport.use(User.createStrategy())
 passport.use(localStrategy)
 
 export default nextConnect()
@@ -21,12 +23,14 @@ export default nextConnect()
   .post(async (req, res) => {
     try {
       const user = await authenticate('local', req, res)
+      console.log("USSSSSER: " + user)
       // session is the payload to save in the token, it may contain basic info about the user
       // const session = { ...user } THIS WAS THE ORIGINAL working code but it stopped working when I began adding photos
       // From my understanding, I only need to pass username for token authentication. Keeping this for ref until I understand better
-      
+
       // console.log("\n\n\nSESSION FROM USER: \n" + JSON.stringify(session._doc.username) + "\n\n\n")
-      const session = {username: user._doc.username}
+      console.log(JSON.stringify(user))
+      const session = { email: user._doc.email }
 
       await setLoginSession(res, session)
       // console.log("REZZZZ: " + res)

@@ -15,8 +15,17 @@ const Signup = () => {
     if (errorMsg) setErrorMsg('')
 
     const body = {
-      username: e.currentTarget.username.value,
+      display_name: e.currentTarget.displayName.value,
+      email: e.currentTarget.email.value,
       password: e.currentTarget.password.value,
+      profile_image: {
+        data: null,
+        content_type: null
+      },
+      games: {
+        current: [],
+        past: []
+      }
     }
 
     if (body.password !== e.currentTarget.rpassword.value) {

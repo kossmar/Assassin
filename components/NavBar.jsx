@@ -13,7 +13,7 @@ export default function NavBar({ page, user }) {
     useEffect(() => {
         if (user) {
             // convert Buffer to Image
-            if (user.hasOwnProperty('profile_image')) {
+            if (user.profile_image.data) {
                     const imageURL = completeBase64ImageURL(user.profile_image.data)
                 setProfileImage(imageURL)
             }
@@ -122,7 +122,7 @@ export default function NavBar({ page, user }) {
                                     {/* Profile NAME */}
                                     <div id="fixed" className="max-h-10 w-full px-2 justify-end md:flex">
                                         <div className={"h-auto self-center text-right italic font-bold mr-0 " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>
-                                            {(user ? user.username : "no user")}
+                                            {(user ? user.display_name : "no user")}
                                         </div>
                                     </div>
 

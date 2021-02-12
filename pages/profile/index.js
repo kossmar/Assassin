@@ -3,9 +3,9 @@ import AssassinIcon from '../../components/AssassinIcon'
 import GameButton from '../../components/GameButton'
 import { useUser } from '../../lib/hooks/useUser'
 import { useRef, useState, useEffect } from 'react'
-import axios from 'axios'
 import { imageToBase64URL, completeBase64ImageURL } from '../../lib/encoder'
-import useSWR, { mutate } from 'swr'
+import { mutate } from 'swr'
+import dbConnect from '../../utils/dbConnect'
 
 const Profile = () => {
 
@@ -21,11 +21,13 @@ const Profile = () => {
 
         if (user) {
             // convert Buffer to Image
-            if (user.hasOwnProperty('profile_image')) {
+            if (user.profile_image.data) {
                 const imageURL = completeBase64ImageURL(user.profile_image.data)
                 setProfileImage(imageURL)
             }
         }
+
+
     })
 
     async function handleSave() {
@@ -134,6 +136,9 @@ const Profile = () => {
                         <div>
                             <div className='font-bold mb-4'> CURRENT </div>
                             <GameButton name={"BABY'S BUTT"} gameId={'6011e8d0d9ae4e35531d5616'} />
+                            {/* {user.games.current.map((game) => {
+                                <GameButton name={game}/>
+                            })} */}
                         </div>
 
                         <div>
@@ -154,3 +159,17 @@ const Profile = () => {
 }
 
 export default Profile
+
+export async function getServerSideProps() {
+
+    await dbConnect()
+    const user = await fetch('http://localhost:3000/api/user')
+        .then((r) => r.json())
+        .then((data) => {
+            return { user: data?.user || null }
+        })
+    console.log(JSON.stringify(user))
+
+    return {props: {thing: "dicks"}}
+
+}

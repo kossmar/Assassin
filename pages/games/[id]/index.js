@@ -13,7 +13,7 @@ import { useUser } from '../../../lib/hooks/useUser'
 
 const ThisGame = () => {
 
-    const user = useUser({ redirectTo: '/login' })
+    const user = useUser({ redirectIfUnauthorized: '/login', redirectWithCookie: '/login' })
 
     const router = useRouter()
     const { id } = router.query
@@ -26,14 +26,14 @@ const ThisGame = () => {
     return (
         <div>
         {/* change it */}
-            <FuckShit gameShit={game} />
+            <Game gameShit={game} />
         </div>
     )
 }
 
 export default ThisGame
 
-const FuckShit = ({ gameShit }) => {
+const Game = ({ gameShit }) => {
 
     useEffect(() => {
         setGame(gameShit)
@@ -92,6 +92,10 @@ const FuckShit = ({ gameShit }) => {
             updatedGame.moderator = game.creator
 
         } else {
+            const updatedAssassinsArr = game.assassins.push({
+                user: game.creator, 
+                kills: []
+            })
             updatedGame.assassins = [{ user: game.creator, kills: [] }]
             updatedGame.moderator = ''
         }
