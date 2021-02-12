@@ -1,6 +1,8 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../models/Game'
 import Pet from '../../../models/Pet'
+import User from '../../../models/User'
+
 
 export default async function handler(req, res) {
     const { method } = req
@@ -17,6 +19,7 @@ export default async function handler(req, res) {
             }
             break
         case 'POST':
+            console.log("GAME BODYYYY: " + JSON.stringify(req.body.game))
             try {
                 const game = await Game.create(
                     req.body.game
@@ -30,6 +33,7 @@ export default async function handler(req, res) {
                 // console.log("RES JSON: " + res.json())
                 // res.send(game)
             } catch (error) {
+                console.log("ERREUR " + error)
                 res.status(400).json({ success: false })
             }
             break

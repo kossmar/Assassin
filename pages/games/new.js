@@ -13,7 +13,7 @@ export default function NewGame() {
 
     const user = useUser({ redirectTo: '/login' })
 
-    const currentUserId = user._id
+
     // var newGame
 
     const router = useRouter()
@@ -49,7 +49,7 @@ export default function NewGame() {
     /* The POST method adds a new entry in the mongodb database. */
     const postNewGame = async (newGame) => {
 
-        const body = {game: JSON.stringify(newGame), userId: currentUserId}
+        const body = {game: newGame, userId: user._id}
 
         try {
             const res = await fetch('/api/games/new', {
@@ -58,7 +58,7 @@ export default function NewGame() {
                     Accept: contentType,
                     'Content-Type': contentType,
                 },
-                body: JSON.stringify(newGame),
+                body: JSON.stringify(body),
             })
 
             // Throw error with status code in case Fetch API req failed
@@ -87,14 +87,14 @@ export default function NewGame() {
         e.preventDefault()
 
         if (selectedRole === 'assassin') usersArr.push({
-            user: currentUserId,
+            user: user._id,
             kills: []
         })
 
         const newGame = {
             ...gameDetails,
-            creator: currentUserId,
-            moderator: (selectedRole === 'moderator' ? currentUserId : ''),
+            creator: user._id,
+            moderator: (selectedRole === 'moderator' ? user._id : ''),
             // assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
             assassins: usersArr,
             game_status: gameStatus.CREATED,
