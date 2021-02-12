@@ -28,8 +28,6 @@ const Profile = ({ games }) => {
                 setProfileImage(imageURL)
             }
         }
-
-
     })
 
     async function handleSave() {
@@ -138,23 +136,19 @@ const Profile = ({ games }) => {
                         <div>
                             <div className='font-bold mb-4'> CURRENT </div>
                             {games.current.map((game) => (
-                                <GameButton name={game.game_name} id={game._id} />
+                                <GameButton key={game._id} name={game.game_name} id={game._id} />
                             ))}
                         </div>
 
                         <div>
                             <div className='font-bold mb-4'> PAST </div>
                             {games.previous.map((game) => (
-                                <GameButton name={game.game_name} id={game._id} isComplete={true}/>
+                                <GameButton key={game._id} name={game.game_name} id={game._id} isComplete={true}/>
                             ))}
                         </div>
                     </div>
 
                 </div>
-
-
-
-
 
                 <canvas ref={canvasRef} className='hidden'></canvas>
             </form>
@@ -184,9 +178,6 @@ export async function getServerSideProps({ query }) {
         game._id = game._id.toString()
         return game
     })
-
-
-
 
     return {
         props: {
