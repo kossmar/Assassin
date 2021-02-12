@@ -9,7 +9,7 @@ import dbConnect from '../../../utils/dbConnect'
 import User from '../../../models/User'
 import Game from '../../../models/Game'
 
-const Profile = () => {
+const Profile = ({ games }) => {
 
     const user = useUser({ redirectTo: '/login' })
 
@@ -137,14 +137,16 @@ const Profile = () => {
                     <div className='grid grid-cols-2 w-4/5 mx-auto my-16 text-center'>
                         <div>
                             <div className='font-bold mb-4'> CURRENT </div>
-                            <GameButton name={"BABY'S BUTT"} gameId={'6011e8d0d9ae4e35531d5616'} />
-                            {/* {user.games.current.map((game) => {
-                                <GameButton name={game}/>
-                            })} */}
+                            {games.current.map((game) => (
+                                <GameButton name={game.game_name} id={game._id} />
+                            ))}
                         </div>
 
                         <div>
                             <div className='font-bold mb-4'> PAST </div>
+                            {games.previous.map((game) => (
+                                <GameButton name={game.game_name} id={game._id} isComplete={true}/>
+                            ))}
                         </div>
                     </div>
 
@@ -165,26 +167,32 @@ export default Profile
 export async function getServerSideProps({ query }) {
 
     await dbConnect()
-    console.log("QUERY: " + JSON.stringify(query))
     const id = query.id
     const user = await User.findOne({ _id: id })
     const games = user.games
 
-    const current = games.current.map((gameId) => {
-        const game = Game.find({}, 'name')
-        const gameNameAndId = {
-            name: game.game_name,
-            id: gameId
-        }
-        console.log("FLIP: " + JSON.stringify(gameNameAndId))
+    const currentResult = await Game.find({ _id: { $in: [...games.current] } })
+    const currentGames = currentResult.map((doc) => {
+        const game = doc.toObject()
+        game._id = game._id.toString()
+        return game
     })
+
+    const previousResult = await Game.find({ _id: { $in: [...games.previous] } })
+    const previousGames = previousResult.map((doc) => {
+        const game = doc.toObject()
+        game._id = game._id.toString()
+        return game
+    })
+
+
 
 
     return {
         props: {
             games: {
-                current: [],
-                past: []
+                current: currentGames,
+                previous: previousGames
             }
         }
     }
