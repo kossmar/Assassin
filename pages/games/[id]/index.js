@@ -174,7 +174,7 @@ const GameComponent = ({ gameShit, gameDetails }) => {
                         <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                             Moderator
                     </div>
-                        <AssassinIcon name={game.moderator ? gameDetails.moderator.name : 'NO MODERATOR'} image='/images/moderator.png' />
+                        <AssassinIcon name={game.moderator ? gameDetails.moderator.display_name : 'NO MODERATOR'} image='/images/moderator.png' />
                     </div>
 
                 </div>
@@ -196,7 +196,7 @@ const GameComponent = ({ gameShit, gameDetails }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins
                     </div>
-                    <Leaderboard assassins={game.assassins} />
+                    <Leaderboard assassins={gameDetails.assassins} />
                 </div>
 
                 {/* INVITES */}
@@ -252,24 +252,63 @@ export async function getServerSideProps({ query }) {
 
     await dbConnect()
 
-    const result = await Game.findOne({_id: gameId})
+    const result = await Game.findOne({ _id: gameId })
     const game = result.toObject()
     game._id = game._id.toString()
 
 
 
     if (game.moderator) {
-        const moderator = await User.findOne({_id: game.moderator})
+        const moderator = await User.findOne({ _id: game.moderator })
 
         game.moderator = {
             _id: game.moderator,
-            name: moderator.display_name
+            display_name: moderator.display_name
         }
 
         console.log(game)
-
     }
 
+    // async function getDisplayNames() {
+    //     const assassinsWithName = game.assassins.map(async (a) => {
+    //         const foundUser = await User.find({ _id: a._id })
+    //         return {
+    //             ...a,
+    //             display_name: foundUser
+    //         }
+    //     })
+
+    //     return assassinsWithName
+    // }
+
+    // const assassinsWithDisplayName = await getDisplayNames()
+    // console.log(assassinsWithDisplayName)
+
+
+    const assassinIds = game.assassins.map(a => {
+        return a.user
+    })
+
+    const usersResult = await User.find({ _id: [...assassinIds] })
+    console.log("USERS found: " + usersResult)
+
+
+    const assassinsWithNames = game.assassins.map(a => {
+        var assassin
+        usersResult.forEach(user => { 
+            if (user._id == a.user) {
+
+                assassin = {
+                    ...a,
+                    display_name: user.display_name
+                }
+            }
+        })
+        return assassin
+    })
+
+    game.assassins = assassinsWithNames
+    console.log("MUNGLE: " + JSON.stringify(game.assassins))
 
     return {
         props: {
