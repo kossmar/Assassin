@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Head from "next/head"
 import Layout from "../../../components/Layout"
 import EditGameDetails from '../../../components/EditGameDetails'
-import { page } from "../../../constants"
+import { gameStatus, page } from "../../../constants"
 import Leaderboard from "../../../components/Leaderboard"
 import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
@@ -10,8 +10,11 @@ import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
 import { saveGame, useGetGame } from '../../../lib/requestHelper'
 import { useUser } from '../../../lib/hooks/useUser'
+import dbConnect from '../../../utils/dbConnect'
+import Game from '../../../models/Game'
+import User from '../../../models/User'
 
-const ThisGame = () => {
+const ThisGame = ({ gameDetails }) => {
 
     const user = useUser({ redirectIfUnauthorized: '/login', redirectWithCookie: '/login' })
 
@@ -25,15 +28,15 @@ const ThisGame = () => {
 
     return (
         <div>
-        {/* change it */}
-            <Game gameShit={game} />
+            {/* change it */}
+            <GameComponent gameShit={game} gameDetails={gameDetails} />
         </div>
     )
 }
 
 export default ThisGame
 
-const Game = ({ gameShit }) => {
+const GameComponent = ({ gameShit, gameDetails }) => {
 
     useEffect(() => {
         setGame(gameShit)
@@ -93,7 +96,7 @@ const Game = ({ gameShit }) => {
 
         } else {
             const updatedAssassinsArr = game.assassins.push({
-                user: game.creator, 
+                user: game.creator,
                 kills: []
             })
             updatedGame.assassins = [{ user: game.creator, kills: [] }]
@@ -171,7 +174,7 @@ const Game = ({ gameShit }) => {
                         <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                             Moderator
                     </div>
-                        <AssassinIcon name={game.moderator ? game.moderator : 'NO MODERATOR'} image='/images/moderator.png' />
+                        <AssassinIcon name={game.moderator ? gameDetails.moderator.name : 'NO MODERATOR'} image='/images/moderator.png' />
                     </div>
 
                 </div>
@@ -241,4 +244,37 @@ const Game = ({ gameShit }) => {
             </Layout>
         </div>
     )
+}
+
+export async function getServerSideProps({ query }) {
+
+    const gameId = query.id
+
+    await dbConnect()
+
+    const result = await Game.findOne({_id: gameId})
+    const game = result.toObject()
+    game._id = game._id.toString()
+
+
+
+    if (game.moderator) {
+        const moderator = await User.findOne({_id: game.moderator})
+
+        game.moderator = {
+            _id: game.moderator,
+            name: moderator.display_name
+        }
+
+        console.log(game)
+
+    }
+
+
+    return {
+        props: {
+            gameDetails: game
+        }
+    }
+
 }
