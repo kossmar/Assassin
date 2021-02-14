@@ -8,9 +8,11 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, useGetGame } from '../../../lib/requestHelper'
+import { getUsers, saveGame } from '../../../lib/request-worker'
+import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import dbConnect from '../../../utils/dbConnect'
+// import { addDisplayNamesToAssassins, getUsersByAssassinUserIds } from '../../../lib/game-worker'
 import Game from '../../../models/Game'
 import User from '../../../models/User'
 
@@ -21,7 +23,7 @@ const ThisGame = ({ gameDetails }) => {
     const router = useRouter()
     const { id } = router.query
 
-    const { game, error } = useGetGame(id)
+    const { game, error } = useGame(id)
 
     if (error) return <p>Failed to load</p>
     if (!game) return <p>Loading...</p>
@@ -29,20 +31,71 @@ const ThisGame = ({ gameDetails }) => {
     return (
         <div>
             {/* change it */}
-            <GameComponent gameShit={game} gameDetails={gameDetails} />
+            <GameComponent gameHook={game} gameDetails={gameDetails} />
         </div>
     )
 }
 
 export default ThisGame
 
-const GameComponent = ({ gameShit, gameDetails }) => {
+const GameComponent = ({ gameHook, gameDetails }) => {
 
     useEffect(() => {
-        setGame(gameShit)
-    }, [gameShit])
 
-    const [game, setGame] = useState(gameShit)
+        if (gameHook.assassins.length > 0) {
+            console.log("KRUMP")
+            const assassinIds = gameHook.assassins.map(a => {
+                return a.user
+            })
+            getUsers(assassinIds).then(data => {
+                const assassinsWithNames = gameHook.assassins.map(a => {
+                    var assassin
+                    data.forEach(user => {
+                        if (user._id == a.user) {
+
+                            assassin = {
+                                ...a,
+                                display_name: user.display_name
+                            }
+                        }
+                    })
+                    return assassin
+                })
+                const modifiedGame = {
+                    ...gameHook,
+                    assassins: assassinsWithNames
+                }
+                setGame(modifiedGame)
+            })
+        }
+
+
+        if (gameHook.moderator) {
+            // const moderator = await User.findOne({ _id: game.moderator })
+            var id = gameHook.moderator
+            if (gameHook.moderator.hasOwnProperty('display_name')) {
+                id = gameHook.moderator._id
+            }
+            console.log("MOD ID: " + id)
+            getUsers(id).then(data => {
+
+                const modifiedGame = {
+                    ...gameHook,
+                    moderator: {
+                        _id: id,
+                        display_name: data[0].display_name
+                    }
+                }
+                setGame(modifiedGame)
+            })
+        }
+
+
+        // setGame(gameHook)
+
+    }, [gameHook])
+
+    const [game, setGame] = useState(gameHook)
     const [isEditing, setIsEditing] = useState(false)
 
 
@@ -174,7 +227,7 @@ const GameComponent = ({ gameShit, gameDetails }) => {
                         <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                             Moderator
                     </div>
-                        <AssassinIcon name={game.moderator ? gameDetails.moderator.display_name : 'NO MODERATOR'} image='/images/moderator.png' />
+                        <AssassinIcon name={game.moderator ? game.moderator.display_name : 'NO MODERATOR'} image='/images/moderator.png' />
                     </div>
 
                 </div>
@@ -196,7 +249,7 @@ const GameComponent = ({ gameShit, gameDetails }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins
                     </div>
-                    <Leaderboard assassins={gameDetails.assassins} />
+                    <Leaderboard assassins={game.assassins} />
                 </div>
 
                 {/* INVITES */}
@@ -265,50 +318,11 @@ export async function getServerSideProps({ query }) {
             _id: game.moderator,
             display_name: moderator.display_name
         }
-
-        console.log(game)
     }
 
-    // async function getDisplayNames() {
-    //     const assassinsWithName = game.assassins.map(async (a) => {
-    //         const foundUser = await User.find({ _id: a._id })
-    //         return {
-    //             ...a,
-    //             display_name: foundUser
-    //         }
-    //     })
-
-    //     return assassinsWithName
-    // }
-
-    // const assassinsWithDisplayName = await getDisplayNames()
-    // console.log(assassinsWithDisplayName)
-
-
-    const assassinIds = game.assassins.map(a => {
-        return a.user
-    })
-
-    const usersResult = await User.find({ _id: [...assassinIds] })
-    console.log("USERS found: " + usersResult)
-
-
-    const assassinsWithNames = game.assassins.map(a => {
-        var assassin
-        usersResult.forEach(user => { 
-            if (user._id == a.user) {
-
-                assassin = {
-                    ...a,
-                    display_name: user.display_name
-                }
-            }
-        })
-        return assassin
-    })
-
-    game.assassins = assassinsWithNames
-    console.log("MUNGLE: " + JSON.stringify(game.assassins))
+    // Query Users from Assassin Arr, add names to Assassin documents
+    // const usersFromAssassinsArr = await getUsersByAssassinUserIds(game.assassins)
+    // game.assassins = addDisplayNamesToAssassins(game.assassins, usersFromAssassinsArr)
 
     return {
         props: {
