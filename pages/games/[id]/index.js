@@ -8,15 +8,13 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { getUsers, saveGame } from '../../../lib/request-worker'
+import { getUsers, saveGame, getAssassinNames, getModeratorName } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
-import dbConnect from '../../../utils/dbConnect'
-// import { addDisplayNamesToAssassins, getUsersByAssassinUserIds } from '../../../lib/game-worker'
-import Game from '../../../models/Game'
-import User from '../../../models/User'
 
-const ThisGame = ({ gameDetails }) => {
+
+
+const ThisGame = () => {
 
     const user = useUser({ redirectIfUnauthorized: '/login', redirectWithCookie: '/login' })
 
@@ -30,68 +28,30 @@ const ThisGame = ({ gameDetails }) => {
 
     return (
         <div>
-            {/* change it */}
-            <GameComponent gameHook={game} gameDetails={gameDetails} />
+            <GameComponent gameHook={game} />
         </div>
     )
 }
 
 export default ThisGame
 
-const GameComponent = ({ gameHook, gameDetails }) => {
+const GameComponent = ({ gameHook }) => {
 
     useEffect(() => {
 
         if (gameHook.assassins.length > 0) {
-            console.log("KRUMP")
-            const assassinIds = gameHook.assassins.map(a => {
-                return a.user
-            })
-            getUsers(assassinIds).then(data => {
-                const assassinsWithNames = gameHook.assassins.map(a => {
-                    var assassin
-                    data.forEach(user => {
-                        if (user._id == a.user) {
-
-                            assassin = {
-                                ...a,
-                                display_name: user.display_name
-                            }
-                        }
-                    })
-                    return assassin
+            getAssassinNames(gameHook)
+                .then(modifiedGame => {
+                    setGame(modifiedGame)
                 })
-                const modifiedGame = {
-                    ...gameHook,
-                    assassins: assassinsWithNames
-                }
-                setGame(modifiedGame)
-            })
         }
-
 
         if (gameHook.moderator) {
-            // const moderator = await User.findOne({ _id: game.moderator })
-            var id = gameHook.moderator
-            if (gameHook.moderator.hasOwnProperty('display_name')) {
-                id = gameHook.moderator._id
-            }
-            console.log("MOD ID: " + id)
-            getUsers(id).then(data => {
-
-                const modifiedGame = {
-                    ...gameHook,
-                    moderator: {
-                        _id: id,
-                        display_name: data[0].display_name
-                    }
-                }
-                setGame(modifiedGame)
-            })
+            getModeratorName(gameHook)
+                .then(modifiedGame => {
+                    setGame(modifiedGame)
+                })
         }
-
-
-        // setGame(gameHook)
 
     }, [gameHook])
 
@@ -297,37 +257,4 @@ const GameComponent = ({ gameHook, gameDetails }) => {
             </Layout>
         </div>
     )
-}
-
-export async function getServerSideProps({ query }) {
-
-    const gameId = query.id
-
-    await dbConnect()
-
-    const result = await Game.findOne({ _id: gameId })
-    const game = result.toObject()
-    game._id = game._id.toString()
-
-
-
-    if (game.moderator) {
-        const moderator = await User.findOne({ _id: game.moderator })
-
-        game.moderator = {
-            _id: game.moderator,
-            display_name: moderator.display_name
-        }
-    }
-
-    // Query Users from Assassin Arr, add names to Assassin documents
-    // const usersFromAssassinsArr = await getUsersByAssassinUserIds(game.assassins)
-    // game.assassins = addDisplayNamesToAssassins(game.assassins, usersFromAssassinsArr)
-
-    return {
-        props: {
-            gameDetails: game
-        }
-    }
-
 }

@@ -1,6 +1,5 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../models/Game'
-import { addDisplayNamesToAssassins, getUsersByAssassinUserIds } from '../../../lib/game-worker'
 
 
 export default async function handler(req, res) {
