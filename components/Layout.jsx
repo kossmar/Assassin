@@ -9,8 +9,12 @@ export default function Layout({ page, children }) {
 
     return (
         <div>
-            <NavBar page={page} user={user}/>
-            <main>{children}</main>
+            <NavBar page={page} user={user} />
+            <div className="bg-gray-100">
+                <div className="md:w-2/3 bg-gray-50 mx-auto">
+                    <main>{children}</main>
+                </div>
+            </div>
         </div>
     )
 }

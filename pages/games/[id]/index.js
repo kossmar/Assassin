@@ -8,41 +8,56 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, useGetGame } from '../../../lib/requestHelper'
+import { getUsers, saveGame, getAssassinNames, getModeratorName } from '../../../lib/game-worker'
+import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
-import dbConnect from '../../../utils/dbConnect'
-import Game from '../../../models/Game'
-import User from '../../../models/User'
 
-const ThisGame = ({ gameDetails }) => {
+
+
+const ThisGame = () => {
 
     const user = useUser({ redirectIfUnauthorized: '/login', redirectWithCookie: '/login' })
 
     const router = useRouter()
     const { id } = router.query
 
-    const { game, error } = useGetGame(id)
+    const { gameResult, error } = useGame(id)
 
     if (error) return <p>Failed to load</p>
-    if (!game) return <p>Loading...</p>
+    if (!gameResult) return <p>Loading...</p>
 
     return (
         <div>
-            {/* change it */}
-            <GameComponent gameShit={game} gameDetails={gameDetails} />
+            <GameComponent gameResult={gameResult} />
         </div>
     )
 }
 
 export default ThisGame
 
-const GameComponent = ({ gameShit, gameDetails }) => {
+const GameComponent = ({ gameResult }) => {
 
     useEffect(() => {
-        setGame(gameShit)
-    }, [gameShit])
 
-    const [game, setGame] = useState(gameShit)
+        if (gameResult.assassins.length > 0) {
+
+            getAssassinNames(gameResult)
+                .then(modifiedGame => {
+                    setGame(modifiedGame)
+                })
+        }
+
+
+        if (gameResult.moderator) {
+            getModeratorName(gameResult)
+                .then(modifiedGame => {
+                    setGame(modifiedGame)
+                })
+        }
+
+    }, [gameResult])
+
+    const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
 
 
@@ -126,20 +141,20 @@ const GameComponent = ({ gameShit, gameDetails }) => {
     return (
         <div>
             <Head>
-                <title>Assassin/new</title>
+                <title>Assassin/Game/[id]</title>
             </Head>
             <Layout page={page.rules}>
                 <section id="top">
 
                 </section>
-                <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
+                <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
                     Murder and mayhem awaits...
                 </div>
 
 
                 {/* GAME DETAILS */}
                 <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
-                    <div className='bg-gray-100 space-y-10 py-10 rounded-xl'>
+                    <div className='border-yellow-200 border-2 bg-gray-100 space-y-10 py-10 rounded-xl'>
                         <div>
                             <div className='font-bold'>
                                 NAME:
@@ -174,7 +189,7 @@ const GameComponent = ({ gameShit, gameDetails }) => {
                         <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                             Moderator
                     </div>
-                        <AssassinIcon name={game.moderator ? gameDetails.moderator.name : 'NO MODERATOR'} image='/images/moderator.png' />
+                        <AssassinIcon name={game.moderator ? game.moderator.display_name : 'NO MODERATOR'} image='/images/moderator.png' />
                     </div>
 
                 </div>
@@ -244,37 +259,4 @@ const GameComponent = ({ gameShit, gameDetails }) => {
             </Layout>
         </div>
     )
-}
-
-export async function getServerSideProps({ query }) {
-
-    const gameId = query.id
-
-    await dbConnect()
-
-    const result = await Game.findOne({_id: gameId})
-    const game = result.toObject()
-    game._id = game._id.toString()
-
-
-
-    if (game.moderator) {
-        const moderator = await User.findOne({_id: game.moderator})
-
-        game.moderator = {
-            _id: game.moderator,
-            name: moderator.display_name
-        }
-
-        console.log(game)
-
-    }
-
-
-    return {
-        props: {
-            gameDetails: game
-        }
-    }
-
 }

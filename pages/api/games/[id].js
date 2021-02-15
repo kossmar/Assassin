@@ -1,6 +1,7 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../models/Game'
 
+
 export default async function handler(req, res) {
     const {
         query: { id },
@@ -21,6 +22,7 @@ export default async function handler(req, res) {
                     console.log("FUCK")
                     return res.status(400).json({ success: false })
                 }
+            
                 res.status(200).json({ success: true, data: game })
             } catch (error) {
                 res.status(400).json({ success: false })
