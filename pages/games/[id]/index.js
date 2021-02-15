@@ -141,20 +141,20 @@ const GameComponent = ({ gameResult }) => {
     return (
         <div>
             <Head>
-                <title>Assassin/new</title>
+                <title>Assassin/Game/[id]</title>
             </Head>
             <Layout page={page.rules}>
                 <section id="top">
 
                 </section>
-                <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
+                <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
                     Murder and mayhem awaits...
                 </div>
 
 
                 {/* GAME DETAILS */}
                 <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
-                    <div className='bg-gray-100 space-y-10 py-10 rounded-xl'>
+                    <div className='border-yellow-200 border-2 bg-gray-100 space-y-10 py-10 rounded-xl'>
                         <div>
                             <div className='font-bold'>
                                 NAME:

@@ -130,7 +130,7 @@ export default function NewGame() {
             </Head>
             <Layout page={page.rules}>
                 <div>
-                    <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
+                    <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
                         Murder and mayhem awaits...
                     </div>
 

@@ -84,73 +84,76 @@ const Profile = ({ games }) => {
     return (
         <Layout>
             <form method="POST" enctype="multipart/form-data">
-                <div className='grid grid-cols-1 sm:grid-cols-2'>
+                <div className="">
+                    <div className="grid grid-cols-1 sm:grid-cols-2">
 
-                    {/* DETAILS */}
-                    <div className="grid grid-cols-3 mx-auto mt-10 sm:float-left sm:grid-cols-1 sm:w-2/5">
+                        {/* DETAILS */}
+                        <div className="grid grid-cols-3 mx-auto mt-10 sm:float-left sm:grid-cols-1 sm:w-2/5">
 
-                        {/* USER IMAGE */}
-                        <div onClick={(isEditing ? handleImageSelect : null)} className="ml-10 sm:mx-auto justify-center">
-                            <AssassinIcon isInteractive={(isEditing ? true : false)} isProfile={true} image={(profileImage && profileImage)} />
-                            <div className="flex justify-center">
-                                <input className="hidden" onChange={handleImageUploaded} ref={inputRef} type="file" id="file" name="file"></input>
+                            {/* USER IMAGE */}
+                            <div onClick={(isEditing ? handleImageSelect : null)} className="ml-10 sm:mx-auto justify-center">
+                                <AssassinIcon isInteractive={(isEditing ? true : false)} isProfile={true} image={(profileImage && profileImage)} />
+                                <div className="flex justify-center">
+                                    <input className="hidden" onChange={handleImageUploaded} ref={inputRef} type="file" id="file" name="file"></input>
+                                </div>
                             </div>
-                        </div>
 
-                        {/* USER DETAILS */}
-                        <div className="col-span-2 font-bold text-center place-self-center">
-                            <div className={'text-2xl ' + (isEditing ? 'hidden' : 'block')}>
-                                {(user ? user.username : "not logged in")}
+                            {/* USER DETAILS */}
+                            <div className="col-span-2 font-bold text-center place-self-center">
+                                <div className={'text-2xl ' + (isEditing ? 'hidden' : 'block')}>
+                                    {(user ? user.username : "not logged in")}
+                                </div>
+                                <input className={'border my-2 pl-2 mx-auto text-center ' + (isEditing ? 'block' : 'hidden')} type="text" defaultValue={(user ? user.username : "not logged in")}></input>
+                                <div className="w-64">
+                                    "I will eat your dad for a good show you son of a bitch"
                             </div>
-                            <input className={'border my-2 pl-2 mx-auto text-center ' + (isEditing ? 'block' : 'hidden')} type="text" defaultValue={(user ? user.username : "not logged in")}></input>
-                            <div className="w-64">
-                                "I will eat your dad for a good show you son of a bitch"
                             </div>
-                        </div>
 
-                        {/* BUTTONS */}
-                        <div className="my-16 col-span-3 sm:col-span-1">
-                            <div onClick={() => { setIsEditing(true) }} className={(isEditing ? "hidden" : "block") + " cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-blue-400 bg-blue-400 hover:border-2 hover:bg-blue-300 text-white"}>
-                                <button>
-                                    Edit
-                                </button>
-                            </div>
-                            <div className={"flex sm:w-3/5 mx-auto " + (isEditing ? "block" : "hidden")}>
-                                <div onClick={handleSave} className="cursor-pointer flex place-content-center mr-4 w-36 h-10 rounded-md mx-auto border-blue-400 bg-blue-400 hover:border-2 hover:bg-blue-300 text-white">
+                            {/* BUTTONS */}
+                            <div className="my-16 col-span-3 sm:col-span-1">
+                                <div onClick={() => { setIsEditing(true) }} className={(isEditing ? "hidden" : "block") + " cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-blue-400 bg-blue-400 hover:border-2 hover:bg-blue-300 text-white"}>
                                     <button>
-                                        Save
+                                        Edit
                                     </button>
                                 </div>
-                                <div onClick={() => { setIsEditing(false) }} className="cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-red-400 bg-red-400 hover:border-2 hover:bg-red-300 text-white">
-                                    <button className="">
-                                        Cancel
+                                <div className={"flex sm:w-3/5 mx-auto " + (isEditing ? "block" : "hidden")}>
+                                    <div onClick={handleSave} className="cursor-pointer flex place-content-center mr-4 w-36 h-10 rounded-md mx-auto border-blue-400 bg-blue-400 hover:border-2 hover:bg-blue-300 text-white">
+                                        <button>
+                                            Save
+                                        </button>
+                                    </div>
+                                    <div onClick={() => { setIsEditing(false) }} className="cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-red-400 bg-red-400 hover:border-2 hover:bg-red-300 text-white">
+                                        <button className="">
+                                            Cancel
                                     </button>
+                                    </div>
                                 </div>
+                            </div>
+
+                        </div>
+
+                        {/* GAMES */}
+                        <div className='grid grid-cols-2 mx-auto my-16 text-center'>
+                            {/* CURRENT */}
+                            <div className="mx-6">
+                                <div className='font-bold mb-4'> CURRENT </div>
+                                {games.current.map((game) => (
+                                    <GameButton key={game._id} name={game.game_name} id={game._id} />
+                                ))}
+                            </div>
+
+                            {/* PAST */}
+                            <div className="mx-6">
+                                <div className='font-bold mb-4'> PAST </div>
+                                {games.previous.map((game) => (
+                                    <GameButton key={game._id} name={game.game_name} id={game._id} isComplete={true} />
+                                ))}
                             </div>
                         </div>
 
                     </div>
-
-                    {/* GAMES */}
-                    <div className='grid grid-cols-2 mx-auto my-16 text-center'>
-                        {/* CURRENT */}
-                        <div className="mx-6">
-                            <div className='font-bold mb-4'> CURRENT </div>
-                            {games.current.map((game) => (
-                                <GameButton key={game._id} name={game.game_name} id={game._id} />
-                            ))}
-                        </div>
-
-                        {/* PAST */}
-                        <div className="mx-6">
-                            <div className='font-bold mb-4'> PAST </div>
-                            {games.previous.map((game) => (
-                                <GameButton key={game._id} name={game.game_name} id={game._id} isComplete={true} />
-                            ))}
-                        </div>
-                    </div>
-
                 </div>
+
 
                 <canvas ref={canvasRef} className='hidden'></canvas>
             </form>
