@@ -21,41 +21,43 @@ const ThisGame = () => {
     const router = useRouter()
     const { id } = router.query
 
-    const { game, error } = useGame(id)
+    const { gameResult, error } = useGame(id)
 
     if (error) return <p>Failed to load</p>
-    if (!game) return <p>Loading...</p>
+    if (!gameResult) return <p>Loading...</p>
 
     return (
         <div>
-            <GameComponent gameHook={game} />
+            <GameComponent gameResult={gameResult} />
         </div>
     )
 }
 
 export default ThisGame
 
-const GameComponent = ({ gameHook }) => {
+const GameComponent = ({ gameResult }) => {
 
     useEffect(() => {
 
-        if (gameHook.assassins.length > 0) {
-            getAssassinNames(gameHook)
+        if (gameResult.assassins.length > 0) {
+
+            getAssassinNames(gameResult)
                 .then(modifiedGame => {
                     setGame(modifiedGame)
                 })
         }
 
-        if (gameHook.moderator) {
-            getModeratorName(gameHook)
+
+        if (gameResult.moderator) {
+            getModeratorName(gameResult)
                 .then(modifiedGame => {
                     setGame(modifiedGame)
                 })
         }
 
-    }, [gameHook])
+    }, [gameResult])
 
-    const [game, setGame] = useState(gameHook)
+    const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
 
 
