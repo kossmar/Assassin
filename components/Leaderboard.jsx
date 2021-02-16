@@ -12,7 +12,7 @@ export default function Leaderboard({ assassins }) {
 
     return (
         <div>
-            <div className='mt-8 grid grid-cols-5 w-4/6 mx-auto'>
+            <div className='mt-8 grid grid-cols-3 w-5/6 mx-auto'>
                 {/* {assassinList.sort((a, b) => {
                     return b.kills.length - a.kills.length
                 }).map((assassin, index) => {
