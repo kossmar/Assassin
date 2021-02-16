@@ -39,19 +39,32 @@ const GameComponent = ({ gameResult }) => {
 
     useEffect(() => {
 
-        if (gameResult.assassins.length > 0) {
-
-            getAssassinNames(gameResult)
-                .then(modifiedGame => {
-                    setGame(modifiedGame)
-                })
-        }
-
+        console.log("GAME RESULTT: " + JSON.stringify(gameResult))
 
         if (gameResult.moderator) {
-            getModeratorName(gameResult)
-                .then(modifiedGame => {
-                    setGame(modifiedGame)
+            getModeratorName(gameResult.moderator)
+                .then(modifiedModerator => {
+                    setGame(prevValue => {
+                        return {
+                            ...prevValue,
+                            moderator: modifiedModerator
+                        }
+                    })
+                })
+        } else { 
+            setGame(gameResult)
+        }
+
+        if (gameResult.assassins.length > 0) {
+
+            getAssassinNames(gameResult.assassins)
+                .then(assassinsWithNames => {
+                    setGame(prevValue => {
+                        return {
+                            ...prevValue,
+                            assassins: assassinsWithNames
+                        }
+                    })
                 })
         }
 
@@ -110,13 +123,17 @@ const GameComponent = ({ gameResult }) => {
             updatedGame.moderator = game.creator
 
         } else {
-            const updatedAssassinsArr = game.assassins.push({
+            console.log("ay")
+            const updatedAssassinsArr = game.assassins
+            updatedAssassinsArr.push({
                 user: game.creator,
                 kills: []
             })
-            updatedGame.assassins = [{ user: game.creator, kills: [] }]
+            updatedGame.assassins = updatedAssassinsArr
             updatedGame.moderator = ''
         }
+
+        console.log("BLATS: " + JSON.stringify(updatedGame))
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
