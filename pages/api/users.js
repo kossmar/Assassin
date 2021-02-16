@@ -14,7 +14,7 @@ export default async function users(req, res) {
         case 'GET': /* get users by array of IDs */
         console.log("QUERY: " + JSON.stringify(req.query.users))
             try {
-                const usersResult = await User.find({ _id: req.query.users })
+                const usersResult = await User.find({ _id: req.query.users.split(',') })
                 if (!usersResult) {
                     res.status(400).json({ success: false })
                 }

@@ -49,7 +49,7 @@ export default function NewGame() {
     /* The POST method adds a new entry in the mongodb database. */
     const postNewGame = async (newGame) => {
 
-        const body = {game: newGame, userId: user._id}
+        const body = { game: newGame, userId: user._id }
 
         try {
             const res = await fetch('/api/games/new', {
@@ -86,9 +86,17 @@ export default function NewGame() {
     const handleSave = (e) => {
         e.preventDefault()
 
-        if (selectedRole === 'assassin') usersArr.push({
+        const assassinsArr = createAssassins()
+        console.log(assassinsArr)
+
+        if (selectedRole === 'assassin') assassinsArr.push({
             user: user._id,
-            kills: []
+            target: '',
+            is_waiting: false,
+            kills: [],
+            is_alive: true,
+            dispute: '',
+            rank_index: 0
         })
 
         const newGame = {
@@ -96,7 +104,7 @@ export default function NewGame() {
             creator: user._id,
             moderator: (selectedRole === 'moderator' ? user._id : ''),
             // assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
-            assassins: usersArr,
+            assassins: assassinsArr,
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
         }
@@ -161,6 +169,24 @@ export default function NewGame() {
     )
 }
 
-const usersArr = [
+// TODO: Delete this biz at some point
 
+const usersArr = [
+    '602b00ec1d66220c2a813b8a',
+    '602b010e1d66220c2a813b8b',
+    '602b01361d66220c2a813b8c'
 ]
+
+function createAssassins() {
+    return usersArr.map(userId => {
+        return {
+            user: userId,
+            target: '',
+            is_waiting: false,
+            kills: [],
+            is_alive: true,
+            dispute: '',
+            rank_index: 0
+        }
+    })
+}
