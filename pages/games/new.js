@@ -69,7 +69,7 @@ export default function NewGame() {
             const data = await res.json()
             const id = data.data._id
 
-            // postAddGameToCurrent(id)
+            await postAddGameToCurrent(id)
 
             router.push(`/games/${id}`)
 
@@ -79,9 +79,34 @@ export default function NewGame() {
         }
     }
 
-    const postAddGameToCurrent = (gameId) => {
+    const postAddGameToCurrent = async (gameId) => {
+        const modifiedUser = user
+        modifiedUser.games.current.push(gameId)
+        const body = JSON.stringify({ user: modifiedUser })
 
+        try {
+            const res = await fetch("/api/profile/save", {
+                method: "POST",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+
+            if (!res.ok) {
+                throw new Error(res.status)
+            }
+
+            const { data } = await res.json()
+
+            mutate(`/api/profile/user`)
+
+        } catch (err) {
+            console.log(err)
+        }
     }
+
 
     const handleSave = (e) => {
         e.preventDefault()

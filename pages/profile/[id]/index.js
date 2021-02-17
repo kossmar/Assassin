@@ -15,12 +15,12 @@ const Profile = ({ games }) => {
 
     const inputRef = useRef()
     const canvasRef = useRef()
-    const [imageBuffer, setImageBuffer] = useState(null)
     const [profileImage, setProfileImage] = useState(null)
     const [isEditing, setIsEditing] = useState(false)
+    const [localUser, setLocalUser] = useState(user)
 
     useEffect(() => {
-
+        setLocalUser(user)
         if (user && !profileImage) {
             // convert Buffer to Image
             if (user.profile_image.data) {
@@ -28,16 +28,12 @@ const Profile = ({ games }) => {
                 setProfileImage(imageURL)
             }
         }
-    })
+    }, [user])
 
     async function handleSave() {
 
         postData()
         setIsEditing(false)
-    }
-
-    function handleEdit() {
-
     }
 
     async function handleImageUploaded(event) {
@@ -48,17 +44,20 @@ const Profile = ({ games }) => {
 
         const splitURL = dataUrl.split(',')[1]
         const buffer = new Buffer.from(splitURL, 'base64')
-        setImageBuffer(buffer)
+        setLocalUser(prevValue => {
+            return {
+                ...prevValue,
+                profile_image: {
+                    data: buffer,
+                    content_type: 'image/jpg'
+                }
+            }
+        })
     }
 
     const postData = async () => {
 
-        const modUser = user
-        modUser.profile_image = {
-            data: imageBuffer,
-            content_type: 'image/jpg'
-        }
-        const body = JSON.stringify({ user: modUser })
+        const body = JSON.stringify({ user: localUser })
 
         try {
             const res = await fetch("/api/profile/save", {
