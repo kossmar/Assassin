@@ -103,7 +103,6 @@ export default function NewGame() {
             ...gameDetails,
             creator: user._id,
             moderator: (selectedRole === 'moderator' ? user._id : ''),
-            // assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
             assassins: assassinsArr,
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
