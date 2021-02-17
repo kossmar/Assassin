@@ -11,6 +11,7 @@ import { useRouter } from 'next/router'
 import { saveGame, getAssassinNames, getModeratorName, deleteGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
+import ConfirmationPopup from '../../../components/ConfirmationPopup'
 
 
 
@@ -69,9 +70,7 @@ const GameComponent = ({ gameResult }) => {
 
     const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
-    const [confirmationPopup, setConfirmationPopup] = useState({
-        isOpen: false,
-    })
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
 
 
     function handleRoleSelect(id) {
@@ -146,12 +145,7 @@ const GameComponent = ({ gameResult }) => {
     }
 
     function handleDeleteClick() {
-        setConfirmationPopup(prevValue => {
-            return {
-                ...prevValue,
-                isOpen: true
-            }
-        })
+        setIsConfirmDeleteOpen(true)
         // deleteGame(game._id)
     }
 
@@ -168,7 +162,19 @@ const GameComponent = ({ gameResult }) => {
             <Head>
                 <title>Assassin/Game/[id]</title>
             </Head>
-            <div className={(confirmationPopup.isOpen ? "fixed" : "hidden") + " bg-gray-200 bg-opacity-70 w-full h-full"}>
+            
+            <ConfirmationPopup
+                message={"Are you sure you want to delete this game?"}
+                isOpen={isConfirmDeleteOpen}
+                cancelCallback={(() => {
+                    setIsConfirmDeleteOpen(false)
+                })}
+                confirmCallback={(() => {
+                    deleteGame(game._id)
+                })}
+            />
+
+            {/* <div className={(confirmationPopup.isOpen ? "fixed" : "hidden") + " bg-gray-200 bg-opacity-70 w-full h-full"}>
                 <div className="flex h-full w-full">
                     <div className="flex p-2 mx-auto place-self-center bg-white border-2 border-gray-400 rounded-lg w-96 h-60">
                         <div className=" mx-auto place-self-center bg-gray-200 space-y-4">
@@ -199,7 +205,7 @@ const GameComponent = ({ gameResult }) => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
             <Layout page={page.rules}>
                 <section id="top">
 
