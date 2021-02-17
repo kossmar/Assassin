@@ -8,7 +8,7 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { getUsers, saveGame, getAssassinNames, getModeratorName } from '../../../lib/game-worker'
+import { saveGame, getAssassinNames, getModeratorName, deleteGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 
@@ -51,7 +51,7 @@ const GameComponent = ({ gameResult }) => {
                         }
                     })
                 })
-        } else { 
+        } else {
             setGame(gameResult)
         }
 
@@ -123,7 +123,6 @@ const GameComponent = ({ gameResult }) => {
             updatedGame.moderator = game.creator
 
         } else {
-            console.log("ay")
             const updatedAssassinsArr = game.assassins
             updatedAssassinsArr.push({
                 user: game.creator,
@@ -133,7 +132,6 @@ const GameComponent = ({ gameResult }) => {
             updatedGame.moderator = ''
         }
 
-        console.log("BLATS: " + JSON.stringify(updatedGame))
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
@@ -145,6 +143,10 @@ const GameComponent = ({ gameResult }) => {
         setIsEditing((prevValue) => {
             return (prevValue ? false : true)
         })
+    }
+
+    function handleDeleteClick() {
+        deleteGame(game._id)
     }
 
     const formValidate = () => {
@@ -270,7 +272,7 @@ const GameComponent = ({ gameResult }) => {
 
                     {/* DELETE */}
                     <div>
-                        <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>DELETE</button>
+                        <button onClick={handleDeleteClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>DELETE</button>
                     </div>
                 </div>
             </Layout>
