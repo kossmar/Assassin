@@ -25,23 +25,19 @@ const uploadMiddleware = upload.single('file')
 const handler = nextConnect()
     // .use(uploadMiddleware)
     .post(async (req, res) => {
-        const imageBuffer = Buffer.from(req.body.image, "base64")
 
         try {
 
-            const user = await User.findByIdAndUpdate(req.body.id, {
-                profile_image: {
-                    data: imageBuffer,
-                    content_type: 'image/jpg'
-                }
+            const updatedUser = await User.findByIdAndUpdate(req.body.user._id, {
+                ...req.body.user
             }, {
                 new: true,
                 runValidators: true,
             })
-            if (!user) {
+            if (!updatedUser) {
                 return res.status(400).json({ success: false })
             }
-            res.status(200).json({ success: true, data: user })
+            res.status(200).json({ success: true, data: updatedUser })
         } catch (error) {
             res.status(400).json({ success: false })
         }
@@ -49,27 +45,3 @@ const handler = nextConnect()
     })
 
 export default handler
-
-
-
-// export default function handler(req, res) {
-
-//     // console.log("SAVE BODY: " + JSON.stringify(req.body))
-//     // console.log("SAVE FILES: " + (req.files))
-
-//     // upload.single('image')(req, {}, err => {
-//     //     console.log(req.files)
-//     // })
-
-
-
-//     // const user = {
-//     //     ...req.body.user,
-//     //     profile_image: {
-//     //         data: req.body.file,
-//     //         contentType: 'image/png'
-//     //     }
-//     // }
-
-//     // console.log("NEW USER: " + JSON.stringify(user))
-// }
