@@ -1,14 +1,29 @@
 import Link from 'next/link'
 import { useEffect, useState, useRef } from 'react'
 import { useDetectOutsideClick } from '../lib/hooks/useDetectOutsideClick'
+import { completeBase64ImageURL } from '../lib/encoder'
 
 
 
 export default function NavBar({ page, user }) {
 
+    // console.log("USER!: " + JSON.stringify(user))
+
+
+    useEffect(() => {
+        if (user) {
+            // convert Buffer to Image
+            if (user.profile_image.data) {
+                    const imageURL = completeBase64ImageURL(user.profile_image.data)
+                setProfileImage(imageURL)
+            }
+        }
+    })
+
     const dropdownRef = useRef(null)
     const [profileDropdownOpen, setProfileDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
     const [menuDropdownOpen, setMenuDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
+    const [profileImage, setProfileImage] = useState(null)
 
     const thing = useEffect(() => {
 
@@ -38,7 +53,7 @@ export default function NavBar({ page, user }) {
 
     return (
         <div>
-            <nav className="bg-white">
+            <nav className="bg-white border-b-2 border-gray-200">
                 <div className="mx-auto px-2">
                     <div className="relative flex items-center justify-between h-20">
 
@@ -107,15 +122,15 @@ export default function NavBar({ page, user }) {
                                     {/* Profile NAME */}
                                     <div id="fixed" className="max-h-10 w-full px-2 justify-end md:flex">
                                         <div className={"h-auto self-center text-right italic font-bold mr-0 " + (profileDropdownOpen ? "transition transform rotate-3" : "transition transform rotate-0")}>
-                                            {(user ? user.username : "no user")}
+                                            {(user ? user.display_name : "no user")}
                                         </div>
                                     </div>
 
                                     {/* Profile IMAGE */}
                                     <div className="flex pl-2 self-center my-auto">
-                                        <div className="max-h-9 w-9 bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
+                                        <div className="overflow-hidden max-h-9 w-9 bg-gray-800 flex text-sm rounded-full ring-2 ring-black" id="user-menu" aria-haspopup="true">
                                             <span className="sr-only">Open user menu</span>
-                                            <img className={"h-9 rounded-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+                                            <img className={"object-cover place-self-center min-h-full min-w-full " + (profileDropdownOpen ? "transition transform -rotate-180" : "transition transform rotate-0")} src={(profileImage ? profileImage : "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80")} alt="" />
                                         </div>
                                     </div>
 
@@ -165,20 +180,20 @@ export default function NavBar({ page, user }) {
                         </div>
 
                         {/* PROFILE Menu */}
-                        <div ref={dropdownRef} className={"sm:absolute right-0 ml-auto text-right " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
+                        <div ref={dropdownRef} className={"sm:absolute right-0 ml-auto float-right text-right bg-white bg-opacity-90 rounded-md " + (profileDropdownOpen ? "transform origin-top duration-200 opacity-100 scale-y-100" : "transform origin-top duration-200 opacity-0 scale-y-0")}>
                             <div className="px-2 pt-2 pb-3 space-y-1">
-                                <Link href="/">
-                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                <Link href={(user ? `/profile/${user._id}` : '/login')}>
+                                    <a className="text-gray-500 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                         Profile
                                     </a>
                                 </Link>
                                 <Link href="/">
-                                    <a className="text-gray-400 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                        Settings
+                                    <a className="text-gray-500 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                        My Games
                                     </a>
                                 </Link>
                                 <Link href="/api/logout">
-                                    <a className="text-red-400 hover:bg-red-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                                    <a className="text-red-500 hover:bg-red-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                         Sign Out
                                     </a>
                                 </Link>

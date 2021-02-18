@@ -13,7 +13,7 @@ export default function NewGame() {
 
     const user = useUser({ redirectTo: '/login' })
 
-    const currentUser = "124567890"
+
     // var newGame
 
     const router = useRouter()
@@ -47,9 +47,9 @@ export default function NewGame() {
     }
 
     /* The POST method adds a new entry in the mongodb database. */
-    const postData = async (newGame) => {
+    const postNewGame = async (newGame) => {
 
-        console.log("STRINGIFY @ postData: \n" + JSON.stringify(newGame))
+        const body = { game: newGame, userId: user._id }
 
         try {
             const res = await fetch('/api/games/new', {
@@ -58,7 +58,7 @@ export default function NewGame() {
                     Accept: contentType,
                     'Content-Type': contentType,
                 },
-                body: JSON.stringify(newGame),
+                body: JSON.stringify(body),
             })
 
             // Throw error with status code in case Fetch API req failed
@@ -69,7 +69,8 @@ export default function NewGame() {
             const data = await res.json()
             const id = data.data._id
 
-            console.log("STATUS: " + res.status)
+            await addGameToCurrent(id)
+
             router.push(`/games/${id}`)
 
         } catch (error) {
@@ -78,23 +79,92 @@ export default function NewGame() {
         }
     }
 
+    const addGameToCurrent = async (gameId) => {
+        const modifiedUser = user
+        modifiedUser.games.current.push(gameId)
+        const body = JSON.stringify({ user: modifiedUser })
+
+        try {
+            const res = await fetch("/api/profile/save", {
+                method: "POST",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+
+            if (!res.ok) {
+                throw new Error(res.status)
+            }
+
+            const { data } = await res.json()
+
+            mutate(`/api/profile/user`)
+
+        } catch (err) {
+            console.log(err)
+        }
+
+        usersArr.forEach((user) => {
+            const body = JSON.stringify({ userId: user, gameId: gameId })
+            postNewGameToCurrent(body)
+        })
+    }
+
+    const postNewGameToCurrent = async (body) => {
+        try {
+            const res = await fetch("/api/profile/add-new-game", {
+                method: "POST",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+
+            if (!res.ok) {
+                throw new Error(res.status)
+            }
+
+            // const { data } = await res.json()
+
+            // mutate(`/api/profile/user`)
+
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+
     const handleSave = (e) => {
         e.preventDefault()
 
+        const assassinsArr = createAssassins()
+        console.log(assassinsArr)
+
+        if (selectedRole === 'assassin') assassinsArr.push({
+            user: user._id,
+            target: '',
+            is_waiting: false,
+            kills: [],
+            is_alive: true,
+            dispute: '',
+            rank_index: 0
+        })
+
         const newGame = {
             ...gameDetails,
-            creator: currentUser,
-            moderator: (selectedRole === 'moderator' ? currentUser : ''),
-            assassins: (selectedRole === 'assassin' ? [{ user: currentUser, kills: [] }] : []),
+            creator: user._id,
+            moderator: (selectedRole === 'moderator' ? user._id : ''),
+            assassins: assassinsArr,
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
         }
 
-        console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(newGame))
-
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
-            postData(newGame)
+            postNewGame(newGame)
         } else {
             setErrors({ errs })
             console.log(errs)
@@ -119,7 +189,7 @@ export default function NewGame() {
             </Head>
             <Layout page={page.rules}>
                 <div>
-                    <div className='mt-10 w-2/6 mx-auto text-center font-bold'>
+                    <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
                         Murder and mayhem awaits...
                     </div>
 
@@ -148,4 +218,26 @@ export default function NewGame() {
             </Layout>
         </>
     )
+}
+
+// TODO: Delete this biz at some point
+
+const usersArr = [
+    '602b00ec1d66220c2a813b8a',
+    '602b010e1d66220c2a813b8b',
+    '602b01361d66220c2a813b8c'
+]
+
+function createAssassins() {
+    return usersArr.map(userId => {
+        return {
+            user: userId,
+            target: '',
+            is_waiting: false,
+            kills: [],
+            is_alive: true,
+            dispute: '',
+            rank_index: 0,
+        }
+    })
 }

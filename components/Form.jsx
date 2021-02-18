@@ -3,9 +3,15 @@ import Link from 'next/link'
 const Form = ({ isLogin, errorMessage, onSubmit }) => (
   <form onSubmit={onSubmit}>
     <label>
-      <span>Username</span>
-      <input type="text" name="username" required />
+      <span>E-mail Address</span>
+      <input type="text" name="email" required />
     </label>
+    {!isLogin && (
+      <label>
+        <span>Display Name</span>
+        <input type="text" name="displayName" required />
+      </label>
+    )}
     <label>
       <span>Password</span>
       <input type="password" name="password" required />
@@ -26,13 +32,13 @@ const Form = ({ isLogin, errorMessage, onSubmit }) => (
           <button type="submit">Login</button>
         </>
       ) : (
-        <>
-          <Link href="/login">
-            <a>I already have an account</a>
-          </Link>
-          <button type="submit">Signup</button>
-        </>
-      )}
+          <>
+            <Link href="/login">
+              <a>I already have an account</a>
+            </Link>
+            <button type="submit">Signup</button>
+          </>
+        )}
     </div>
 
     {errorMessage && <p className="error">{errorMessage}</p>}
