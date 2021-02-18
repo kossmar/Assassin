@@ -69,7 +69,7 @@ export default function NewGame() {
             const data = await res.json()
             const id = data.data._id
 
-            await postAddGameToCurrent(id)
+            await addGameToCurrent(id)
 
             router.push(`/games/${id}`)
 
@@ -79,7 +79,7 @@ export default function NewGame() {
         }
     }
 
-    const postAddGameToCurrent = async (gameId) => {
+    const addGameToCurrent = async (gameId) => {
         const modifiedUser = user
         modifiedUser.games.current.push(gameId)
         const body = JSON.stringify({ user: modifiedUser })
@@ -101,6 +101,35 @@ export default function NewGame() {
             const { data } = await res.json()
 
             mutate(`/api/profile/user`)
+
+        } catch (err) {
+            console.log(err)
+        }
+
+        usersArr.forEach((user) => {
+            const body = JSON.stringify({ userId: user, gameId: gameId })
+            postNewGameToCurrent(body)
+        })
+    }
+
+    const postNewGameToCurrent = async (body) => {
+        try {
+            const res = await fetch("/api/profile/add-new-game", {
+                method: "POST",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            })
+
+            if (!res.ok) {
+                throw new Error(res.status)
+            }
+
+            // const { data } = await res.json()
+
+            // mutate(`/api/profile/user`)
 
         } catch (err) {
             console.log(err)
@@ -132,8 +161,6 @@ export default function NewGame() {
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
         }
-
-        console.log("STRINGIFY at start of handleSave: \n" + JSON.stringify(newGame))
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
@@ -210,7 +237,7 @@ function createAssassins() {
             kills: [],
             is_alive: true,
             dispute: '',
-            rank_index: 0
+            rank_index: 0,
         }
     })
 }

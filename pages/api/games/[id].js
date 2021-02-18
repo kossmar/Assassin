@@ -1,5 +1,6 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../models/Game'
+import User from '../../../models/User'
 
 
 export default async function handler(req, res) {
@@ -22,7 +23,7 @@ export default async function handler(req, res) {
                     console.log("FUCK")
                     return res.status(400).json({ success: false })
                 }
-            
+
                 res.status(200).json({ success: true, data: game })
             } catch (error) {
                 res.status(400).json({ success: false })
@@ -45,15 +46,27 @@ export default async function handler(req, res) {
             }
             break
 
-          case 'DELETE' /* Delete a model by its ID */:
+        case 'DELETE' /* Delete a model by its ID */:
             try {
-              const deletedGame = await Game.deleteOne({ _id: id })
-              if (!deletedGame) {
-                return res.status(400).json({ success: false })
-              }
-              res.status(200).json({ success: true, data: {} })
+
+                const foundUsers = await User.find({ 'games.current': id })
+                console.log("USERS")
+                console.log(foundUsers)
+
+                foundUsers.forEach( async (user) => {
+                    const tits = await User.findByIdAndUpdate({ _id: user._id }, { '$pull': { 'games.current': id } })
+                    console.log(tits)
+                })
+
+                const deletedGame = await Game.deleteOne({ _id: id })
+                if (!deletedGame) {
+                    return res.status(400).json({ success: false })
+                }
+
+
+                res.status(200).json({ success: true, data: {} })
             } catch (error) {
-              res.status(400).json({ success: false })
+                res.status(400).json({ success: false })
             }
             break
 

@@ -173,6 +173,7 @@ export async function getServerSideProps({ query }) {
     const id = query.id
     const user = await User.findOne({ _id: id })
     const games = user.games
+    console.log("DUNKS: " + games)
 
     const currentResult = await Game.find({ _id: { $in: [...games.current] } })
     const currentGames = currentResult.map((doc) => {
