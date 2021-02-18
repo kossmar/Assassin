@@ -5,7 +5,6 @@ import Layout from '../components/Layout'
 import Form from '../components/form'
 
 const Login = () => {
-//   useUser({ redirectTo: '/', redirectIfFound: true })
 
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -19,7 +18,6 @@ const Login = () => {
       password: e.currentTarget.password.value,
     }
 
-    console.log("BODD: " + JSON.stringify(body))
 
     try {
       const res = await fetch('/api/login', {
@@ -41,9 +39,12 @@ const Login = () => {
 
   return (
     <Layout>
-      <div className="w-80 mx-auto my-16 p-4 border-gray-300 border rounded-sm">
-        <Form isLogin errorMessage={errorMsg} onSubmit={handleSubmit} />
+      <div className="pt-16">
+        <div className="w-80 mx-auto p-4 border-gray-300 border rounded-sm">
+          <Form isLogin errorMessage={errorMsg} onSubmit={handleSubmit} />
+        </div>
       </div>
+
     </Layout>
   )
 }

@@ -54,8 +54,10 @@ const Signup = () => {
 
   return (
     <Layout>
-      <div className="w-80 mx-auto my-16 p-4 border-gray-300 border rounded-sm">
-        <Form isLogin={false} errorMessage={errorMsg} onSubmit={handleSubmit} />
+      <div className="pt-16">
+        <div className="w-80 mx-auto p-4 border-gray-300 border rounded-sm">
+          <Form isLogin={false} errorMessage={errorMsg} onSubmit={handleSubmit} />
+        </div>
       </div>
     </Layout>
   )
