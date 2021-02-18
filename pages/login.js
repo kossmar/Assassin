@@ -40,7 +40,7 @@ const Login = () => {
   return (
     <Layout>
       <div className="pt-16">
-        <div className="w-80 mx-auto p-4 border-gray-300 border rounded-sm">
+        <div className="w-80 mx-auto p-4 border-gray-300 border rounded-lg">
           <Form isLogin errorMessage={errorMsg} onSubmit={handleSubmit} />
         </div>
       </div>

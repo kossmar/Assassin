@@ -35,7 +35,6 @@ const Signup = () => {
 
     try {
 
-      console.log("FROM SIGNUP PAGE: " + JSON.stringify(body))
       const res = await fetch('/api/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -55,7 +54,7 @@ const Signup = () => {
   return (
     <Layout>
       <div className="pt-16">
-        <div className="w-80 mx-auto p-4 border-gray-300 border rounded-sm">
+        <div className="w-80 mx-auto p-4 border-gray-300 border rounded-lg">
           <Form isLogin={false} errorMessage={errorMsg} onSubmit={handleSubmit} />
         </div>
       </div>
