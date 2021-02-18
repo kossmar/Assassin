@@ -8,10 +8,10 @@ export default function Layout({ page, children }) {
     const user = useUser()
 
     return (
-        <div>
+        <div className="h-screen">
             <NavBar page={page} user={user} />
-            <div className="bg-gray-100">
-                <div className="md:w-2/3 bg-gray-50 mx-auto">
+            <div className="bg-gray-100 h-full">
+                <div className="md:w-2/3 bg-gray-50 mx-auto h-full">
                     <main>{children}</main>
                 </div>
             </div>
