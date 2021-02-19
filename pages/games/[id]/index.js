@@ -29,17 +29,24 @@ const ThisGame = () => {
 
     return (
         <div>
-            <GameComponent gameResult={gameResult} />
+            <GameComponent gameResult={gameResult} user={user} />
         </div>
     )
 }
 
 export default ThisGame
 
-const GameComponent = ({ gameResult }) => {
+const GameComponent = ({ gameResult, user }) => {
 
     useEffect(() => {
         if (gameResult.moderators.length > 0) {
+
+            gameResult.moderators.forEach((moderatorId) => {
+                if (user._id === moderatorId) {
+                    setIsModerator(true)
+                }
+            })
+
             getModeratorNames(gameResult.moderators)
                 .then(modifiedModerators => {
                     console.log("rats")
@@ -262,14 +269,22 @@ const GameComponent = ({ gameResult }) => {
                     <div>
                         <Invite />
                     </div>
-                    <div>
+                    <div className={(!isModerator && 'hidden')}>
                         <Invite isForAssassins={false} />
                     </div>
                 </div>
 
 
-                {/* BUTTONS */}
-                <div className='w-2/5 mx-auto space-y-4 py-8'>
+                {/* ASSASSIN BUTTONS */}
+                <div>
+                    <div className={'my-4 ' + (isModerator && 'hidden')}>
+                        <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>
+                            LEAVE GAME
+                        </button>
+                    </div>
+                </div>
+                {/* MODERATOR BUTTONS */}
+                <div className={'w-2/5 mx-auto space-y-4 py-8 ' + (!isModerator && 'hidden')}>
 
                     {/* EDIT  */}
                     <div className={(isEditing ? 'hidden' : 'block')}>
@@ -291,13 +306,19 @@ const GameComponent = ({ gameResult }) => {
 
                     {/* BEGIN */}
                     <div>
-                        <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'>BEGIN</button>
+                        <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'>
+                            BEGIN
+                        </button>
                     </div>
 
                     {/* DELETE */}
                     <div>
-                        <button onClick={handleDeleteClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>DELETE</button>
+                        <button onClick={handleDeleteClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>
+                            DELETE
+                        </button>
                     </div>
+
+
                 </div>
             </Layout>
         </div>
