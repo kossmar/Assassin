@@ -6,7 +6,7 @@ const GameSchema = new mongoose.Schema({
     game_name: String,
     weapons: String,
     safe_zones: String,
-    moderator: String,
+    moderators: [String],
     assassins: [
         { 
             _id: false,
