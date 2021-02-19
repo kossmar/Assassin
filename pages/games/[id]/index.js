@@ -8,7 +8,7 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNames, getModeratorName, deleteGame } from '../../../lib/game-worker'
+import { saveGame, getAssassinNames, getModeratorNames, deleteGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import ConfirmationPopup from '../../../components/ConfirmationPopup'
@@ -39,13 +39,15 @@ export default ThisGame
 const GameComponent = ({ gameResult }) => {
 
     useEffect(() => {
-        if (gameResult.moderator) {
-            getModeratorName(gameResult.moderator)
-                .then(modifiedModerator => {
+        if (gameResult.moderators.length > 0) {
+            getModeratorNames(gameResult.moderators)
+                .then(modifiedModerators => {
+                    console.log("rats")
+                    console.log(modifiedModerators)
                     setGame(prevValue => {
                         return {
                             ...prevValue,
-                            moderator: modifiedModerator
+                            moderators: modifiedModerators
                         }
                     })
                 })
@@ -71,6 +73,7 @@ const GameComponent = ({ gameResult }) => {
     const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
+    const [isModerator, setIsModerator] = useState(false)
 
 
     function handleRoleSelect(id) {
@@ -113,13 +116,16 @@ const GameComponent = ({ gameResult }) => {
         }
 
         if (game.creator_role === 'moderator') {
+            const updatedModeratorsArr = game.moderators
+            updatedModeratorsArr.push(game.creator)
 
             const updatedAssassinsArr = game.assassins.filter((assassin) => {
                 return assassin.user != game.creator
             })
 
+
             updatedGame.assassins = updatedAssassinsArr
-            updatedGame.moderator = game.creator
+            updatedGame.moderators = game.creator
 
         } else {
             const updatedAssassinsArr = game.assassins
@@ -127,8 +133,12 @@ const GameComponent = ({ gameResult }) => {
                 user: game.creator,
                 kills: []
             })
+            const updatedModeratorsArr = game.moderators.filter((moderator) => {
+                return moderator != game.creator
+            })
+
             updatedGame.assassins = updatedAssassinsArr
-            updatedGame.moderator = ''
+            updatedGame.moderators = updatedModeratorsArr
         }
 
 
@@ -173,7 +183,7 @@ const GameComponent = ({ gameResult }) => {
                     deleteGame(game._id)
                 })}
             />
-            
+
             <Layout page={page.rules}>
                 <section id="top">
 
@@ -218,9 +228,11 @@ const GameComponent = ({ gameResult }) => {
                     {/* MODERATOR */}
                     <div className='my-10'>
                         <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
-                            Moderator
-                    </div>
-                        <AssassinIcon name={game.moderator ? game.moderator.display_name : 'NO MODERATOR'} image='/images/moderator.png' />
+                            Moderators:
+                        </div>
+                        {game.moderators.map((moderator) => {
+                            return <AssassinIcon name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                        })}
                     </div>
 
                 </div>
@@ -240,7 +252,7 @@ const GameComponent = ({ gameResult }) => {
                 {/* ASSASSINS */}
                 <div className='my-10'>
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
-                        Assassins
+                        Assassins:
                     </div>
                     <Leaderboard assassins={game.assassins} />
                 </div>
@@ -257,7 +269,7 @@ const GameComponent = ({ gameResult }) => {
 
 
                 {/* BUTTONS */}
-                <div className='w-2/5 mx-auto space-y-4 my-8'>
+                <div className='w-2/5 mx-auto space-y-4 py-8'>
 
                     {/* EDIT  */}
                     <div className={(isEditing ? 'hidden' : 'block')}>

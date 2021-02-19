@@ -89,7 +89,7 @@ const Profile = ({ games }) => {
 
     return (
         <Layout>
-            <form method="POST" enctype="multipart/form-data">
+            <form method="POST" enctype="multipart/form-data" className="py-10">
 
                 <div className="grid grid-cols-1 sm:grid-cols-2">
 

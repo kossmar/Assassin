@@ -156,7 +156,7 @@ export default function NewGame() {
         const newGame = {
             ...gameDetails,
             creator: user._id,
-            moderator: (selectedRole === 'moderator' ? user._id : ''),
+            moderators: (selectedRole === 'moderator' ? [user._id] : []),
             assassins: assassinsArr,
             game_status: gameStatus.CREATED,
             creator_role: selectedRole
@@ -188,8 +188,8 @@ export default function NewGame() {
                 <title>Assassin/new</title>
             </Head>
             <Layout page={page.rules}>
-                <div>
-                    <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
+                <div className="py-10">
+                    <div className='py-10 w-2/6 mx-auto text-center font-bold'>
                         Murder and mayhem awaits...
                     </div>
 
