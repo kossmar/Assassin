@@ -12,6 +12,7 @@ import { saveGame, getAssassinNames, getModeratorNames, deleteGame } from '../..
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import ConfirmationPopup from '../../../components/ConfirmationPopup'
+import JoinRequest from '../../../components/JoinRequest'
 
 
 
@@ -122,6 +123,9 @@ const GameComponent = ({ gameResult, user }) => {
             ...game,
         }
 
+        //TODO: This won't work with multiple moderators!
+        //Probably just change game.creator to user._id
+
         if (game.creator_role === 'moderator') {
             const updatedModeratorsArr = game.moderators
             updatedModeratorsArr.push(game.creator)
@@ -231,10 +235,19 @@ const GameComponent = ({ gameResult, user }) => {
                         </div>
                     </div>
 
+                    {/* REQUESTS */}
+                    <div className="my-20">
+                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
+                            Requests:
+                        </div>
+
+                        <JoinRequest name="Glippyz"/>
+
+                    </div>
 
                     {/* MODERATOR */}
-                    <div className='my-10'>
-                        <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
+                    <div className='mt-16'>
+                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
                             Moderators:
                         </div>
                         {game.moderators.map((moderator) => {
