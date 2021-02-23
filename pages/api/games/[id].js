@@ -20,7 +20,6 @@ export default async function handler(req, res) {
             try {
                 const game = await Game.findById(id)
                 if (!game) {
-                    console.log("FUCK")
                     return res.status(400).json({ success: false })
                 }
 
@@ -32,7 +31,6 @@ export default async function handler(req, res) {
 
         case 'PUT' /* Edit a model by its ID */:
             try {
-                console.log("BODY @ PUT: " + JSON.stringify(req.body))
                 const game = await Game.findByIdAndUpdate(id, req.body, {
                     new: true,
                     runValidators: true,
@@ -50,7 +48,6 @@ export default async function handler(req, res) {
             try {
 
                 const foundUsers = await User.find({ 'games.current': id })
-                console.log("USERS")
                 console.log(foundUsers)
 
                 foundUsers.forEach( async (user) => {

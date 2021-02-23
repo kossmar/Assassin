@@ -7,7 +7,7 @@ import { completeBase64ImageURL } from '../lib/encoder'
 
 export default function NavBar({ page, user }) {
 
-    console.log("USER!: " + JSON.stringify(user))
+    // console.log("USER!: " + JSON.stringify(user))
 
 
     useEffect(() => {
