@@ -8,7 +8,7 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNames, getModeratorNames, deleteGame, sendJoinRequest, getRequestUserNames } from '../../../lib/game-worker'
+import { saveGame, getAssassinNames, getModeratorNames, deleteGame, sendJoinRequest, getRequestUserNames, leaveGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import ConfirmationPopup from '../../../components/ConfirmationPopup'
@@ -18,7 +18,7 @@ import JoinRequest from '../../../components/JoinRequest'
 
 const ThisGame = () => {
 
-    const user = useUser({ redirectIfUnauthorized: '/login'})
+    const user = useUser({ redirectIfUnauthorized: '/login' })
 
     const router = useRouter()
     const { id } = router.query
@@ -28,9 +28,11 @@ const ThisGame = () => {
     if (error) return <p>Failed to load</p>
     if (!gameResult || !user) return <p>Loading...</p>
 
+    console.log("Game returned from useGame on game page")
+    console.log(gameResult)
     return (
         <div>
-            <GameComponent gameResult={gameResult} user={user} />
+            <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
         </div>
     )
 }
@@ -86,23 +88,19 @@ const GameComponent = ({ gameResult, user }) => {
                     })
                 })
         }
-        console.log("join requests: " + gameResult.join_requests)
-        console.log(gameResult)
 
         if (gameResult.join_requests.length > 0) {
-            console.log("tits")
-            console.log("join requests: " + gameResult.join_requests)
             getRequestUserNames(gameResult.join_requests)
                 .then(usersWithNames => {
-                    console.log("Requests with names: " + JSON.stringify(usersWithNames))
                     setGame(prevValue => {
                         return {
                             ...prevValue,
                             join_requests: usersWithNames
                         }
                     })
-                    console.log(game)
                 })
+        } else {
+            setGame(gameResult)
         }
 
     }, [gameResult, user])
@@ -205,6 +203,10 @@ const GameComponent = ({ gameResult, user }) => {
         sendJoinRequest(game._id, user._id)
     }
 
+    function handleLeaveClicked() {
+        leaveGame(game._id, user._id)
+    }
+
     const formValidate = () => {
         let err = {}
         if (!game.game_name) err.name = 'Game Name is required'
@@ -276,7 +278,7 @@ const GameComponent = ({ gameResult, user }) => {
                             Requests:
                         </div>
                         {game.join_requests.map((user) => (
-                            <JoinRequest key={user._id} name={user.display_name} />
+                            <JoinRequest key={user._id} name={user.display_name} gameId={game._id} userId={user._id} />
                         ))}
                         <JoinRequest name="Glippyz" />
 
@@ -315,7 +317,7 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* INVITES */}
-                <div className={(hasJoined ? 'block' :'hidden')}>
+                <div className={(hasJoined ? 'block' : 'hidden')}>
                     <div>
                         <Invite gameId={game._id} />
                     </div>
@@ -377,8 +379,9 @@ const GameComponent = ({ gameResult, user }) => {
                                 REQUEST PENDING...
                             </div>
                         </div>
-                        <div className={'my-4 ' + ((!hasJoined || isCreator) ? 'hidden' : 'block')}>
-                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>
+                        <div className={'my-4 ' + ((!hasJoined || isCreator || isModerator) ? 'hidden' : 'block')}>
+                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'
+                                onClick={handleLeaveClicked}>
                                 LEAVE GAME
                             </button>
                         </div>

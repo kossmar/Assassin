@@ -35,10 +35,10 @@ export default async function handler(req, res) {
                     new: true,
                     runValidators: true,
                 })
-                if (!game) {
+               if (!game) {
                     return res.status(400).json({ success: false })
                 }
-                res.status(200).json({ success: true, data: game })
+                res.status(200).json({ success: true, data: game }) 
             } catch (error) {
                 res.status(400).json({ success: false })
             }
