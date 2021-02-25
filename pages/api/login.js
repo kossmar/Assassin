@@ -27,6 +27,9 @@ export default nextConnect()
       // From my understanding, I only need to pass username for token authentication. Keeping this for ref until I understand better
 
       // console.log("\n\n\nSESSION FROM USER: \n" + JSON.stringify(session._doc.username) + "\n\n\n")
+      console.log("ASS")
+      console.log(user)
+
       const session = { email: user._doc.email }
 
       await setLoginSession(res, session)

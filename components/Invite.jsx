@@ -1,6 +1,9 @@
 import React from 'react'
 
-export default function Invite({ isForAssassins = true, inviteLink = "https://assassingame.com/game/invite/aSdfkafagggsj" }) {
+export default function Invite({ isForAssassins = true, gameId}) {
+
+    const inviteLink = 'https://assassingame.com/game/' + gameId
+
     return (
         <div>
             <div>

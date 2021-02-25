@@ -21,9 +21,10 @@ const upload = multer({
 
 const uploadMiddleware = upload.single('file')
 
-
 const handler = nextConnect()
     // .use(uploadMiddleware)
+
+    // change to PUT
     .post(async (req, res) => {
 
         try {

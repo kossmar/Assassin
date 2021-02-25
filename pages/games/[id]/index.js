@@ -8,16 +8,17 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNames, getModeratorNames, deleteGame } from '../../../lib/game-worker'
+import { saveGame, getAssassinNames, getModeratorNames, deleteGame, sendJoinRequest, getRequestUserNames, leaveGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import ConfirmationPopup from '../../../components/ConfirmationPopup'
+import JoinRequest from '../../../components/JoinRequest'
 
 
 
 const ThisGame = () => {
 
-    const user = useUser({ redirectIfUnauthorized: '/login', redirectWithCookie: '/login' })
+    const user = useUser({ redirectIfUnauthorized: '/login' })
 
     const router = useRouter()
     const { id } = router.query
@@ -25,32 +26,45 @@ const ThisGame = () => {
     const { gameResult, error } = useGame(id)
 
     if (error) return <p>Failed to load</p>
-    if (!gameResult) return <p>Loading...</p>
+    if (!gameResult || !user) return <p>Loading...</p>
 
     return (
         <div>
-            <GameComponent gameResult={gameResult} user={user} />
+            <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
         </div>
     )
 }
 
 export default ThisGame
-
 const GameComponent = ({ gameResult, user }) => {
 
     useEffect(() => {
-        if (gameResult.moderators.length > 0) {
+        setHasJoined(false)
 
+        if (gameResult.creator === user._id) {
+            setIsCreator(true)
+        }
+
+        gameResult.assassins.forEach((assassin) => {
+            if (user._id === assassin.user) setHasJoined(true)
+        })
+
+        gameResult.join_requests.forEach(userId => {
+
+            if (user._id === userId) setHasRequestedJoin(true)
+        })
+
+        if (gameResult.moderators.length > 0) {
             gameResult.moderators.forEach((moderatorId) => {
+
                 if (user._id === moderatorId) {
                     setIsModerator(true)
+                    setHasJoined(true)
                 }
             })
 
             getModeratorNames(gameResult.moderators)
                 .then(modifiedModerators => {
-                    console.log("rats")
-                    console.log(modifiedModerators)
                     setGame(prevValue => {
                         return {
                             ...prevValue,
@@ -75,12 +89,30 @@ const GameComponent = ({ gameResult, user }) => {
                 })
         }
 
-    }, [gameResult])
+        if (gameResult.join_requests.length > 0) {
+            getRequestUserNames(gameResult.join_requests)
+                .then(usersWithNames => {
+                    setGame(prevValue => {
+                        return {
+                            ...prevValue,
+                            join_requests: usersWithNames
+                        }
+                    })
+                })
+        } else {
+            setGame(gameResult)
+        }
+
+    }, [gameResult, user])
 
     const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
+    const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isModerator, setIsModerator] = useState(false)
+    const [hasJoined, setHasJoined] = useState(false)
+    const [hasRequestedJoin, setHasRequestedJoin] = useState(false)
+    const [isCreator, setIsCreator] = useState(false)
 
 
     function handleRoleSelect(id) {
@@ -121,6 +153,9 @@ const GameComponent = ({ gameResult, user }) => {
         const updatedGame = {
             ...game,
         }
+
+        //TODO: This won't work with multiple moderators!
+        //Probably just change game.creator to user._id
 
         if (game.creator_role === 'moderator') {
             const updatedModeratorsArr = game.moderators
@@ -163,7 +198,15 @@ const GameComponent = ({ gameResult, user }) => {
 
     function handleDeleteClick() {
         setIsConfirmDeleteOpen(true)
-        // deleteGame(game._id)
+    }
+
+    function handleJoinGameClicked() {
+        sendJoinRequest(game._id, user._id)
+    }
+
+    function handleLeaveClicked() {
+        // leaveGame(game._id, user._id)
+        setIsConfirmLeaveOpen(true)
     }
 
     const formValidate = () => {
@@ -188,6 +231,18 @@ const GameComponent = ({ gameResult, user }) => {
                 })}
                 confirmCallback={(() => {
                     deleteGame(game._id)
+                })}
+            />
+            <ConfirmationPopup
+                message={"Are you sure you want to leave this game?"}
+                isOpen={isConfirmLeaveOpen}
+                cancelCallback={(() => {
+                    setIsConfirmLeaveOpen(false)
+                })}
+                confirmCallback={(() => {
+                    leaveGame(game._id, user._id, () => {
+                        setIsConfirmLeaveOpen(false)
+                    })
                 })}
             />
 
@@ -231,10 +286,21 @@ const GameComponent = ({ gameResult, user }) => {
                         </div>
                     </div>
 
+                    {/* REQUESTS */}
+                    <div className={"my-20 " + (isModerator ? 'block' : 'hidden')}>
+                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
+                            Requests:
+                        </div>
+                        {game.join_requests.map((user) => (
+                            <JoinRequest key={user._id} name={user.display_name} gameId={game._id} userId={user._id} />
+                        ))}
+                        <JoinRequest name="Glippyz" />
+
+                    </div>
 
                     {/* MODERATOR */}
-                    <div className='my-10'>
-                        <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
+                    <div className='mt-16'>
+                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
                             Moderators:
                         </div>
                         {game.moderators.map((moderator) => {
@@ -265,61 +331,78 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* INVITES */}
-                <div>
+                <div className={(hasJoined ? 'block' : 'hidden')}>
                     <div>
-                        <Invite />
+                        <Invite gameId={game._id} />
                     </div>
-                    <div className={(!isModerator && 'hidden')}>
+                    <div className={(isModerator ? 'block' : 'hidden')}>
                         <Invite isForAssassins={false} />
                     </div>
                 </div>
 
 
-                {/* ASSASSIN BUTTONS */}
-                <div>
-                    <div className={'my-4 ' + (isModerator && 'hidden')}>
-                        <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>
-                            LEAVE GAME
-                        </button>
-                    </div>
-                </div>
-                {/* MODERATOR BUTTONS */}
-                <div className={'w-2/5 mx-auto space-y-4 py-8 ' + (!isModerator && 'hidden')}>
+                {/* BUTTONS */}
+                <div className="py-8">
 
-                    {/* EDIT  */}
-                    <div className={(isEditing ? 'hidden' : 'block')}>
-                        <a href='#top'>
-                            <button onClick={handleEditClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                                EDIT
+
+                    {/* MODERATOR BUTTONS */}
+                    <div className={'w-2/5 mx-auto space-y-4 ' + (isModerator ? 'block' : 'hidden')}>
+
+                        {/* EDIT  */}
+                        <div className={(isEditing ? 'hidden' : 'block')}>
+                            <a href='#top'>
+                                <button onClick={handleEditClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+                                    EDIT
+                                </button>
+                            </a>
+                        </div>
+
+                        {/* SAVE */}
+                        <div className={(isEditing ? 'block' : 'hidden')}>
+                            <a href='#top'>
+                                <button onClick={handleSaveClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+                                    SAVE
+                                </button>
+                            </a>
+                        </div>
+
+                        {/* BEGIN */}
+                        <div>
+                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'>
+                                BEGIN
                             </button>
-                        </a>
-                    </div>
+                        </div>
 
-                    {/* SAVE */}
-                    <div className={(isEditing ? 'block' : 'hidden')}>
-                        <a href='#top'>
-                            <button onClick={handleSaveClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                                SAVE
+                        {/* DELETE */}
+                        <div>
+                            <button onClick={handleDeleteClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>
+                                DELETE
                             </button>
-                        </a>
+                        </div>
+
                     </div>
 
-                    {/* BEGIN */}
+                    {/* ASSASSIN BUTTONS */}
                     <div>
-                        <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'>
-                            BEGIN
-                        </button>
+                        <div className={'my-4 ' + (hasJoined ? 'hidden' : 'block')}>
+                            <button className={(hasRequestedJoin ? 'hidden' : 'block') + ' flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'}
+                                onClick={handleJoinGameClicked}>
+                                JOIN GAME
+                            </button>
+                            <div className={(hasRequestedJoin ? 'block' : 'hidden') + ' flex w-44 text-center justify-center mx-auto px-10 py-2 rounded-md border-2 border-gray-200 text-white font-bold bg-gray-500'}>
+                                REQUEST PENDING...
+                            </div>
+                        </div>
+                        <div className={'my-4 ' + ((!hasJoined || isCreator || isModerator) ? 'hidden' : 'block')}>
+                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'
+                                onClick={handleLeaveClicked}>
+                                LEAVE GAME
+                            </button>
+                        </div>
                     </div>
-
-                    {/* DELETE */}
-                    <div>
-                        <button onClick={handleDeleteClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'>
-                            DELETE
-                        </button>
-                    </div>
-
 
                 </div>
+
             </Layout>
         </div>
     )

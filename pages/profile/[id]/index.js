@@ -107,7 +107,7 @@ const Profile = ({ games }) => {
                         {/* USER DETAILS */}
                         <div className="col-span-2 font-bold text-center place-self-center">
                             <div className={'text-2xl ' + (isEditing ? 'hidden' : 'block')}>
-                                {(user ? user.username : "not logged in")}
+                                {(user ? user.display_name : "not logged in")}
                             </div>
                             <input className={'border my-2 pl-2 mx-auto text-center ' + (isEditing ? 'block' : 'hidden')} type="text" defaultValue={(user ? user.username : "not logged in")}></input>
                             <div className="w-64">

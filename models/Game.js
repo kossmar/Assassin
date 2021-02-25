@@ -21,6 +21,7 @@ const GameSchema = new mongoose.Schema({
     ],
     campaign_status: String,
     benchwarmers: [String],
+    join_requests: [String],
     winner: String,
     invite_assassin_URL: String,
     invite_moderator_URL: String
