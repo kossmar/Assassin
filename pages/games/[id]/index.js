@@ -28,8 +28,6 @@ const ThisGame = () => {
     if (error) return <p>Failed to load</p>
     if (!gameResult || !user) return <p>Loading...</p>
 
-    console.log("Game returned from useGame on game page")
-    console.log(gameResult)
     return (
         <div>
             <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
@@ -110,6 +108,7 @@ const GameComponent = ({ gameResult, user }) => {
     const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
+    const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isModerator, setIsModerator] = useState(false)
     const [hasJoined, setHasJoined] = useState(false)
     const [hasRequestedJoin, setHasRequestedJoin] = useState(false)
@@ -206,7 +205,8 @@ const GameComponent = ({ gameResult, user }) => {
     }
 
     function handleLeaveClicked() {
-        leaveGame(game._id, user._id)
+        // leaveGame(game._id, user._id)
+        setIsConfirmLeaveOpen(true)
     }
 
     const formValidate = () => {
@@ -231,6 +231,18 @@ const GameComponent = ({ gameResult, user }) => {
                 })}
                 confirmCallback={(() => {
                     deleteGame(game._id)
+                })}
+            />
+            <ConfirmationPopup
+                message={"Are you sure you want to leave this game?"}
+                isOpen={isConfirmLeaveOpen}
+                cancelCallback={(() => {
+                    setIsConfirmLeaveOpen(false)
+                })}
+                confirmCallback={(() => {
+                    leaveGame(game._id, user._id, () => {
+                        setIsConfirmLeaveOpen(false)
+                    })
                 })}
             />
 

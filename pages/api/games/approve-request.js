@@ -19,24 +19,18 @@ const handler = nextConnect()
             rank_index: null
         }
         try {
-            console.log("NEW ASS")
-            console.log(newAssassin)
-            var updatedGame
+
             const game = await Game.findByIdAndUpdate(gameId, { $push: { assassins: newAssassin }, $pull: { join_requests: userId } }, { new: true })
-            console.log("game from findByIdAndUpdate")
-            console.log(game)
 
             const user = await User.findByIdAndUpdate(userId, { $push: { 'games.current': gameId } }, {
                 new: true,
                 runValidators: true,
             })
-            console.log("usah")
-            console.log(user)
+
 
             if (!game || !user) {
                 return res.status(400).json({ success: false })
             }
-
 
 
             res.status(200).json({ success: true, data: game })

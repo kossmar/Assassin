@@ -29,8 +29,6 @@ export default function JoinRequest({ name, userId, gameId }) {
             }
     
             const { data } = await res.json()
-            console.log("Updated Game Returned after Request Approved")
-            console.log(data)
             mutate(`/api/games/${gameId}`, data, false)
 
     

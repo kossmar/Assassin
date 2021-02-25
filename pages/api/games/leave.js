@@ -6,8 +6,6 @@ const handler = nextConnect()
     .put(async (req, res) => {
         const gameId = req.body.gameId
         const userId = req.body.userId
-        console.log("KRIUNT")
-        console.log(gameId + '   ' + userId)
 
         try {
             const game = await Game.findByIdAndUpdate(gameId, { $pull: { assassins: { user: userId } } }, { new: true })
