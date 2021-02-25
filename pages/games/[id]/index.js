@@ -41,6 +41,8 @@ export default ThisGame
 const GameComponent = ({ gameResult, user }) => {
 
     useEffect(() => {
+        setHasJoined(false)
+
         if (gameResult.creator === user._id) {
             setIsCreator(true)
         }

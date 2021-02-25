@@ -10,8 +10,9 @@ const handler = nextConnect()
         console.log(gameId + '   ' + userId)
 
         try {
-            const game = await Game.findByIdAndUpdate(gameId, { $pull: { assassins: { user: userId } } })
-            await User.findByIdAndUpdate(userId, { $pull: { current: gameId } })
+            const game = await Game.findByIdAndUpdate(gameId, { $pull: { assassins: { user: userId } } }, { new: true })
+            await User.findByIdAndUpdate(userId, { $pull: { 'games.current': gameId } })
+
             if (!game) {
                 return res.status(400).json({ success: false })
             }

@@ -20,7 +20,7 @@ export default function JoinRequest({ name, userId, gameId }) {
             const res = await fetch(`/api/games/approve-request`, {
                 method: 'PUT',
                 headers: jsonHeaders,
-                body: JSON.stringify(body),
+                body: JSON.stringify(body)
             })
     
             // Throw error with status code in case Fetch API req failed
