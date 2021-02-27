@@ -8,7 +8,7 @@ const GameSchema = new mongoose.Schema({
     safe_zones: String,
     moderators: [String],
     assassins: [
-        { 
+        {
             _id: false,
             user: String,
             target: String,
@@ -21,7 +21,22 @@ const GameSchema = new mongoose.Schema({
     ],
     campaign_status: String,
     benchwarmers: [String],
-    join_requests: [String],
+    join_requests: {
+        assassins: [
+            {
+                _id: false,
+                user: String,
+                role: String
+            }
+        ],
+        moderators: [
+            {
+                _id: false,
+                user: String,
+                role: String
+            }
+        ],
+    },
     winner: String,
     invite_assassin_URL: String,
     invite_moderator_URL: String

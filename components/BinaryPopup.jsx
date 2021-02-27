@@ -1,13 +1,13 @@
 import React from 'react'
 
-export default function ConfirmationPopup({ isOpen, confirmCallback, cancelCallback, message }) {
+export default function BinaryPopup({ isOpen, firstOptionTitle, firstCallback, secondOptionTitle, secondCallback, message, isWarningStyle = false }) {
 
-    function handleCancelClick() {
-        cancelCallback()
+    function handleSecondOptionClick() {
+        secondCallback()
     }
 
-    function handleConfirmClick() {
-        confirmCallback()
+    function handleFirstOptionClick() {
+        firstCallback()
     }
 
     return (
@@ -19,15 +19,15 @@ export default function ConfirmationPopup({ isOpen, confirmCallback, cancelCallb
                             {message}
                         </div>
                         <div className="grid grid-cols-2">
-                            <div onClick={handleConfirmClick} className={"my-2 cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-red-400 bg-red-400 hover:bg-red-300 hover:border-2 text-white"}>
+                            <div onClick={handleFirstOptionClick} className={"my-2 cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto " + (isWarningStyle ? "border-red-400 bg-red-400 hover:bg-red-300" : "border-blue-400 bg-blue-400 hover:bg-blue-300") + " hover:border-2 text-white"}>
                                 <div className="place-self-center">
-                                    YES
+                                    {firstOptionTitle}
                                 </div>
                             </div>
-                            <div onClick={handleCancelClick} className={"my-2 cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-blue-400 bg-blue-400 hover:bg-blue-300 hover:border-2 text-white"}>
+                            <div onClick={handleSecondOptionClick} className={"my-2 cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-blue-400 bg-blue-400 hover:bg-blue-300 hover:border-2 text-white"}>
                                 <div className="place-self-center">
-                                    CANCEL
-                                    </div>
+                                    {secondOptionTitle}
+                                </div>
                             </div>
                         </div>
                     </div>

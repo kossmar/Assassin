@@ -8,10 +8,10 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNames, getModeratorNames, deleteGame, sendJoinRequest, getRequestUserNames, leaveGame } from '../../../lib/game-worker'
+import { saveGame, getAssassinNames, getModeratorNames, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
-import ConfirmationPopup from '../../../components/ConfirmationPopup'
+import BinaryPopup from '../../../components/BinaryPopup'
 import JoinRequest from '../../../components/JoinRequest'
 
 
@@ -49,9 +49,11 @@ const GameComponent = ({ gameResult, user }) => {
             if (user._id === assassin.user) setHasJoined(true)
         })
 
-        gameResult.join_requests.forEach(userId => {
-
-            if (user._id === userId) setHasRequestedJoin(true)
+        gameResult.join_requests.assassins.forEach(request => {
+            if (user._id === request.user) setHasRequestedJoin(true)
+        })
+        gameResult.join_requests.moderators.forEach(request => {
+            if (user._id === request.user) setHasRequestedJoin(true)
         })
 
         if (gameResult.moderators.length > 0) {
@@ -89,30 +91,41 @@ const GameComponent = ({ gameResult, user }) => {
                 })
         }
 
-        if (gameResult.join_requests.length > 0) {
-            getRequestUserNames(gameResult.join_requests)
-                .then(usersWithNames => {
+        if (gameResult.join_requests.assassins.length > 0 || gameResult.join_requests.moderators.length > 0) {
+            getRequestDisplayNames(gameResult.join_requests)
+                .then(requestsWithNames => {
+                    console.log("ANUS")
+                    // const assassinRequests = requestsWithNames.map(request => {
+                    //     if (request.role === 'assassin') return request
+                    // })
+                    // const moderatorRequests = requestsWithNames.map(request => {
+                    //     if (request.role === 'moderator') return request
+                    // })
                     setGame(prevValue => {
                         return {
                             ...prevValue,
-                            join_requests: usersWithNames
+                            join_requests: requestsWithNames
                         }
                     })
+                    console.log("GAME AFTER GET REQUEST DISPLAY NAMES")
+                    console.log(game)
+
                 })
         } else {
             setGame(gameResult)
         }
-
     }, [gameResult, user])
 
     const [game, setGame] = useState(gameResult)
     const [isEditing, setIsEditing] = useState(false)
-    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
-    const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isModerator, setIsModerator] = useState(false)
     const [hasJoined, setHasJoined] = useState(false)
     const [hasRequestedJoin, setHasRequestedJoin] = useState(false)
     const [isCreator, setIsCreator] = useState(false)
+
+    const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
+    const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
+    const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false)
 
 
     function handleRoleSelect(id) {
@@ -201,7 +214,8 @@ const GameComponent = ({ gameResult, user }) => {
     }
 
     function handleJoinGameClicked() {
-        sendJoinRequest(game._id, user._id)
+        setIsJoinPopupOpen(true)
+        // sendJoinRequest(game._id, user._id)
     }
 
     function handleLeaveClicked() {
@@ -220,28 +234,50 @@ const GameComponent = ({ gameResult, user }) => {
     return (
         <div>
             <Head>
-                <title>Assassin/Game/[id]</title>
+                <title>Assassin/Game/{game._id}</title>
             </Head>
 
-            <ConfirmationPopup
+            <BinaryPopup
+                isWarningStyle
                 message={"Are you sure you want to delete this game?"}
                 isOpen={isConfirmDeleteOpen}
-                cancelCallback={(() => {
-                    setIsConfirmDeleteOpen(false)
-                })}
-                confirmCallback={(() => {
+                firstOptionTitle="YES"
+                firstCallback={(() => {
                     deleteGame(game._id)
                 })}
+                secondOptionTitle="NO"
+                secondCallback={(() => {
+                    setIsConfirmDeleteOpen(false)
+                })}
             />
-            <ConfirmationPopup
+            <BinaryPopup
+                isWarningStyle
                 message={"Are you sure you want to leave this game?"}
                 isOpen={isConfirmLeaveOpen}
-                cancelCallback={(() => {
-                    setIsConfirmLeaveOpen(false)
-                })}
-                confirmCallback={(() => {
+                firstOptionTitle="YES"
+                firstCallback={(() => {
                     leaveGame(game._id, user._id, () => {
                         setIsConfirmLeaveOpen(false)
+                    })
+                })}
+                secondOptionTitle="NO"
+                secondCallback={(() => {
+                    setIsConfirmLeaveOpen(false)
+                })}
+            />
+            <BinaryPopup
+                message={"What role would you like to join as?"}
+                isOpen={isJoinPopupOpen}
+                firstOptionTitle="ASSASSIN"
+                firstCallback={(() => {
+                    sendJoinRequest(game._id, user._id, 'assassin', () => {
+                        setIsJoinPopupOpen(false)
+                    })
+                })}
+                secondOptionTitle="MODERATOR"
+                secondCallback={(() => {
+                    sendJoinRequest(game._id, user._id, 'moderator', () => {
+                        setIsJoinPopupOpen(false)
                     })
                 })}
             />
@@ -291,10 +327,33 @@ const GameComponent = ({ gameResult, user }) => {
                         <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
                             Requests:
                         </div>
-                        {game.join_requests.map((user) => (
-                            <JoinRequest key={user._id} name={user.display_name} gameId={game._id} userId={user._id} />
-                        ))}
-                        <JoinRequest name="Glippyz" />
+                        <div className='border-blue-100 border-2 bg-gray-100 rounded-xl p-4'>
+                            <div>
+                                <div className='mt-4 w-2/6 mx-auto text-center font-bold'>
+                                    Assassins
+                                </div>
+                                <div className={'font-bold text-gray-400 ' + (game.join_requests.assassins.length === 0 ? '' : 'hidden')}>
+                                    NONE
+                                </div>
+                                {game.join_requests.assassins.map((request) => (
+                                    <JoinRequest key={request.user} role='assassin' name={request.display_name} gameId={game._id} userId={request.user} />
+                                ))}
+                            </div>
+                            <div>
+                                <div className='mt-4 w-2/6 mx-auto text-center font-bold'>
+                                    Moderators
+                                </div>
+                                <div className={'font-bold text-gray-400 ' + (game.join_requests.moderators.length === 0 ? '' : 'hidden')}>
+                                    NONE
+                                </div>
+                                {game.join_requests.moderators.map(request => (
+                                    (request.role === 'moderator' &&
+                                        <JoinRequest key={request.user} role='moderator' name={request.display_name ? request.display_name : "loading"} gameId={game._id} userId={request.user} />
+                                    )
+                                ))}
+                            </div>
+                        </div>
+
 
                     </div>
 
@@ -303,9 +362,9 @@ const GameComponent = ({ gameResult, user }) => {
                         <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
                             Moderators:
                         </div>
-                        {game.moderators.map((moderator) => {
-                            return <AssassinIcon name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
-                        })}
+                        {game.moderators.map((moderator) => (
+                            <AssassinIcon name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                        ))}
                     </div>
 
                 </div>
