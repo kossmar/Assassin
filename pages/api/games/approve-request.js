@@ -21,12 +21,9 @@ const handler = nextConnect()
         }
         try {
             var game
-            console.log("ROLE: " + role)
             switch (role) {
                 case 'assassin':
                     game = await Game.findByIdAndUpdate(gameId, { $push: { assassins: newAssassin }, join_requests: { $pull: { assassins: userId } } }, { new: true })
-                    console.log("DUNKS")
-                    console.log(game)
                     break
                 case 'moderator':
                     game = await Game.findByIdAndUpdate(gameId, { $push: { assassins: newAssassin }, $pull: { 'join_requests.moderators': userId } }, { new: true })
