@@ -8,6 +8,7 @@ const handler = nextConnect()
 
         const gameId = req.body.gameId
         const userId = req.body.userId
+        const role = req.body.role
 
         const newAssassin = {
             user: userId,
@@ -19,8 +20,15 @@ const handler = nextConnect()
             rank_index: null
         }
         try {
-
-            const game = await Game.findByIdAndUpdate(gameId, { $push: { assassins: newAssassin }, $pull: { join_requests: userId } }, { new: true })
+            var game
+            switch (role) {
+                case 'assassin':
+                    game = await Game.findByIdAndUpdate(gameId, { $push: { assassins: newAssassin }, join_requests: { $pull: { assassins: userId } } }, { new: true })
+                    break
+                case 'moderator':
+                    game = await Game.findByIdAndUpdate(gameId, { $push: { assassins: newAssassin }, $pull: { 'join_requests.moderators': userId } }, { new: true })
+                    break
+            }
 
             const user = await User.findByIdAndUpdate(userId, { $push: { 'games.current': gameId } }, {
                 new: true,

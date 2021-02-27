@@ -1,7 +1,7 @@
 import React from 'react'
 import { mutate } from 'swr'
 
-export default function JoinRequest({ name, userId, gameId }) {
+export default function JoinRequest({ name, userId, gameId, role }) {
 
 
     const jsonHeaders = {
@@ -13,7 +13,8 @@ export default function JoinRequest({ name, userId, gameId }) {
         console.log("freak one for me")
         const body = {
             gameId: gameId,
-            userId: userId
+            userId: userId,
+            role: role
         }
 
         try {
@@ -23,7 +24,6 @@ export default function JoinRequest({ name, userId, gameId }) {
                 body: JSON.stringify(body)
             })
     
-            // Throw error with status code in case Fetch API req failed
             if (!res.ok) {
                 throw new Error(res.status)
             }
@@ -35,7 +35,6 @@ export default function JoinRequest({ name, userId, gameId }) {
     
         } catch (error) {
             console.log("Failed to update game: " + error)
-            // setMessage('Failed to update game')
         }
     }
 
@@ -46,7 +45,7 @@ export default function JoinRequest({ name, userId, gameId }) {
     return (
         <div className="my-6 bg-gray-200 border rounded-lg border-gray-400">
 
-            <div className="grid grid-cols-5 m-2 bg-blue-50">
+            <div className="grid grid-cols-5 m-2 bg-blue-50 rounded-lg">
                 <div className="col-span-3">
                     {name}
                 </div>
