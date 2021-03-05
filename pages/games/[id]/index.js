@@ -13,6 +13,7 @@ import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import BinaryPopup from '../../../components/BinaryPopup'
 import JoinRequest from '../../../components/JoinRequest'
+import SinglePopup from '../../../components/SinglePopup'
 
 
 
@@ -40,6 +41,8 @@ const GameComponent = ({ gameResult, user }) => {
 
     useEffect(() => {
         setHasJoined(false)
+        setRoleSelection('assassin')
+        setIsModerator(false)
 
         if (gameResult.creator === user._id) {
             setIsCreator(true)
@@ -56,11 +59,13 @@ const GameComponent = ({ gameResult, user }) => {
             if (user._id === request.user) setHasRequestedJoin(true)
         })
 
+
         if (gameResult.moderators.length > 0) {
             gameResult.moderators.forEach((moderatorId) => {
 
                 if (user._id === moderatorId) {
                     setIsModerator(true)
+                    setRoleSelection('moderator')
                     setHasJoined(true)
                 }
             })
@@ -94,26 +99,17 @@ const GameComponent = ({ gameResult, user }) => {
         if (gameResult.join_requests.assassins.length > 0 || gameResult.join_requests.moderators.length > 0) {
             getRequestDisplayNames(gameResult.join_requests)
                 .then(requestsWithNames => {
-                    console.log("ANUS")
-                    // const assassinRequests = requestsWithNames.map(request => {
-                    //     if (request.role === 'assassin') return request
-                    // })
-                    // const moderatorRequests = requestsWithNames.map(request => {
-                    //     if (request.role === 'moderator') return request
-                    // })
                     setGame(prevValue => {
                         return {
                             ...prevValue,
                             join_requests: requestsWithNames
                         }
                     })
-                    console.log("GAME AFTER GET REQUEST DISPLAY NAMES")
-                    console.log(game)
-
                 })
         } else {
             setGame(gameResult)
         }
+
     }, [gameResult, user])
 
     const [game, setGame] = useState(gameResult)
@@ -122,21 +118,24 @@ const GameComponent = ({ gameResult, user }) => {
     const [hasJoined, setHasJoined] = useState(false)
     const [hasRequestedJoin, setHasRequestedJoin] = useState(false)
     const [isCreator, setIsCreator] = useState(false)
+    const [roleSelection, setRoleSelection] = useState('assassin')
+
 
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
     const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false)
+    const [isStartPopUpOpen, setIsStartPopUpOpen] = useState(false)
 
 
     function handleRoleSelect(id) {
         const role = id
-
-        setGame((prevValues) => {
-            return ({
-                ...prevValues,
-                creator_role: role
-            })
-        })
+        setRoleSelection(role)
+        // setGame((prevValues) => {
+        //     return ({
+        //         ...prevValues,
+        //         creator_role: role
+        //     })
+        // })
     }
 
     function updateDetails(e) {
@@ -163,38 +162,102 @@ const GameComponent = ({ gameResult, user }) => {
     function handleSaveClick(e) {
         e.preventDefault()
 
+        console.log(gameResult)
+
         const updatedGame = {
             ...game,
         }
 
-        //TODO: This won't work with multiple moderators!
-        //Probably just change game.creator to user._id
+        const isUserSelectionModerator = (roleSelection === 'moderator' ? true : false)
+        // var isUserSelectionModerator = false
 
-        if (game.creator_role === 'moderator') {
-            const updatedModeratorsArr = game.moderators
-            updatedModeratorsArr.push(game.creator)
+        // gameResult.moderators.forEach(moderator => {
+        //     if (moderator === user._id) {
+        //         isUserSelectionModerator = true
+        //     }
+        // })
 
-            const updatedAssassinsArr = game.assassins.filter((assassin) => {
-                return assassin.user != game.creator
-            })
+        var isRoleUpdated = (isModerator === isUserSelectionModerator ? false : true)
+        console.log("isModerator: " + isModerator)
+        console.log("isUserSelectionModerator: " + isUserSelectionModerator )
+        console.log("isRoleUpdated: " + isRoleUpdated)
+        if (isRoleUpdated) {
+            console.log("NUTS")
+
+            var updatedAssassinsArr
+            var updatedModeratorsArr
+
+            switch (isUserSelectionModerator) {
+                case true:
+                    console.log("YO")
+                    updatedModeratorsArr = gameResult.moderators
+                    updatedModeratorsArr.push(user._id)
+
+                    updatedAssassinsArr = gameResult.assassins.filter((assassin) => {
+                        return assassin.user != user._id
+                    })
 
 
-            updatedGame.assassins = updatedAssassinsArr
-            updatedGame.moderators = game.creator
+                    updatedGame.assassins = updatedAssassinsArr
+                    updatedGame.moderators = updatedModeratorsArr
 
-        } else {
-            const updatedAssassinsArr = game.assassins
-            updatedAssassinsArr.push({
-                user: game.creator,
-                kills: []
-            })
-            const updatedModeratorsArr = game.moderators.filter((moderator) => {
-                return moderator != game.creator
-            })
+                    break
 
-            updatedGame.assassins = updatedAssassinsArr
-            updatedGame.moderators = updatedModeratorsArr
+                case false:
+                    console.log("FRO")
+                    updatedAssassinsArr = gameResult.assassins
+                    updatedAssassinsArr.push({
+                        user: gameResult.creator,
+                        kills: [],
+                        target: '',
+                        isWaiting: false,
+                        is_alive: true,
+                        dispute: '',
+                        rank_index: 0
+                    })
+                    updatedModeratorsArr = gameResult.moderators.filter((moderator) => {
+                        return moderator != user._id
+                    })
+
+                    updatedGame.assassins = updatedAssassinsArr
+                    updatedGame.moderators = updatedModeratorsArr
+                    break
+
+                default:
+                    break
+            }
         }
+
+        // if (game.creator_role === 'moderator') {
+        //     const updatedModeratorsArr = game.moderators
+        //     updatedModeratorsArr.push(user._id)
+
+        //     const updatedAssassinsArr = game.assassins.filter((assassin) => {
+        //         return assassin.user != user._id
+        //     })
+
+
+        //     updatedGame.assassins = updatedAssassinsArr
+        //     updatedGame.moderators = updatedModeratorsArr
+
+        // } else {
+        //     const updatedAssassinsArr = game.assassins
+        //     updatedAssassinsArr.push({
+        //         user: game.creator,
+        //         kills: [],
+        //         target: '',
+        //         isWaiting: false,
+        //         is_alive: true,
+        //         dispute: '',
+        //         rank_index: 0
+        //     })
+        //     const updatedModeratorsArr = game.moderators.filter((moderator) => {
+        //         return moderator != user._id
+        //     })
+
+        //     updatedGame.assassins = updatedAssassinsArr
+        //     updatedGame.moderators = updatedModeratorsArr
+        // }
 
 
         const errs = formValidate()
@@ -215,12 +278,16 @@ const GameComponent = ({ gameResult, user }) => {
 
     function handleJoinGameClicked() {
         setIsJoinPopupOpen(true)
-        // sendJoinRequest(game._id, user._id)
     }
 
     function handleLeaveClicked() {
-        // leaveGame(game._id, user._id)
         setIsConfirmLeaveOpen(true)
+    }
+
+    function handleStartClicked() {
+        if (game.moderators.length < 1) {
+            setIsStartPopUpOpen(true)
+        }
     }
 
     const formValidate = () => {
@@ -279,6 +346,15 @@ const GameComponent = ({ gameResult, user }) => {
                     sendJoinRequest(game._id, user._id, 'moderator', () => {
                         setIsJoinPopupOpen(false)
                     })
+                })}
+            />
+
+            <SinglePopup
+                message={"You must have at least one moderator before you can begin the game"}
+                isOpen={isStartPopUpOpen}
+                optionTitle={"OK"}
+                callback={(() => {
+                    setIsStartPopUpOpen(false)
                 })}
             />
 
@@ -363,7 +439,7 @@ const GameComponent = ({ gameResult, user }) => {
                             Moderators:
                         </div>
                         {game.moderators.map((moderator) => (
-                            <AssassinIcon name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                            <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
                         ))}
                     </div>
 
@@ -377,7 +453,7 @@ const GameComponent = ({ gameResult, user }) => {
                     <EditGameDetails onChange={updateDetails} details={game} />
 
                     {/* CHOOSE ROLE */}
-                    <ChooseRole onClick={handleRoleSelect} selectedRole={game.creator_role} />
+                    <ChooseRole onClick={handleRoleSelect} selectedRole={roleSelection} />
 
                 </div>
 
@@ -394,9 +470,6 @@ const GameComponent = ({ gameResult, user }) => {
                     <div>
                         <Invite gameId={game._id} />
                     </div>
-                    <div className={(isModerator ? 'block' : 'hidden')}>
-                        <Invite isForAssassins={false} />
-                    </div>
                 </div>
 
 
@@ -405,7 +478,7 @@ const GameComponent = ({ gameResult, user }) => {
 
 
                     {/* MODERATOR BUTTONS */}
-                    <div className={'w-2/5 mx-auto space-y-4 ' + (isModerator ? 'block' : 'hidden')}>
+                    <div className={'w-2/5 mx-auto space-y-4 ' + (isModerator || isCreator ? 'block' : 'hidden')}>
 
                         {/* EDIT  */}
                         <div className={(isEditing ? 'hidden' : 'block')}>
@@ -427,7 +500,8 @@ const GameComponent = ({ gameResult, user }) => {
 
                         {/* BEGIN */}
                         <div>
-                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'>
+                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'
+                                onClick={handleStartClicked}>
                                 BEGIN
                             </button>
                         </div>
