@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Invite({ isForAssassins = true, gameId}) {
+export default function Invite({ isForAssassins = true, gameId }) {
 
     const inviteLink = 'https://assassingame.com/game/' + gameId
 
@@ -9,10 +9,13 @@ export default function Invite({ isForAssassins = true, gameId}) {
             <div>
                 <div className="flex flex-col justify-center w-96 mx-auto py-6">
 
-                    <div className='flex flex-col'>
-                        {(isForAssassins ? <label className='text-left'>Invite Assassins</label> : <label className='text-left'>Invite Moderator</label>)}
 
-                        <div className="flex">
+                    <div className='flex flex-col'>
+                        {(isForAssassins ? <label className='text-left font-bold'>Invite Players</label> : <label className='text-left'>Invite Moderator</label>)}
+
+                        {/* EMAIL INVITE */}
+
+                        {/* <div className="flex">
                             <input name='inviteEmails' className='border my-2 pl-2 w-5/6' type="text" placeholder='e-mail' />
 
                             <div className='flex m-auto w-1/6'>
@@ -24,12 +27,13 @@ export default function Invite({ isForAssassins = true, gameId}) {
                                 </button>
                             </div>
 
-                        </div>
-
+                        </div> */}
                     </div>
 
+
+                    {/* LINK INVITE */}
                     <div className='flex flex-col'>
-                        <label className='text-left'>Invite Link</label>
+                        {/* <label className='text-left'>Invite Link</label> */}
 
                         <div className='flex'>
                             <div className='overflow-scroll border rounded my-2 pl-2 py-2 w-5/6'>
