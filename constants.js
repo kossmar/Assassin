@@ -4,11 +4,24 @@ const page = {
     rules: "rules"
 }
 
-const gameStatus = {
-    CREATED: 'CREATED',
-    ACTIVE: 'ACTIVE',
-    PAUSED: 'PAUSED',
-    COMPLETE: 'COMPLETE'
+const GAME_STATUS = {
+    CREATED: {
+        STATUS: 'CREATED',
+        MESSAGE: 'MURDER AND MAYHEM AWAITS...'
+    },
+    ACTIVE: {
+        STATUS: 'ACTIVE',
+        MESSAGE: "DON'T DIE"
+    },
+    PAUSED: {
+        STATUS: 'PAUSED',
+        MESSAGE: 'PAUSED UNTIL PEOPLE FIGURE OUT THEIR ISSUES'
+    },
+    COMPLETE: {
+        STATUS: 'COMPLETE',
+        MESSAGE: "ONLY ONE PERSON DIDN'T DIE"
+    },
 }
 
-export { page, gameStatus }
+
+export { page, GAME_STATUS }

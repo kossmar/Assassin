@@ -19,7 +19,7 @@ const GameSchema = new mongoose.Schema({
             rank_index: Number
         }
     ],
-    campaign_status: String,
+    game_status: String,
     benchwarmers: [String],
     join_requests: {
         assassins: [

@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react'
 import Head from "next/head"
 import Layout from "../../../components/Layout"
 import EditGameDetails from '../../../components/EditGameDetails'
-import { gameStatus, page } from "../../../constants"
+import { GAME_STATUS, page } from "../../../constants"
 import Leaderboard from "../../../components/Leaderboard"
 import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNamesAndImages, getModeratorNamesAndImages, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame } from '../../../lib/game-worker'
+import { saveGame, getAssassinNamesAndImages, getModeratorNamesAndImages, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame, startGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import BinaryPopup from '../../../components/BinaryPopup'
 import JoinRequest from '../../../components/JoinRequest'
 import SinglePopup from '../../../components/SinglePopup'
+import GameStatus from '../../../components/GameStatus'
 
 
 
@@ -37,6 +38,7 @@ const ThisGame = () => {
 }
 
 export default ThisGame
+
 const GameComponent = ({ gameResult, user }) => {
 
     useEffect(() => {
@@ -176,17 +178,10 @@ const GameComponent = ({ gameResult, user }) => {
         }
 
         const isUserSelectionModerator = (roleSelection === 'moderator' ? true : false)
-        // var isUserSelectionModerator = false
-
-        // gameResult.moderators.forEach(moderator => {
-        //     if (moderator === user._id) {
-        //         isUserSelectionModerator = true
-        //     }
-        // })
 
         var isRoleUpdated = (isModerator === isUserSelectionModerator ? false : true)
         console.log("isModerator: " + isModerator)
-        console.log("isUserSelectionModerator: " + isUserSelectionModerator )
+        console.log("isUserSelectionModerator: " + isUserSelectionModerator)
         console.log("isRoleUpdated: " + isRoleUpdated)
         if (isRoleUpdated) {
             console.log("NUTS")
@@ -263,6 +258,12 @@ const GameComponent = ({ gameResult, user }) => {
         if (game.moderators.length < 1) {
             setIsStartPopUpOpen(true)
         }
+
+        startGame(gameResult._id)
+    }
+
+    function handlePauseClicked() {
+
     }
 
     const formValidate = () => {
@@ -337,9 +338,8 @@ const GameComponent = ({ gameResult, user }) => {
                 <section id="top">
 
                 </section>
-                <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
-                    Murder and mayhem awaits...
-                </div>
+
+                <GameStatus status={gameResult.game_status} />
 
 
                 {/* GAME DETAILS */}
@@ -373,40 +373,6 @@ const GameComponent = ({ gameResult, user }) => {
                         </div>
                     </div>
 
-                    {/* REQUESTS */}
-                    <div className={"my-20 " + (isModerator ? 'block' : 'hidden')}>
-                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
-                            Requests:
-                        </div>
-                        <div className='border-blue-100 border-2 bg-gray-100 rounded-xl p-4'>
-                            <div>
-                                <div className='mt-4 w-2/6 mx-auto text-center font-bold'>
-                                    Assassins
-                                </div>
-                                <div className={'font-bold text-gray-400 ' + (game.join_requests.assassins.length === 0 ? '' : 'hidden')}>
-                                    NONE
-                                </div>
-                                {game.join_requests.assassins.map((request) => (
-                                    <JoinRequest key={request.user} role='assassin' name={request.display_name} gameId={game._id} userId={request.user} />
-                                ))}
-                            </div>
-                            <div>
-                                <div className='mt-4 w-2/6 mx-auto text-center font-bold'>
-                                    Moderators
-                                </div>
-                                <div className={'font-bold text-gray-400 ' + (game.join_requests.moderators.length === 0 ? '' : 'hidden')}>
-                                    NONE
-                                </div>
-                                {game.join_requests.moderators.map(request => (
-                                    (request.role === 'moderator' &&
-                                        <JoinRequest key={request.user} role='moderator' name={request.display_name ? request.display_name : "loading"} gameId={game._id} userId={request.user} />
-                                    )
-                                ))}
-                            </div>
-                        </div>
-
-
-                    </div>
 
                     {/* MODERATOR */}
                     <div className='mt-16'>
@@ -438,6 +404,39 @@ const GameComponent = ({ gameResult, user }) => {
                         Assassins:
                     </div>
                     <Leaderboard assassins={game.assassins} />
+                </div>
+
+                {/* REQUESTS */}
+                <div className={"my-20 w-96 mx-auto py-16 space-y-10 text-center " + (isModerator ? 'block' : 'hidden')}>
+                    <div className='w-2/6 mx-auto text-center font-bold underline'>
+                        Requests:
+                    </div>
+                    <div className='border-blue-100 border-2 bg-gray-100 rounded-xl p-4'>
+                        <div>
+                            <div className='w-2/6 mx-auto text-center font-bold'>
+                                Assassins
+                            </div>
+                            <div className={'font-bold text-gray-400 ' + (game.join_requests.assassins.length === 0 ? '' : 'hidden')}>
+                                NONE
+                            </div>
+                            {game.join_requests.assassins.map((request) => (
+                                <JoinRequest key={request.user} role='assassin' name={request.display_name} gameId={game._id} userId={request.user} />
+                            ))}
+                        </div>
+                        <div>
+                            <div className='mt-4 w-2/6 mx-auto text-center font-bold'>
+                                Moderators
+                            </div>
+                            <div className={'font-bold text-gray-400 ' + (game.join_requests.moderators.length === 0 ? '' : 'hidden')}>
+                                NONE
+                            </div>
+                            {game.join_requests.moderators.map(request => (
+                                (request.role === 'moderator' &&
+                                    <JoinRequest key={request.user} role='moderator' name={request.display_name ? request.display_name : "loading"} gameId={game._id} userId={request.user} />
+                                )
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* INVITES */}
@@ -474,10 +473,18 @@ const GameComponent = ({ gameResult, user }) => {
                         </div>
 
                         {/* BEGIN */}
-                        <div>
+                        <div className={(gameResult.game_status === GAME_STATUS.CREATED.STATUS ? 'block' : 'hidden')}>
                             <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'
                                 onClick={handleStartClicked}>
                                 BEGIN
+                            </button>
+                        </div>
+
+                        {/* PAUSE */}
+                        <div className={(gameResult.game_status != GAME_STATUS.PAUSED.STATUS || gameResult.game_status === GAME_STATUS.CREATED.STATUS  ? 'block' : 'hidden')}>
+                            <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-yellow-200 hover:border-black text-white font-bold bg-yellow-500'
+                                onClick={handlePauseClicked}>
+                                PAUSE
                             </button>
                         </div>
 
