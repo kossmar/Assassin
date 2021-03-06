@@ -8,7 +8,7 @@ import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNames, getModeratorNames, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame } from '../../../lib/game-worker'
+import { saveGame, getAssassinNamesAndImages, getModeratorNamesAndImages, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import BinaryPopup from '../../../components/BinaryPopup'
@@ -44,14 +44,17 @@ const GameComponent = ({ gameResult, user }) => {
         setRoleSelection('assassin')
         setIsModerator(false)
 
+        // Check if User is game creator
         if (gameResult.creator === user._id) {
             setIsCreator(true)
         }
 
+        // Check if user is waiting for approval to join
         gameResult.assassins.forEach((assassin) => {
             if (user._id === assassin.user) setHasJoined(true)
         })
 
+        // Check if User has requested to join the game
         gameResult.join_requests.assassins.forEach(request => {
             if (user._id === request.user) setHasRequestedJoin(true)
         })
@@ -60,6 +63,7 @@ const GameComponent = ({ gameResult, user }) => {
         })
 
 
+        // Check for moderators and retrieve display names
         if (gameResult.moderators.length > 0) {
             gameResult.moderators.forEach((moderatorId) => {
 
@@ -70,7 +74,7 @@ const GameComponent = ({ gameResult, user }) => {
                 }
             })
 
-            getModeratorNames(gameResult.moderators)
+            getModeratorNamesAndImages(gameResult.moderators)
                 .then(modifiedModerators => {
                     setGame(prevValue => {
                         return {
@@ -83,9 +87,10 @@ const GameComponent = ({ gameResult, user }) => {
             setGame(gameResult)
         }
 
+        //  Check for assassins and retrieve display names
         if (gameResult.assassins.length > 0) {
 
-            getAssassinNames(gameResult.assassins)
+            getAssassinNamesAndImages(gameResult.assassins)
                 .then(assassinsWithNames => {
                     setGame(prevValue => {
                         return {
@@ -96,6 +101,7 @@ const GameComponent = ({ gameResult, user }) => {
                 })
         }
 
+        // Check for join requests and retrieve display names
         if (gameResult.join_requests.assassins.length > 0 || gameResult.join_requests.moderators.length > 0) {
             getRequestDisplayNames(gameResult.join_requests)
                 .then(requestsWithNames => {
@@ -106,6 +112,7 @@ const GameComponent = ({ gameResult, user }) => {
                         }
                     })
                 })
+
         } else {
             setGame(gameResult)
         }
@@ -227,38 +234,6 @@ const GameComponent = ({ gameResult, user }) => {
                     break
             }
         }
-
-        // if (game.creator_role === 'moderator') {
-        //     const updatedModeratorsArr = game.moderators
-        //     updatedModeratorsArr.push(user._id)
-
-        //     const updatedAssassinsArr = game.assassins.filter((assassin) => {
-        //         return assassin.user != user._id
-        //     })
-
-
-        //     updatedGame.assassins = updatedAssassinsArr
-        //     updatedGame.moderators = updatedModeratorsArr
-
-        // } else {
-        //     const updatedAssassinsArr = game.assassins
-        //     updatedAssassinsArr.push({
-        //         user: game.creator,
-        //         kills: [],
-        //         target: '',
-        //         isWaiting: false,
-        //         is_alive: true,
-        //         dispute: '',
-        //         rank_index: 0
-        //     })
-        //     const updatedModeratorsArr = game.moderators.filter((moderator) => {
-        //         return moderator != user._id
-        //     })
-
-        //     updatedGame.assassins = updatedAssassinsArr
-        //     updatedGame.moderators = updatedModeratorsArr
-        // }
-
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {

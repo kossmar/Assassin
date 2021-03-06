@@ -19,7 +19,7 @@ export default function Leaderboard({ assassins }) {
                     return (<AssassinIcon key={assassin.user} name={assassin.user} image={assassin.image} kills={assassin.kills} displayKills={displayKills} isWinning={(index===0 ? true : false)} />)
                 })} */}
                 {assassinList.map((assassin, index) => {
-                    return (<AssassinIcon key={assassin.user} name={assassin.display_name} image={assassin.image} kills={assassin.kills} displayKills={displayKills} isWinning={(index===0 ? true : false)} />)
+                    return (<AssassinIcon key={assassin.user} name={assassin.display_name} image={(assassin.profile_image ? assassin.profile_image : '/images/assassin.png')} kills={assassin.kills} displayKills={displayKills} isWinning={(index===0 ? true : false)} />)
                 })}
             </div>
         </div>
