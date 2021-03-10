@@ -257,13 +257,14 @@ const GameComponent = ({ gameResult, user }) => {
     function handleStartClicked() {
         if (game.moderators.length < 1) {
             setIsStartPopUpOpen(true)
+        } else {
+            startGame(gameResult)
         }
 
-        startGame(gameResult._id)
     }
 
     function handlePauseClicked() {
-
+        // Restrict some things
     }
 
     const formValidate = () => {
@@ -403,7 +404,7 @@ const GameComponent = ({ gameResult, user }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins:
                     </div>
-                    <Leaderboard assassins={game.assassins} />
+                    <Leaderboard assassins={game.assassins} forModerator={isModerator ? true : false} />
                 </div>
 
                 {/* REQUESTS */}
@@ -481,7 +482,7 @@ const GameComponent = ({ gameResult, user }) => {
                         </div>
 
                         {/* PAUSE */}
-                        <div className={(gameResult.game_status != GAME_STATUS.PAUSED.STATUS || gameResult.game_status === GAME_STATUS.CREATED.STATUS  ? 'block' : 'hidden')}>
+                        <div className={(gameResult.game_status === GAME_STATUS.PAUSED.STATUS || gameResult.game_status === GAME_STATUS.CREATED.STATUS ? 'hidden' : 'block')}>
                             <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-yellow-200 hover:border-black text-white font-bold bg-yellow-500'
                                 onClick={handlePauseClicked}>
                                 PAUSE

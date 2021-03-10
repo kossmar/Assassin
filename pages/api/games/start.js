@@ -1,19 +1,30 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../models/Game'
 import nextConnect from 'next-connect'
-import { gameStatus } from '../../../constants'
+import { GAME_STATUS } from '../../../constants'
 
 const handler = nextConnect()
     .put(async (req, res) => {
-        const gameId = req.body.gameId
-        console.log("gameId: " + gameId)
+
+        const game = req.body.game
+        const targetArr = [...game.assassins]
+
+
+        game.assassins.forEach(assassin => {
+            // select random target from targetArr, set it as target for this assassin and remove it from targetArr
+            const index = Math.floor(Math.random() * targetArr.length)
+            const target = targetArr[index];
+            assassin.target = target
+            targetArr.splice(index, 1)
+        })
+
         try {
-            const game = await Game.findByIdAndUpdate(gameId, { campaign_status: gameStatus.ACTIVE }, {
+            const returnedGame = await Game.findByIdAndUpdate(game._id, { assassins: game.assassins, game_status: GAME_STATUS.ACTIVE.STATUS }, {
                 new: true,
                 runValidators: true
             })
 
-            if (!game) {
+            if (!returnedGame) {
                 res.status(400).json({ success: false })
             }
 
@@ -25,4 +36,4 @@ const handler = nextConnect()
         }
     })
 
-    export default handler
+export default handler
