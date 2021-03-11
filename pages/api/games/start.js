@@ -9,14 +9,55 @@ const handler = nextConnect()
         const game = req.body.game
         const targetArr = [...game.assassins]
 
+        // console.log("TARGET ARRAY: ")
+        // console.log(targetArr)
 
-        game.assassins.forEach(assassin => {
-            // select random target from targetArr, set it as target for this assassin and remove it from targetArr
-            const index = Math.floor(Math.random() * targetArr.length)
-            const target = targetArr[index];
-            assassin.target = target
-            targetArr.splice(index, 1)
-        })
+
+        // game.assassins.forEach(assassin => {
+        //     // select random target from targetArr, set it as target for this assassin and remove it from targetArr
+        //     const index = Math.floor(Math.random() * targetArr.length)
+        //     const target = targetArr[index];
+        //     console.log("INDEX: " + index)
+        //     console.log("TARGET:")
+        //     console.log(target)
+        //     assassin.target = target.user
+        //     targetArr.splice(index, 1)
+        // })
+
+        // console.log("ASSASSINS W/ TARGETS")
+        // console.log(game.assassins)
+
+        // Shift Target Array by one index to prevent final assassin being left with themselves as a target 
+        const movingTarget = targetArr.splice(0, 1)
+        targetArr.push(...movingTarget)
+
+        // Loop through Assassin Array
+        for (var x = 0; x < game.assassins.length; x++) {
+            const assassin = game.assassins[x]
+
+            // Search for a Target to assign
+            for (var i = 0; i < targetArr.length; i++) {
+                const target = targetArr[i]
+
+                // Check if conditions are met for Target and Assassin
+                if (assassin.user != target.user && target.target != assassin.user && assassin.user != target.target) {
+
+                    // assign Target to Assassin
+                    assassin.target = target.user
+                    // Remove Target from Target Array so that it can not be assigned twice
+                    targetArr.splice(i, 1)
+
+                    // duplicate the assignment in the Target Array so that two assassins do not target eachother 
+                    for (var a = 0; a < targetArr.length; a++) {
+                        if (targetArr[a].user === assassin.user) {
+                            targetArr[a].target = target.user
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
 
         try {
             const returnedGame = await Game.findByIdAndUpdate(game._id, { assassins: game.assassins, game_status: GAME_STATUS.ACTIVE.STATUS }, {

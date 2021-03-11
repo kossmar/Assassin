@@ -4,16 +4,17 @@ import { GAME_STATUS } from '../constants'
 
 export default function Leaderboard({ assassins, forModerator = false }) {
     console.log(assassins)
-    // useEffect(() => {
-    //     // If moderator, sort assassins by target
-    //     if (forModerator || status != GAME_STATUS.CREATED.STATUS) {
-    //         const sortedAssassinsArr = findTargets(assassins[0], assassins, [])
-    //         setAssassinList(sortedAssassinsArr)
-    //     } else {
-    //         setAssassinList(assassins)
-    //     }
+    useEffect(() => {
+        // If moderator, sort assassins by target
+        if (forModerator || status != GAME_STATUS.CREATED.STATUS) {
+            const sortedAssassinsArr = findTargets(assassins[0], assassins, [])
+            setAssassinList(sortedAssassinsArr)
+        } else {
+            setAssassinList(assassins)
+        }
 
-    // }, [assassins])
+    }, [assassins])
+
     useEffect(() => {
         setAssassinList(assassins)
     })
