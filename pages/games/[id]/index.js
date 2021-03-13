@@ -30,6 +30,9 @@ const ThisGame = () => {
     if (error) return <p>Failed to load</p>
     if (!gameResult || !user) return <p>Loading...</p>
 
+    console.log("GAME STRAIGHT FROM DB")
+    console.log(gameResult)
+
     return (
         <div>
             <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
@@ -91,9 +94,13 @@ const GameComponent = ({ gameResult, user }) => {
 
         //  Check for assassins and retrieve display names
         if (gameResult.assassins.length > 0) {
-
-            getAssassinNamesAndImages(gameResult.assassins)
+            console.log("Assassins from gameResult")
+            console.log(gameResult.assassins)
+            getAssassinNamesAndImages([...gameResult.assassins])
                 .then(assassinsWithNames => {
+                        
+                    console.log("assassinsWithNames received at index ")
+                    console.log(assassinsWithNames)
                     setGame(prevValue => {
                         return {
                             ...prevValue,
@@ -257,13 +264,14 @@ const GameComponent = ({ gameResult, user }) => {
     function handleStartClicked() {
         if (game.moderators.length < 1) {
             setIsStartPopUpOpen(true)
+        } else {
+            startGame(gameResult)
         }
 
-        startGame(gameResult._id)
     }
 
     function handlePauseClicked() {
-
+        // Restrict some things
     }
 
     const formValidate = () => {
@@ -403,7 +411,7 @@ const GameComponent = ({ gameResult, user }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins:
                     </div>
-                    <Leaderboard assassins={game.assassins} />
+                    <Leaderboard assassins={game.assassins} forModerator={isModerator} status={gameResult.game_status} />
                 </div>
 
                 {/* REQUESTS */}
@@ -481,7 +489,7 @@ const GameComponent = ({ gameResult, user }) => {
                         </div>
 
                         {/* PAUSE */}
-                        <div className={(gameResult.game_status != GAME_STATUS.PAUSED.STATUS || gameResult.game_status === GAME_STATUS.CREATED.STATUS  ? 'block' : 'hidden')}>
+                        <div className={(gameResult.game_status === GAME_STATUS.PAUSED.STATUS || gameResult.game_status === GAME_STATUS.CREATED.STATUS ? 'hidden' : 'block')}>
                             <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-yellow-200 hover:border-black text-white font-bold bg-yellow-500'
                                 onClick={handlePauseClicked}>
                                 PAUSE

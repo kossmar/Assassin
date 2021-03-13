@@ -1,6 +1,5 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../models/Game'
-import Pet from '../../../models/Pet'
 import User from '../../../models/User'
 
 

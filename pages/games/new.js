@@ -4,9 +4,8 @@ import Head from "next/head"
 import Layout from "../../components/Layout"
 import EditGameDetails from '../../components/EditGameDetails'
 import { page } from "../../constants"
-import Link from "next/link"
 import ChooseRole from '../../components/ChooseRole'
-import { gameStatus } from '../../constants'
+import { GAME_STATUS } from '../../constants'
 import { useUser } from '../../lib/hooks/useUser'
 
 export default function NewGame() {
@@ -158,7 +157,7 @@ export default function NewGame() {
             creator: user._id,
             moderators: (selectedRole === 'moderator' ? [user._id] : []),
             assassins: assassinsArr,
-            game_status: gameStatus.CREATED,
+            game_status: GAME_STATUS.CREATED.STATUS,
             creator_role: selectedRole
         }
 
