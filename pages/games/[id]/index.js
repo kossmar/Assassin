@@ -30,6 +30,9 @@ const ThisGame = () => {
     if (error) return <p>Failed to load</p>
     if (!gameResult || !user) return <p>Loading...</p>
 
+    console.log("GAME STRAIGHT FROM DB")
+    console.log(gameResult)
+
     return (
         <div>
             <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
@@ -91,9 +94,13 @@ const GameComponent = ({ gameResult, user }) => {
 
         //  Check for assassins and retrieve display names
         if (gameResult.assassins.length > 0) {
-
-            getAssassinNamesAndImages(gameResult.assassins)
+            console.log("Assassins from gameResult")
+            console.log(gameResult.assassins)
+            getAssassinNamesAndImages([...gameResult.assassins])
                 .then(assassinsWithNames => {
+                        
+                    console.log("assassinsWithNames received at index ")
+                    console.log(assassinsWithNames)
                     setGame(prevValue => {
                         return {
                             ...prevValue,
@@ -404,7 +411,7 @@ const GameComponent = ({ gameResult, user }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins:
                     </div>
-                    <Leaderboard assassins={game.assassins} forModerator={isModerator ? true : false} />
+                    <Leaderboard assassins={game.assassins} forModerator={isModerator ? true : false } status={gameResult.game_status} />
                 </div>
 
                 {/* REQUESTS */}
