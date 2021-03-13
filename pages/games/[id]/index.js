@@ -411,7 +411,7 @@ const GameComponent = ({ gameResult, user }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
                         Assassins:
                     </div>
-                    <Leaderboard assassins={game.assassins} forModerator={isModerator ? true : false } status={gameResult.game_status} />
+                    <Leaderboard assassins={game.assassins} forModerator={isModerator} status={gameResult.game_status} />
                 </div>
 
                 {/* REQUESTS */}
