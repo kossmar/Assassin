@@ -45,7 +45,7 @@ export default function Leaderboard({ assassins, forModerator = false, status })
     // HTML 
     return (
         <div>
-            <div className={'mt-8 grid w-5/6 mx-auto ' + (forModerator ? 'grid-cols-6' : 'grid-cols-3')}>
+            <div className={'mt-8 grid w-5/6 mx-auto ' + ((forModerator && status != GAME_STATUS.CREATED.STATUS) ? 'grid-cols-6' : 'grid-cols-3')}>
                 {/* {assassinList.sort((a, b) => {
                     return b.kills.length - a.kills.length
                 }).map((assassin, index) => {
@@ -55,8 +55,7 @@ export default function Leaderboard({ assassins, forModerator = false, status })
                     return (
                         <>
                             <AssassinIcon key={assassin.user} name={assassin.display_name} image={(assassin.profile_image ? assassin.profile_image : '/images/assassin.png')} kills={assassin.kills} displayKills={displayKills} isWinning={(index === 0 ? true : false)} />
-                            
-                            {(forModerator && <img src='/images/arrow.png' className='ml-4 place-self-center'></img>)}
+                            {((forModerator && status != GAME_STATUS.CREATED.STATUS) && <img src='/images/arrow.png' className='ml-4 place-self-center'></img>)}
                         </>
                     )
                 })}
