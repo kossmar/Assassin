@@ -1,10 +1,10 @@
-const page = {
+export const page = {
     home: "home",
     about: "about",
     rules: "rules"
 }
 
-const GAME_STATUS = {
+export const GAME_STATUS = {
     CREATED: {
         STATUS: 'CREATED',
         MESSAGE: 'MURDER AND MAYHEM AWAITS...'
@@ -23,5 +23,25 @@ const GAME_STATUS = {
     },
 }
 
+export const ASSASSIN_STATUS = {
+    ALIVE: 'ALIVE',
+    PURGATORY: 'PURGATORY',
+    DEAD: 'DEAD',
+    DISPUTE: 'DISPUTE'
+}
 
-export { page, GAME_STATUS }
+export const ASSASSIN_ICON_USE = {
+    PROFILE: 'PROFILE',
+    ROLE: 'ROLE',
+    TARGET: {
+        ALIVE: 'TARGET_ALIVE',
+        CONFIRM: 'TARGET_CONFIRM',
+        WAITING: 'TARGET_WAITING',
+    },
+    DISPLAY: 'DISPLAY'
+}
+
+
+
+
+// export { page, GAME_STATUS, ASSASSIN_ICON_USE}

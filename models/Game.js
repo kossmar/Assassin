@@ -14,7 +14,7 @@ const GameSchema = new mongoose.Schema({
             target: String,
             is_waiting: Boolean,
             kills: [String],
-            is_alive: Boolean,
+            status: String,
             dispute: String,
             rank_index: Number
         }

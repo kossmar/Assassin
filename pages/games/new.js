@@ -234,7 +234,7 @@ function createAssassins() {
             target: '',
             is_waiting: false,
             kills: [],
-            is_alive: true,
+            status: "ALIVE",
             dispute: '',
             rank_index: 0,
         }
