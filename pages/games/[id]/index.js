@@ -15,6 +15,7 @@ import BinaryPopup from '../../../components/BinaryPopup'
 import JoinRequest from '../../../components/JoinRequest'
 import SinglePopup from '../../../components/SinglePopup'
 import GameStatus from '../../../components/GameStatus'
+import Target from '../../../components/Target'
 
 
 
@@ -98,7 +99,7 @@ const GameComponent = ({ gameResult, user }) => {
             console.log(gameResult.assassins)
             getAssassinNamesAndImages([...gameResult.assassins])
                 .then(assassinsWithNames => {
-                        
+
                     console.log("assassinsWithNames received at index ")
                     console.log(assassinsWithNames)
                     setGame(prevValue => {
@@ -146,12 +147,6 @@ const GameComponent = ({ gameResult, user }) => {
     function handleRoleSelect(id) {
         const role = id
         setRoleSelection(role)
-        // setGame((prevValues) => {
-        //     return ({
-        //         ...prevValues,
-        //         creator_role: role
-        //     })
-        // })
     }
 
     function updateDetails(e) {
@@ -187,18 +182,13 @@ const GameComponent = ({ gameResult, user }) => {
         const isUserSelectionModerator = (roleSelection === 'moderator' ? true : false)
 
         var isRoleUpdated = (isModerator === isUserSelectionModerator ? false : true)
-        console.log("isModerator: " + isModerator)
-        console.log("isUserSelectionModerator: " + isUserSelectionModerator)
-        console.log("isRoleUpdated: " + isRoleUpdated)
         if (isRoleUpdated) {
-            console.log("NUTS")
 
             var updatedAssassinsArr
             var updatedModeratorsArr
 
             switch (isUserSelectionModerator) {
                 case true:
-                    console.log("YO")
                     updatedModeratorsArr = gameResult.moderators
                     updatedModeratorsArr.push(user._id)
 
@@ -213,7 +203,6 @@ const GameComponent = ({ gameResult, user }) => {
                     break
 
                 case false:
-                    console.log("FRO")
                     updatedAssassinsArr = gameResult.assassins
                     updatedAssassinsArr.push({
                         user: gameResult.creator,
@@ -380,18 +369,19 @@ const GameComponent = ({ gameResult, user }) => {
                             </div>
                         </div>
                     </div>
+                </div>
 
+                {/* TARGET */}
+                <Target />
 
-                    {/* MODERATOR */}
-                    <div className='mt-16'>
-                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
-                            Moderators:
-                        </div>
-                        {game.moderators.map((moderator) => (
-                            <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
-                        ))}
+                {/* MODERATOR */}
+                <div className='my-16'>
+                    <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
+                        Moderators:
                     </div>
-
+                    {game.moderators.map((moderator) => (
+                        <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                    ))}
                 </div>
 
 
