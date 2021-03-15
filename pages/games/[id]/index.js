@@ -31,9 +31,6 @@ const ThisGame = () => {
     if (error) return <p>Failed to load</p>
     if (!gameResult || !user) return <p>Loading...</p>
 
-    console.log("GAME STRAIGHT FROM DB")
-    console.log(gameResult)
-
     return (
         <div>
             <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
@@ -93,21 +90,44 @@ const GameComponent = ({ gameResult, user }) => {
             setGame(gameResult)
         }
 
-        //  Check for assassins and retrieve display names
+        //  Check for assassins and retrieve display names, then set target
         if (gameResult.assassins.length > 0) {
-            console.log("Assassins from gameResult")
             console.log(gameResult.assassins)
             getAssassinNamesAndImages([...gameResult.assassins])
                 .then(assassinsWithNames => {
-
-                    console.log("assassinsWithNames received at index ")
-                    console.log(assassinsWithNames)
                     setGame(prevValue => {
                         return {
                             ...prevValue,
                             assassins: assassinsWithNames
                         }
                     })
+                    // Set Target
+                    if (!isModerator && game.game_status === GAME_STATUS.ACTIVE.STATUS) {
+                        console.log("UH")
+                        console.log(assassinsWithNames)
+                        for (var a = 0; a <= assassinsWithNames.length; a++) {
+
+                            // find the current user's assassin object
+                            const currentAssassin = assassinsWithNames[a]
+                            console.log(currentAssassin.user)
+                            if (currentAssassin.user === user._id) {
+                                console.log("BUH")
+
+                                for (var t = 0; t <= assassinsWithNames.length; t++) {
+
+                                    // Find the current user's target object
+                                    const target = assassinsWithNames[t]
+                                    if (currentAssassin.target === target.user) {
+                                        console.log("TARGET")
+                                        console.log(target)
+                                        setTarget(target)
+                                        break
+                                    }
+                                }
+                                break
+                            }
+                        }
+                    }
                 })
         }
 
@@ -122,10 +142,10 @@ const GameComponent = ({ gameResult, user }) => {
                         }
                     })
                 })
-
         } else {
             setGame(gameResult)
         }
+
 
     }, [gameResult, user])
 
@@ -136,6 +156,7 @@ const GameComponent = ({ gameResult, user }) => {
     const [hasRequestedJoin, setHasRequestedJoin] = useState(false)
     const [isCreator, setIsCreator] = useState(false)
     const [roleSelection, setRoleSelection] = useState('assassin')
+    const [target, setTarget] = useState(null)
 
 
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
@@ -372,7 +393,8 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* TARGET */}
-                <Target />
+                {(!isModerator && <Target target={target} />)}
+
 
                 {/* MODERATOR */}
                 <div className='my-16'>
