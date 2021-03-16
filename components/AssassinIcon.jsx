@@ -34,6 +34,11 @@ export default function AssassinIcon({ name, image = '/images/assassin.png', kil
                 {/* IMAGE CIRCLE*/}
                 <div onClick={(handleClick)} className={'rounded-full border-8 ' + (isInteractive && !isProfile ? (isSelected ? 'border-red-600' : 'border-transparent hover:border-red-400') : 'border-transparent')}>
 
+                    {/* TARGET.WAITING X */}
+                    <div className={(state === TARGET.WAITING ? 'absolute' : 'hidden') + ' ml-6 mt-6'}>
+                        <img src='/images/cross.png' />
+                    </div>
+
                     {/* HOVER 4 Image Select */}
                     <div className={(isProfile ? (isInteractive ? "absolute cursor-pointer " : " hidden ") : "hidden ") + (isInteractive ? 'block' : 'hidden') + " content-center w-28 h-28 rounded-full bg-transparent text-transparent hover:text-white hover:bg-gray-200 hover:bg-opacity-75 "}>
                         <div className="place-self-center mt-10">
@@ -52,8 +57,11 @@ export default function AssassinIcon({ name, image = '/images/assassin.png', kil
                     <div className='flex rounded-full border-4 border-black overflow-hidden h-28'>
                         <img src={image} className='object-cover place-self-center min-h-full min-w-full' />
                     </div>
+
                 </div>
                 <div className='font-bold italic'>{name}</div>
+
+
             </div>
         </div>
 
