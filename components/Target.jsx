@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { mutate } from 'swr'
 import AssassinIcon from '../components/AssassinIcon'
-import { GAME_STATUS, ASSASSIN_ICON_USE } from '../constants'
+import { GAME_STATUS, ASSASSIN_ICON_USE, ASSASSIN_STATUS } from '../constants'
 
 
-export default function Target({ target }) {
+export default function Target({ target, gameId }) {
 
     const { ALIVE, CONFIRM, WAITING } = ASSASSIN_ICON_USE.TARGET
+    const { ALIVE: TARGET_ALIVE, PURGATORY: TARGET_PURGATORY } = ASSASSIN_STATUS
     // console.log(ALIVE)
 
     const [name, setName] = useState(null)
@@ -18,6 +20,14 @@ export default function Target({ target }) {
             setName(target.display_name)
             setImage((target.profile_image ? target.profile_image : '/images/assassin.png'))
         }
+        setState(() => {
+            switch (target.state) {
+                case TARGET_ALIVE:
+                    return ALIVE
+                case TARGET_PURGATORY:
+                    return WAITING
+            }
+        })
     })
 
     function handleKillClick() {
@@ -25,8 +35,34 @@ export default function Target({ target }) {
         setState(CONFIRM)
     }
 
-    function handleConfirmClick() {
+    async function handleConfirmClick() {
         console.log('confirm')
+
+        const body = JSON.stringify({
+            gameId: gameId,
+            target: target
+        })
+
+        try {
+            const res = await fetch('/api/games/confirm-kill-assassin', {
+                method: "PUT",
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: body
+            })
+
+            if (!res.ok) {
+                throw new Error(res.status)
+            }
+
+            const { data } = await res.json()
+            mutate(`/api/games/${gameId}`, data, false)
+
+        } catch (error) {
+            console.log("Failed to confirm kill by assassin - client side: ")
+        }
     }
 
     function handleCancelClick() {

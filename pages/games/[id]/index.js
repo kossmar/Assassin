@@ -387,7 +387,7 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* TARGET */}
-                {(!isModerator && <Target target={target} />)}
+                {(!isModerator && <Target target={target} gameId={gameResult._id} />)}
 
 
                 {/* MODERATOR */}
