@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Head from "next/head"
 import Layout from "../../../components/Layout"
 import EditGameDetails from '../../../components/EditGameDetails'
-import { GAME_STATUS, page } from "../../../constants"
+import { ASSASSIN_STATUS, GAME_STATUS, page } from "../../../constants"
 import Leaderboard from "../../../components/Leaderboard"
 import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
@@ -16,8 +16,9 @@ import JoinRequest from '../../../components/JoinRequest'
 import SinglePopup from '../../../components/SinglePopup'
 import GameStatus from '../../../components/GameStatus'
 import Target from '../../../components/Target'
+import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
 
-
+const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
 
 const ThisGame = () => {
 
@@ -54,7 +55,11 @@ const GameComponent = ({ gameResult, user }) => {
 
         // Check if user is waiting for approval to join
         gameResult.assassins.forEach((assassin) => {
-            if (user._id === assassin.user) setHasJoined(true)
+            if (user._id === assassin.user) {
+                setHasJoined(true)
+                setCurrentAssassin(assassin)
+                setAssassinStatus(assassin.status)
+            }
         })
 
         // Check if User has requested to join the game
@@ -140,7 +145,6 @@ const GameComponent = ({ gameResult, user }) => {
             setGame(gameResult)
         }
 
-
     }, [gameResult, user])
 
     const [game, setGame] = useState(gameResult)
@@ -151,8 +155,11 @@ const GameComponent = ({ gameResult, user }) => {
     const [isCreator, setIsCreator] = useState(false)
     const [roleSelection, setRoleSelection] = useState('assassin')
     const [target, setTarget] = useState(null)
+    const [currentAssassin, setCurrentAssassin] = useState(null)
+    const [assassinStatus, setAssassinStatus] = useState(ALIVE)
 
 
+    // Pop Up State
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
     const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false)
@@ -292,6 +299,7 @@ const GameComponent = ({ gameResult, user }) => {
                 <title>Assassin/Game/{game._id}</title>
             </Head>
 
+            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} />
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
