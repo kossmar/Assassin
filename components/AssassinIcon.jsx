@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ASSASSIN_ICON_USE } from '../constants'
 import { useDetectOutsideClick } from '../lib/hooks/useDetectOutsideClick'
 
-export default function AssassinIcon({ name, image = '/images/assassin.png', kills, isWinning, displayKills, isInteractive = false, clickCallback, isSelected = false, id, isProfile, state }) {
+export default function AssassinIcon({ assassin, name, image = '/images/assassin.png', kills, isWinning, displayKills, isInteractive = false, clickCallback, isSelected = false, id, isProfile, state, disabled = false }) {
 
     const { ROLE, TARGET, DISPLAY, PROFILE } = ASSASSIN_ICON_USE
 
@@ -47,7 +47,7 @@ export default function AssassinIcon({ name, image = '/images/assassin.png', kil
                     </div>
 
                     {/* HOVER for Confirm Kill */}
-                    <div className={(state === TARGET.ALIVE ? 'absolute' : "hidden") + " cursor-pointer content-center w-28 h-28 rounded-full bg-transparent text-transparent hover:text-red-700 hover:bg-red-200 hover:bg-opacity-75"}>
+                    <div className={(state === TARGET.ALIVE && !disabled ? 'absolute' : "hidden") + " cursor-pointer content-center w-28 h-28 rounded-full bg-transparent text-transparent hover:text-red-700 hover:bg-red-200 hover:bg-opacity-75"}>
                         <div className="place-self-center mt-10">
                             KILL
                         </div>

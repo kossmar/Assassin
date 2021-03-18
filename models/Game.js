@@ -16,7 +16,15 @@ const GameSchema = new mongoose.Schema({
             kills: [String],
             status: String,
             dispute: String,
-            rank_index: Number
+            rank_index: Number // seems useless
+        }
+    ],
+    graveyard: [
+        {
+            _id: false,
+            user: String,
+            kills: [String],
+            death_rank
         }
     ],
     game_status: String,

@@ -41,6 +41,12 @@ export const ASSASSIN_ICON_USE = {
     DISPLAY: 'DISPLAY'
 }
 
+export const DID_YOU_DIE = {
+    MESSAGE: 'DID THIS PERSON KILL YOU?',
+    CONFIRM: 'YES',
+    DISPUTE: 'DISPUTE',
+}
+
 
 
 

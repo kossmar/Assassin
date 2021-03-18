@@ -4,7 +4,7 @@ import AssassinIcon from '../components/AssassinIcon'
 import { GAME_STATUS, ASSASSIN_ICON_USE, ASSASSIN_STATUS } from '../constants'
 
 
-export default function Target({ target, gameId }) {
+export default function Target({ target, gameId, disabled }) {
 
     const { ALIVE, CONFIRM, WAITING } = ASSASSIN_ICON_USE.TARGET
     const { ALIVE: TARGET_ALIVE, PURGATORY: TARGET_PURGATORY } = ASSASSIN_STATUS
@@ -120,7 +120,7 @@ export default function Target({ target, gameId }) {
                         :
                         <div>THIS PERSON LOOKS DEAD</div>
                     )}
-                    <AssassinIcon name={name} image={image} isInteractive={false} state={state} clickCallback={handleKillClick} />
+                    <AssassinIcon name={name} image={image} isInteractive={false} state={state} clickCallback={handleKillClick} disabled={disabled}/>
                 </div>
 
                 {/* 'CONFIRM' STATE BUTTONS */}

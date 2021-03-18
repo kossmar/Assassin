@@ -123,6 +123,18 @@ const GameComponent = ({ gameResult, user }) => {
                                         break
                                     }
                                 }
+
+                                // If current user is in PURGATORY, find killer - to be passed to DID YOU DIE popup
+                                if (currentAssassin.status = PURGATORY) {
+                                    for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                        const killer = assassinsWithNames[k]
+                                        if (killer.target === currentAssassin.user) {
+                                            setKiller(killer)
+                                            break
+                                        }
+                                    }
+                                }
+
                                 break
                             }
                         }
@@ -164,6 +176,7 @@ const GameComponent = ({ gameResult, user }) => {
     const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false)
     const [isStartPopUpOpen, setIsStartPopUpOpen] = useState(false)
+    const [killer, setKiller] = useState(null)
 
 
     function handleRoleSelect(id) {
@@ -299,7 +312,9 @@ const GameComponent = ({ gameResult, user }) => {
                 <title>Assassin/Game/{game._id}</title>
             </Head>
 
-            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} />
+            {/* DID YOU DIE? */}
+            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentUser={user} gameId={gameResult._id} />
+
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
@@ -395,7 +410,7 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* TARGET */}
-                {(!isModerator && <Target target={target} gameId={gameResult._id} />)}
+                {(!isModerator && <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} />)}
 
 
                 {/* MODERATOR */}
