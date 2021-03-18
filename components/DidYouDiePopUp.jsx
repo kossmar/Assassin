@@ -3,7 +3,7 @@ import { mutate } from 'swr'
 import AssassinIcon from '../components/AssassinIcon'
 import { DID_YOU_DIE } from '../constants'
 
-export default function DidYouDiePopUp({ isOpen, killer, currentUser, gameId }) {
+export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId }) {
 
     console.log("killer")
     console.log(killer)
@@ -15,7 +15,7 @@ export default function DidYouDiePopUp({ isOpen, killer, currentUser, gameId }) 
         const body = JSON.stringify({
             gameId: gameId,
             killer: killer,
-            target: currentUser
+            target: currentAssassin
         })
 
         try {

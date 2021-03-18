@@ -16,12 +16,23 @@ const handler = nextConnect()
 
         try {
             // Update Target Status to DEAD
-            await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': target._id }, { $set: { 'assassins.$.status': DEAD } }, { new: true })
+            // await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': target._id }, { $set: { 'assassins.$.status': DEAD } }, { new: true })
 
             // Update Killer kills array to include Target
-            const game = await Game.findOneAndUpdate({ _id: killer.user, 'assassins.user': killer.user }, { $push: { 'assassins.$.kills': target._id } }, { new: true })
+            const game1 = await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': killer.user }, { $push: { 'assassins.$.kills': target.user } }, { new: true })
 
-            if (game) return res.status(400).json({ success: false })
+            // Push new dead guy to Graveyard array
+            const deadGuy = {
+                user: target.user,
+                kills: target.kills,
+                death_rank: (game1.graveyard.length + 1)
+            }
+            await Game.findByIdAndUpdate(gameId, { $push: { graveyard: deadGuy } }, { new: true })
+
+            // Remove Target from Assassins array
+            const game = await Game.findOneAndUpdate({ _id: gameId }, { $pull: { assassins: { user: target.user } } })
+
+            if (!game) return res.status(400).json({ success: false })
 
             res.status(200).json({ success: true, data: game })
 

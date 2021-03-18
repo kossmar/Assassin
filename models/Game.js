@@ -24,7 +24,7 @@ const GameSchema = new mongoose.Schema({
             _id: false,
             user: String,
             kills: [String],
-            death_rank
+            death_rank: Number // equals graveyard.length + 1
         }
     ],
     game_status: String,

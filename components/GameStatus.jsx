@@ -25,7 +25,7 @@ export default function GameStatus({ status }) {
 
     return (
         <>
-            <div className='pt-10 w-2/6 mx-auto text-center font-bold'>
+            <div className='pt-10 w-2/6 mx-auto text-center font-bold text-2xl'>
                 {statusMessage}
             </div>
         </>
