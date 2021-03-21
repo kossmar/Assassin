@@ -45,6 +45,7 @@ const GameSchema = new mongoose.Schema({
             }
         ],
     },
+    disputes: [String],
     winner: String,
     invite_assassin_URL: String,
     invite_moderator_URL: String

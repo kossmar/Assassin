@@ -154,8 +154,7 @@ const GameComponent = ({ gameResult, user }) => {
 
         // Check for Graveyard and retrieve display names and images
         if (gameResult.graveyard.length > 0) {
-            console.log("GRAVEYARD")
-            console.log(gameResult.graveyard)
+
             getGraveyardNamesAndImages(gameResult.graveyard)
                 .then(graveyardWithNamesAndImages => {
                     setGame(prevValue => {
@@ -164,8 +163,7 @@ const GameComponent = ({ gameResult, user }) => {
                             graveyard: graveyardWithNamesAndImages
                         }
                     })
-                    console.log("GRAVEYARD WITH NAMES")
-                    console.log(graveyardWithNamesAndImages)
+
                 })
         }
 
