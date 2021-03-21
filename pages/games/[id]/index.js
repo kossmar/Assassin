@@ -17,6 +17,7 @@ import SinglePopup from '../../../components/SinglePopup'
 import GameStatus from '../../../components/GameStatus'
 import Target from '../../../components/Target'
 import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
+import DisputePopUp from '../../../components/DisputePopUp'
 
 const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
 
@@ -132,8 +133,32 @@ const GameComponent = ({ gameResult, user }) => {
                                     }
                                 }
 
-                                // If current user is in PURGATORY, find killer - to be passed to DID YOU DIE popup
-                                if (currentAssassin.status = PURGATORY) {
+                                switch (currentAssassin.status) {
+                                    // If current user is in PURGATORY, set killer
+                                    case PURGATORY:
+                                        for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                            const killer = assassinsWithNames[k]
+                                            if (killer.target === currentAssassin.user) {
+                                                setKiller(killer)
+                                                break
+                                            }
+                                        }
+                                        break
+
+                                    // If current user is in DISPUTE, only set killer if killer is also in dispute, otherwise you would be setting an assassin who hasn't struck yet.
+                                    case DISPUTE:
+                                        for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                            const killer = assassinsWithNames[k]
+                                            if (killer.target === currentAssassin.user && killer.status === DISPUTE) {
+                                                setKiller(killer)
+                                                break
+                                            }
+                                        }
+                                        break
+                                    default:
+                                        break
+                                }
+                                if (currentAssassin.status === PURGATORY || currentAssassin.status === DISPUTE) {
                                     for (var k = 0; k <= assassinsWithNames.length; k++) {
                                         const killer = assassinsWithNames[k]
                                         if (killer.target === currentAssassin.user) {
@@ -340,7 +365,7 @@ const GameComponent = ({ gameResult, user }) => {
 
             {/* DID YOU DIE? */}
             <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
-
+            <DisputePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.DISPUTE)} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)}/>
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
@@ -403,7 +428,7 @@ const GameComponent = ({ gameResult, user }) => {
                 <GameStatus status={gameResult.game_status} />
                 <div className={'text-center text-red-600 ' + (isDead ? 'block' : 'hidden')}>
                     OOPS... YOU'RE DEAD
-                </div>  
+                </div>
 
                 {/* GAME DETAILS */}
                 <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
