@@ -2,6 +2,7 @@ import dbConnect from '../../../utils/dbConnect'
 import nextConnect from 'next-connect'
 import Game from '../../../models/Game'
 import User from '../../../models/User'
+import { ASSASSIN_STATUS } from '../../../constants'
 
 const handler = nextConnect()
     .put(async (req, res) => {
@@ -15,7 +16,7 @@ const handler = nextConnect()
             target: null,
             is_waiting: false,
             kills: [],
-            is_alive: true,
+            status: ASSASSIN_STATUS.ALIVE,
             dispute: null,
             rank_index: null
         }

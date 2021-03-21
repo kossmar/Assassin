@@ -14,9 +14,17 @@ const GameSchema = new mongoose.Schema({
             target: String,
             is_waiting: Boolean,
             kills: [String],
-            is_alive: Boolean,
+            status: String,
             dispute: String,
-            rank_index: Number
+            rank_index: Number // seems useless
+        }
+    ],
+    graveyard: [
+        {
+            _id: false,
+            user: String,
+            kills: [String],
+            death_rank: Number // equals graveyard.length + 1
         }
     ],
     game_status: String,
@@ -37,6 +45,7 @@ const GameSchema = new mongoose.Schema({
             }
         ],
     },
+    disputes: [String],
     winner: String,
     invite_assassin_URL: String,
     invite_moderator_URL: String

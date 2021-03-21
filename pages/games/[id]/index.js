@@ -2,21 +2,23 @@ import React, { useState, useEffect } from 'react'
 import Head from "next/head"
 import Layout from "../../../components/Layout"
 import EditGameDetails from '../../../components/EditGameDetails'
-import { GAME_STATUS, page } from "../../../constants"
+import { ASSASSIN_STATUS, GAME_STATUS, page } from "../../../constants"
 import Leaderboard from "../../../components/Leaderboard"
 import Invite from "../../../components/Invite"
 import ChooseRole from '../../../components/ChooseRole'
 import AssassinIcon from '../../../components/AssassinIcon'
 import { useRouter } from 'next/router'
-import { saveGame, getAssassinNamesAndImages, getModeratorNamesAndImages, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame, startGame } from '../../../lib/game-worker'
+import { saveGame, getAssassinNamesAndImages, getModeratorNamesAndImages, getGraveyardNamesAndImages, deleteGame, sendJoinRequest, getRequestDisplayNames, leaveGame, startGame } from '../../../lib/game-worker'
 import { useGame } from '../../../lib/hooks/useGame'
 import { useUser } from '../../../lib/hooks/useUser'
 import BinaryPopup from '../../../components/BinaryPopup'
 import JoinRequest from '../../../components/JoinRequest'
 import SinglePopup from '../../../components/SinglePopup'
 import GameStatus from '../../../components/GameStatus'
+import Target from '../../../components/Target'
+import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
 
-
+const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
 
 const ThisGame = () => {
 
@@ -29,9 +31,6 @@ const ThisGame = () => {
 
     if (error) return <p>Failed to load</p>
     if (!gameResult || !user) return <p>Loading...</p>
-
-    console.log("GAME STRAIGHT FROM DB")
-    console.log(gameResult)
 
     return (
         <div>
@@ -56,7 +55,17 @@ const GameComponent = ({ gameResult, user }) => {
 
         // Check if user is waiting for approval to join
         gameResult.assassins.forEach((assassin) => {
-            if (user._id === assassin.user) setHasJoined(true)
+            if (user._id === assassin.user) {
+                setHasJoined(true)
+                setCurrentAssassin(assassin)
+                setAssassinStatus(assassin.status)
+            }
+        })
+        gameResult.graveyard.forEach((deadGuy) => {
+            if (user._id === deadGuy.user) {
+                setHasJoined(true)
+                setIsDead(true)
+            }
         })
 
         // Check if User has requested to join the game
@@ -92,21 +101,69 @@ const GameComponent = ({ gameResult, user }) => {
             setGame(gameResult)
         }
 
-        //  Check for assassins and retrieve display names
+        //  Check for assassins and retrieve display names, then set target
         if (gameResult.assassins.length > 0) {
-            console.log("Assassins from gameResult")
-            console.log(gameResult.assassins)
             getAssassinNamesAndImages([...gameResult.assassins])
                 .then(assassinsWithNames => {
-                        
-                    console.log("assassinsWithNames received at index ")
-                    console.log(assassinsWithNames)
                     setGame(prevValue => {
                         return {
                             ...prevValue,
                             assassins: assassinsWithNames
                         }
                     })
+                    // Set Target
+                    if (!isModerator && game.game_status === GAME_STATUS.ACTIVE.STATUS) {
+                        for (var a = 0; a < assassinsWithNames.length; a++) {
+
+                            // find the current user's assassin object
+                            const currentAssassin = assassinsWithNames[a]
+
+                            if (currentAssassin.user === user._id) {
+
+                                setCurrentAssassin(currentAssassin)
+
+                                for (var t = 0; t <= assassinsWithNames.length; t++) {
+
+                                    // Find the current user's target object
+                                    const target = assassinsWithNames[t]
+                                    if (currentAssassin.target === target.user) {
+                                        setTarget(target)
+                                        break
+                                    }
+                                }
+
+                                // If current user is in PURGATORY, find killer - to be passed to DID YOU DIE popup
+                                if (currentAssassin.status = PURGATORY) {
+                                    for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                        const killer = assassinsWithNames[k]
+                                        if (killer.target === currentAssassin.user) {
+                                            setKiller(killer)
+                                            break
+                                        }
+                                    }
+                                }
+
+                                break
+                            }
+
+
+                        }
+                    }
+                })
+        }
+
+        // Check for Graveyard and retrieve display names and images
+        if (gameResult.graveyard.length > 0) {
+
+            getGraveyardNamesAndImages(gameResult.graveyard)
+                .then(graveyardWithNamesAndImages => {
+                    setGame(prevValue => {
+                        return {
+                            ...prevValue,
+                            graveyard: graveyardWithNamesAndImages
+                        }
+                    })
+
                 })
         }
 
@@ -121,7 +178,6 @@ const GameComponent = ({ gameResult, user }) => {
                         }
                     })
                 })
-
         } else {
             setGame(gameResult)
         }
@@ -135,8 +191,14 @@ const GameComponent = ({ gameResult, user }) => {
     const [hasRequestedJoin, setHasRequestedJoin] = useState(false)
     const [isCreator, setIsCreator] = useState(false)
     const [roleSelection, setRoleSelection] = useState('assassin')
+    const [target, setTarget] = useState(null)
+    const [currentAssassin, setCurrentAssassin] = useState(null)
+    const [assassinStatus, setAssassinStatus] = useState(ALIVE)
+    const [killer, setKiller] = useState(null)
+    const [isDead, setIsDead] = useState(false)
 
 
+    // Pop Up State
     const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false)
     const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false)
@@ -146,12 +208,6 @@ const GameComponent = ({ gameResult, user }) => {
     function handleRoleSelect(id) {
         const role = id
         setRoleSelection(role)
-        // setGame((prevValues) => {
-        //     return ({
-        //         ...prevValues,
-        //         creator_role: role
-        //     })
-        // })
     }
 
     function updateDetails(e) {
@@ -187,18 +243,13 @@ const GameComponent = ({ gameResult, user }) => {
         const isUserSelectionModerator = (roleSelection === 'moderator' ? true : false)
 
         var isRoleUpdated = (isModerator === isUserSelectionModerator ? false : true)
-        console.log("isModerator: " + isModerator)
-        console.log("isUserSelectionModerator: " + isUserSelectionModerator)
-        console.log("isRoleUpdated: " + isRoleUpdated)
         if (isRoleUpdated) {
-            console.log("NUTS")
 
             var updatedAssassinsArr
             var updatedModeratorsArr
 
             switch (isUserSelectionModerator) {
                 case true:
-                    console.log("YO")
                     updatedModeratorsArr = gameResult.moderators
                     updatedModeratorsArr.push(user._id)
 
@@ -213,7 +264,6 @@ const GameComponent = ({ gameResult, user }) => {
                     break
 
                 case false:
-                    console.log("FRO")
                     updatedAssassinsArr = gameResult.assassins
                     updatedAssassinsArr.push({
                         user: gameResult.creator,
@@ -288,6 +338,9 @@ const GameComponent = ({ gameResult, user }) => {
                 <title>Assassin/Game/{game._id}</title>
             </Head>
 
+            {/* DID YOU DIE? */}
+            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
+
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
@@ -348,7 +401,9 @@ const GameComponent = ({ gameResult, user }) => {
                 </section>
 
                 <GameStatus status={gameResult.game_status} />
-
+                <div className={'text-center text-red-600 ' + (isDead ? 'block' : 'hidden')}>
+                    OOPS... YOU'RE DEAD
+                </div>  
 
                 {/* GAME DETAILS */}
                 <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
@@ -380,18 +435,23 @@ const GameComponent = ({ gameResult, user }) => {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* TARGET */}
+                {(currentAssassin != null &&
+                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} />
+                )}
 
 
-                    {/* MODERATOR */}
-                    <div className='mt-16'>
-                        <div className='mt-16 w-2/6 mx-auto text-center font-bold underline'>
-                            Moderators:
-                        </div>
-                        {game.moderators.map((moderator) => (
-                            <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
-                        ))}
+
+                {/* MODERATOR */}
+                <div className='my-10'>
+                    <div className='mt-16= w-2/6 mx-auto text-center font-bold underline text-2xl'>
+                        MODERATORS:
                     </div>
-
+                    {game.moderators.map((moderator) => (
+                        <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                    ))}
                 </div>
 
 
@@ -407,11 +467,19 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* ASSASSINS */}
-                <div className='my-10'>
-                    <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline'>
-                        Assassins:
+                <div className='my-20'>
+                    <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
+                        ASSASSINS:
                     </div>
                     <Leaderboard assassins={game.assassins} forModerator={isModerator} status={gameResult.game_status} />
+                </div>
+
+                {/* GRAVEYARD */}
+                <div className='my-20'>
+                    <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
+                        GRAVEYARD:
+                    </div>
+                    <Leaderboard assassins={game.graveyard} forModerator={isModerator} status={gameResult.game_status} />
                 </div>
 
                 {/* REQUESTS */}
