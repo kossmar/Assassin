@@ -136,7 +136,7 @@ const GameComponent = ({ gameResult, user }) => {
                                 switch (currentAssassin.status) {
                                     // If current user is in PURGATORY, set killer
                                     case PURGATORY:
-                                        for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                        for (var k = 0; k < assassinsWithNames.length; k++) {
                                             const killer = assassinsWithNames[k]
                                             if (killer.target === currentAssassin.user) {
                                                 setKiller(killer)
@@ -147,7 +147,7 @@ const GameComponent = ({ gameResult, user }) => {
 
                                     // If current user is in DISPUTE, only set killer if killer is also in dispute, otherwise you would be setting an assassin who hasn't struck yet.
                                     case DISPUTE:
-                                        for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                        for (var k = 0; k < assassinsWithNames.length; k++) {
                                             const killer = assassinsWithNames[k]
                                             if (killer.target === currentAssassin.user && killer.status === DISPUTE) {
                                                 setKiller(killer)
@@ -364,6 +364,7 @@ const GameComponent = ({ gameResult, user }) => {
             </Head>
 
             {/* DID YOU DIE? */}
+            
             <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
             <DisputePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.DISPUTE)} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)}/>
             <BinaryPopup
