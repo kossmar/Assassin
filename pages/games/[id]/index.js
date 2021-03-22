@@ -18,6 +18,7 @@ import GameStatus from '../../../components/GameStatus'
 import Target from '../../../components/Target'
 import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
 import DisputePopUp from '../../../components/DisputePopUp'
+import DisputeList from '../../../components/DisputeList'
 
 const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
 
@@ -364,9 +365,9 @@ const GameComponent = ({ gameResult, user }) => {
             </Head>
 
             {/* DID YOU DIE? */}
-            
+
             <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
-            <DisputePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.DISPUTE)} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)}/>
+            <DisputePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.DISPUTE)} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)} />
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
@@ -432,7 +433,7 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* GAME DETAILS */}
-                <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
+                <div className={'w-96 mx-auto pt-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
                     <div className='border-yellow-200 border-2 bg-gray-100 space-y-10 py-10 rounded-xl'>
                         <div>
                             <div className='font-bold'>
@@ -469,18 +470,6 @@ const GameComponent = ({ gameResult, user }) => {
                 )}
 
 
-
-                {/* MODERATOR */}
-                <div className='my-10'>
-                    <div className='mt-16= w-2/6 mx-auto text-center font-bold underline text-2xl'>
-                        MODERATORS:
-                    </div>
-                    {game.moderators.map((moderator) => (
-                        <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
-                    ))}
-                </div>
-
-
                 {/* EDIT GAME DETAILS */}
                 <div className={(isEditing ? 'block' : 'hidden')}>
 
@@ -491,6 +480,9 @@ const GameComponent = ({ gameResult, user }) => {
                     <ChooseRole onClick={handleRoleSelect} selectedRole={roleSelection} />
 
                 </div>
+
+                {/* DISPUTES */}
+                <DisputeList disputesArr={gameResult.disputes}/>
 
                 {/* ASSASSINS */}
                 <div className='my-20'>
@@ -508,9 +500,19 @@ const GameComponent = ({ gameResult, user }) => {
                     <Leaderboard assassins={game.graveyard} forModerator={isModerator} status={gameResult.game_status} />
                 </div>
 
+                {/* MODERATOR */}
+                <div className='my-10'>
+                    <div className='mt-16= w-2/6 mx-auto text-center font-bold underline text-2xl'>
+                        MODERATORS:
+                    </div>
+                    {game.moderators.map((moderator) => (
+                        <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                    ))}
+                </div>
+
                 {/* REQUESTS */}
                 <div className={"my-20 w-96 mx-auto py-16 space-y-10 text-center " + (isModerator ? 'block' : 'hidden')}>
-                    <div className='w-2/6 mx-auto text-center font-bold underline'>
+                    <div className='w-2/6 mx-auto text-center font-bold underline text-2xl'>
                         Requests:
                     </div>
                     <div className='border-blue-100 border-2 bg-gray-100 rounded-xl p-4'>

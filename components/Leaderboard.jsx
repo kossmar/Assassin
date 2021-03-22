@@ -4,6 +4,10 @@ import { GAME_STATUS } from '../constants'
 
 export default function Leaderboard({ assassins, forModerator = false, status }) {
 
+
+    // FIXME: Remove arrows for GRAVEYARD
+    // FIXME: Shrink arrows on smaller screens
+
     //STATE
     const [assassinList, setAssassinList] = useState(assassins)
     const displayKills = false

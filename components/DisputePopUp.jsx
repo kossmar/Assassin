@@ -6,15 +6,14 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
     const [isTarget, setIsTarget] = useState(true)
     const [opponent, setOpponent] = useState(null)
     const [response, setResponse] = useState('')
-    const [killerHasResponded, setKillerHasResponded] = useState(false)
+    const [dispute, setDispute] = useState(null)
 
     useEffect(() => {
 
         if (disputeId) {
             getCurrentDispute(disputeId)
                 .then(foundDispute => {
-                    console.log(foundDispute.killerHasResponded)
-                    setKillerHasResponded(foundDispute.killerHasResponded)
+                    setDispute(foundDispute)
                     if (foundDispute.target.user === currentAssassin.user) {
                         setIsTarget(true)
                         setOpponent(killer)
@@ -30,7 +29,6 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
 
     function handleTextAreaChange(e) {
         setResponse(e.target.value)
-        console.log(response)
     }
 
     async function handleSubmitResponse() {
@@ -64,10 +62,10 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                 // FOR TARGET 
                                 <div className=''>
                                     <div className='text-center'>
-                                        <div>
+                                        <div className>
                                             YOU HAVE STARTED A DISPUTE WITH:
                                         </div>
-                                        <div className='font-bold'>
+                                        <div className='font-bold text-2xl'>
                                             {(opponent ? opponent.display_name : 'LOADING...')}
                                         </div>
                                     </div>
@@ -87,13 +85,13 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                         <div>
                                             YOU ARE IN A DISPUTE WITH:
                                         </div>
-                                        <div className='font-bold'>
+                                        <div className='font-bold text-2xl'>
                                             {(opponent ? opponent.display_name : 'LOADING...')}
                                         </div>
                                     </div>
 
                                     {/* Killer HAS responded */}
-                                    <div className={(killerHasResponded ? 'block' : 'hidden')}>
+                                    <div className={(dispute.killerHasResponded ? 'block' : 'hidden')}>
                                         <div className='text-center text-blue-700'>
                                             your response has been submitted
                                         </div>
@@ -106,7 +104,7 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                     </div>
 
                                     {/* Killer has NOT responded */}
-                                    <div className={(killerHasResponded ? 'hidden' : 'block')}>
+                                    <div className={(dispute.killerHasResponded ? 'hidden' : 'block')}>
                                         <div>
                                             <div className='text-center'>
                                                 State yer' case!
