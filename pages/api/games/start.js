@@ -9,24 +9,6 @@ const handler = nextConnect()
         const game = req.body.game
         const targetArr = [...game.assassins]
 
-        // console.log("TARGET ARRAY: ")
-        // console.log(targetArr)
-
-
-        // game.assassins.forEach(assassin => {
-        //     // select random target from targetArr, set it as target for this assassin and remove it from targetArr
-        //     const index = Math.floor(Math.random() * targetArr.length)
-        //     const target = targetArr[index];
-        //     console.log("INDEX: " + index)
-        //     console.log("TARGET:")
-        //     console.log(target)
-        //     assassin.target = target.user
-        //     targetArr.splice(index, 1)
-        // })
-
-        // console.log("ASSASSINS W/ TARGETS")
-        // console.log(game.assassins)
-
         // Shift Target Array by one index to prevent final assassin being left with themselves as a target 
         const movingTarget = targetArr.splice(0, 1)
         targetArr.push(...movingTarget)

@@ -224,7 +224,8 @@ export default function NewGame() {
 const usersArr = [
     '602b00ec1d66220c2a813b8a',
     '602b010e1d66220c2a813b8b',
-    '602b01361d66220c2a813b8c'
+    '602b01361d66220c2a813b8c',
+    '6025b3144fdfe637afe77bbe',
 ]
 
 function createAssassins() {

@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { getDisputes } from '../lib/dispute-worker'
 
-export default function DisputeList({ disputesArr }) {
+export default function DisputeList({ disputesArr, callback }) {
 
-    const [disputes, setDisputes] = useState(['a'])
+    const [disputes, setDisputes] = useState([])
 
     useEffect(() => {
         getDisputes(disputesArr)
             .then((foundDisputes) => {
-                console.log('FOUND DISPUTES')
-                console.log(foundDisputes)
                 setDisputes(foundDisputes)
             })
-    }, disputesArr, disputes)
+    }, [disputesArr])
 
-    async function handleModerateClick() {
-
+    async function handleAdjudicateClick(dispute) {
+        callback(dispute)
     }
 
     return (
@@ -25,8 +23,8 @@ export default function DisputeList({ disputesArr }) {
                     Disputes:
                 </div>
 
-                {disputes.map(dispute => (
-                    <div className="grid place-items-center grid-cols-2 m-2 bg-white bg-opacity-70 rounded-lg p-2">
+                {disputes.map((dispute) => (
+                    <div key={dispute._id} className="grid place-items-center grid-cols-2 m-2 bg-white bg-opacity-70 rounded-lg p-2">
                         <div className="mx-0">
                             <div className='uppercase'>
                                 {dispute.killer.display_name}
@@ -39,7 +37,7 @@ export default function DisputeList({ disputesArr }) {
                             </div>
                         </div>
                         <div>
-                            <button onClick={handleModerateClick} className="rounded p-2 bg-green-300 hover:bg-green-400 border-2 border-transparent hover:text-white hover:border-black">
+                            <button onClick={(() => handleAdjudicateClick(dispute))} className="rounded p-2 bg-green-300 hover:bg-green-400 border-2 border-transparent hover:text-white hover:border-black">
                                 ADJUDICATE
                             </button>
                         </div>

@@ -47,6 +47,8 @@ export default async function handler(req, res) {
         case 'DELETE' /* Delete a model by its ID */:
             try {
 
+                // TODO: delete any existing disputes
+                
                 const foundUsers = await User.find({ 'games.current': id })
                 console.log(foundUsers)
 

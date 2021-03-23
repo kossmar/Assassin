@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { getCurrentDispute, submitDisputeResponse } from '../lib/dispute-worker'
+import { getCurrentDispute, submitDisputeResponse, killTarget } from '../lib/dispute-worker'
 
-export default function DisputePopUp({ killer, target, currentAssassin, disputeId, isOpen = false }) {
+export default function DisputePopUp({ killer, target, currentAssassin, disputeId, isOpen = false, targetCancelCallback }) {
 
     const [isTarget, setIsTarget] = useState(true)
     const [opponent, setOpponent] = useState(null)
@@ -12,20 +12,29 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
 
         if (disputeId) {
             getCurrentDispute(disputeId)
-                .then(foundDispute => {
-                    setDispute(foundDispute)
-                    if (foundDispute.target.user === currentAssassin.user) {
-                        setIsTarget(true)
-                        setOpponent(killer)
-                    } else {
-                        setIsTarget(false)
-                        setOpponent(target)
+                .then(foundDisputeArray => {
+                    console.log('FOUND DISPUTE disputePopUp')
+                    console.log(foundDisputeArray)
+                    // TODO: make error catching here to ensure there is only 1 item in the array
+                    if (foundDisputeArray.length === 1) {
+                        const currentDispute = foundDisputeArray[0]
+                        setDispute(currentDispute)
+                        if (currentDispute.target.user === currentAssassin.user) {
+                            setIsTarget(true)
+                            console.log('KILLER disputePopUp.jsx')
+                            console.log(killer)
+                            setOpponent(killer)
+                        } else {
+                            setIsTarget(false)
+                            setOpponent(target)
+                        }
                     }
+
                 })
         }
         // FIXME: running useEffect only when killer is updated. This seems incorrect but the call to the db to find the dispute only gets called once so ¯\_(ツ)_/¯
 
-    }, [killer])
+    }, [killer, isOpen])
 
     function handleTextAreaChange(e) {
         setResponse(e.target.value)
@@ -41,6 +50,18 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
 
     function handleRevokeKill() {
 
+    }
+
+    function handleTargetCancelDispute() {
+        if (!dispute) {
+            console.log('no dispute found')
+            return
+        }
+        // TODO: add a confirmation thing
+        killTarget(dispute)
+        .then(() => {
+            targetCancelCallback()
+        })
     }
 
     return (
@@ -60,7 +81,7 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                 ?
 
                                 // FOR TARGET 
-                                <div className=''>
+                                <div>
                                     <div className='text-center'>
                                         <div className>
                                             YOU HAVE STARTED A DISPUTE WITH:
@@ -71,7 +92,7 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                     </div>
                                     <div className='place-content-center flex'>
                                         <button className='w-44 px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'
-                                        >
+                                            onClick={handleTargetCancelDispute}>
                                             CANCEL
                                         </button>
                                     </div>
@@ -80,7 +101,7 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                 :
 
                                 // FOR KILLER
-                                <div className=''>
+                                <div>
                                     <div className='text-center'>
                                         <div>
                                             YOU ARE IN A DISPUTE WITH:

@@ -9,15 +9,17 @@ const handler = nextConnect()
     .put(async (req, res) => {
         const { dispute } = req.body
         console.log(dispute)
-        
+
         try {
 
             // FIXME: probably a way to change two subdocuments in the same call
-            const game = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.target }, { $set: { 'assassins.$.status': DEAD } }, { new: true })
-            if (!game) return res.status(400).json({ success: false })
+            // const game = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.target }, { $set: { 'assassins.$.status': DEAD } }, { new: true })
+            // if (!game) return res.status(400).json({ success: false })
 
-            const game2 = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.killer }, { $set: { 'assassins.$.status': ALIVE } }, { new: true })
-            if (!game2) return res.status(400).json({ success: false })
+            const game1 = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.killer }, { $set: { 'assassins.$.status': ALIVE }, $push: { 'assassin.$.kills': dispute.target.user } }, { new: true })
+            if (!game1) return res.status(400).json({ success: false })
+
+            const game
 
             const dispute = await Dispute.findByIdAndDelete()
 
