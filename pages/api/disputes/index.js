@@ -6,8 +6,7 @@ const handler = nextConnect()
     .get(async (req, res) => {
         try {
             const disputes = await Dispute.find({ _id: req.query.disputes.split(',') })
-            console.log('DISPUTEs')
-            console.log(disputes)
+
             if (!disputes) return res.status(400).json({ success: false })
 
             // create an array of user IDs to request User objects from the db

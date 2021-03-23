@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getCurrentDispute, submitDisputeResponse, killTarget } from '../lib/dispute-worker'
+import { getCurrentDispute, submitDisputeResponse, killTarget, saveTarget } from '../lib/dispute-worker'
 
 export default function DisputePopUp({ killer, target, currentAssassin, disputeId, isOpen = false, targetCancelCallback }) {
 
@@ -44,12 +44,24 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
         submitDisputeResponse(response, disputeId)
             .then(success => {
                 // TODO: if success is false, show an error message
-                setKillerHasResponded(true)
+                setDispute(prevValue => {
+                    return {
+                        ...prevValue,
+                        killerHasResponded: true
+                    }
+                })
             })
     }
 
     function handleRevokeKill() {
-
+        saveTarget(dispute)
+            .then(success => {
+                if (success === true) {
+                    targetCancelCallback()
+                } else {
+                    console.log('Could not revoked kill - handleRevokeKill - DisputePopUp.jsx')
+                }
+            })
     }
 
     function handleTargetCancelDispute() {
@@ -59,9 +71,9 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
         }
         // TODO: add a confirmation thing
         killTarget(dispute)
-        .then(() => {
-            targetCancelCallback()
-        })
+            .then(() => {
+                targetCancelCallback()
+            })
     }
 
     return (

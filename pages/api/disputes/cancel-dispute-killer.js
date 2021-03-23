@@ -9,10 +9,12 @@ const handler = nextConnect()
     .put(async (req, res) => {
         const { dispute, isKiller } = req.body
         console.log(dispute)
-        
+
         try {
 
             // FIXME: probably a way to change two subdocuments in the same call
+            // TODO: remove this whole file. Should be handled by save-target.js so that one file can handle a killer cancelling a dispute as well as a moderator deciding to save a target
+
             const game = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.target }, { $set: { 'assassins.$.status': ALIVE } }, { new: true })
             if (!game) return res.status(400).json({ success: false })
 

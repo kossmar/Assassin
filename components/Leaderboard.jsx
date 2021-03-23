@@ -2,27 +2,27 @@ import React, { useEffect, useState } from 'react'
 import AssassinIcon from './AssassinIcon'
 import { GAME_STATUS } from '../constants'
 
-export default function Leaderboard({ assassins, forModerator = false, status, graveyard=false}) {
+
+export default function Leaderboard({ assassins, forModerator, status, graveyard }) {
 
 
     // FIXME: Remove arrows for GRAVEYARD
     // FIXME: Shrink arrows on smaller screens or just plop them behind the assassin icons on the z-index
 
     //STATE
-    const [assassinList, setAssassinList] = useState(assassins)
+    const [assassinList, setAssassinList] = useState(null)
     const displayKills = false
 
 
     // USE EFFECT
     useEffect(() => {
-
         if (forModerator && status != GAME_STATUS.CREATED.STATUS && !graveyard) {
             const assassinsDuplicate = [...assassins]
             // recursively sort assassins
             const sortedAssassinsArr = findTargets(assassins[0], assassinsDuplicate, [])
-            setAssassinList(sortedAssassinsArr)
+            if (sortedAssassinsArr) setAssassinList(sortedAssassinsArr)
         } else {
-            setAssassinList(assassins)
+            if (assassins) setAssassinList(assassins)
         }
     }, [assassins])
 
@@ -51,7 +51,7 @@ export default function Leaderboard({ assassins, forModerator = false, status, g
     // HTML 
     return (
         <div>
-            <div className={'mt-8 grid w-5/6 mx-auto ' + ((forModerator && status != GAME_STATUS.CREATED.STATUS) ? 'grid-cols-3' : 'grid-cols-3')}>
+            <div className={'mt-8 grid w-5/6 mx-auto grid-cols-3'}>
                 {/* {assassinList.sort((a, b) => {
                     return b.kills.length - a.kills.length
                 }).map((assassin, index) => {
@@ -64,7 +64,7 @@ export default function Leaderboard({ assassins, forModerator = false, status, g
                             <div key={assassin.user} className='grid grid-cols-2'>
                                 <AssassinIcon key={index} name={assassin.display_name} image={(assassin.profile_image ? assassin.profile_image : '/images/assassin.png')} kills={assassin.kills} displayKills={displayKills} isWinning={(index === 0 ? true : false)} />
                                 {((forModerator && status != GAME_STATUS.CREATED.STATUS && !graveyard) &&
-                                    <img src='/images/arrow.png' className='ml-4 place-self-center'></img>
+                                    <img src='/images/arrow.png' className='ml-4 place-self-center' />
                                 )}
                             </div>
                         )
@@ -79,4 +79,9 @@ export default function Leaderboard({ assassins, forModerator = false, status, g
             </div>
         </div>
     )
+}
+
+Leaderboard.defaultProps = {
+    graveyard: false,
+    forModerator: false
 }

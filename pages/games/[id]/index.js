@@ -356,6 +356,10 @@ const GameComponent = ({ gameResult, user }) => {
         setCurrentAssassin(null)
     }
 
+    function handleKillerCancelDispute() {
+        setIsDisputePopUpOpen(false)
+    }
+
     function handlePauseClicked() {
         // Restrict some things
     }
@@ -383,7 +387,7 @@ const GameComponent = ({ gameResult, user }) => {
 
             <AdjudicatePopUp isOpen={isAdjudicatePopUpOpen} dispute={currentDispute} closeCallback={(() => setIsAdjudicatePopUpOpen(false))} />
             <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
-            <DisputePopUp isOpen={isDisputePopUpOpen} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)} targetCancelCallback={handleTargetCancelDispute} />
+            <DisputePopUp isOpen={isDisputePopUpOpen} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)} targetCancelCallback={handleTargetCancelDispute} killerCancelCallback={handleKillerCancelDispute} />
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
@@ -482,7 +486,7 @@ const GameComponent = ({ gameResult, user }) => {
 
                 {/* TARGET */}
                 {((currentAssassin != null && gameResult.game_status === ACTIVE.STATUS) &&
-                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} />
+                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY || assassinStatus === ASSASSIN_STATUS.DISPUTE)} />
                 )}
 
 
@@ -498,9 +502,9 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* DISPUTES */}
-                <div className={(gameResult.status === ACTIVE ? 'block' : 'hidden')}>
+                {((gameResult.status === ACTIVE && gameResult.disputes.length > 0) &&
                     <DisputeList disputesArr={gameResult.disputes} callback={handleDisputeListCallback} />
-                </div>
+                )}
 
                 {/* ASSASSINS */}
                 <div className='my-20'>
@@ -515,7 +519,7 @@ const GameComponent = ({ gameResult, user }) => {
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
                         GRAVEYARD:
                     </div>
-                    <Leaderboard assassins={game.graveyard} forModerator={isModerator} status={gameResult.game_status} />
+                    <Leaderboard assassins={game.graveyard} forModerator={isModerator} status={gameResult.game_status} graveyard={true} />
                 </div>
 
                 {/* MODERATOR */}

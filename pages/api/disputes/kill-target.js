@@ -9,7 +9,6 @@ const handler = nextConnect()
     .put(async (req, res) => {
 
         // FIXME: probably a way to update these things in less calls
-        // TODO: set assassin's dispute to empty
 
         const { dispute } = req.body
 
@@ -37,7 +36,7 @@ const handler = nextConnect()
             console.log(target)
 
             // Update Killer kills array to include Target and Assign Killer to dead Target's Target
-            const game1 = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.killer.user }, { $push: { 'assassins.$.kills': dispute.target.user }, $set: { 'assassins.$.target': target.target, 'assassins.$.status': ALIVE } }, { new: true })
+            const game1 = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.killer.user }, { $push: { 'assassins.$.kills': dispute.target.user }, $set: { 'assassins.$.target': target.target, 'assassins.$.status': ALIVE, 'assassin.$.dispute': '' } }, { new: true })
             if (!game1) return res.status(400).json({ success: false, errorMessage: 'Could not update game1 in adjudicate-kill.js' })
             console.log('game1')
             console.log(game1)

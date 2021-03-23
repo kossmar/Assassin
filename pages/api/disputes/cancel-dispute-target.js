@@ -12,6 +12,8 @@ const handler = nextConnect()
 
         try {
 
+            // TODO: remove this whole file. Should be handled by kill-target.js so that one file can handle a target cancelling a dispute as well as a moderator deciding to kill a target
+
             // FIXME: probably a way to change two subdocuments in the same call
             // const game = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.target }, { $set: { 'assassins.$.status': DEAD } }, { new: true })
             // if (!game) return res.status(400).json({ success: false })
