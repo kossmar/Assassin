@@ -22,7 +22,7 @@ import DisputeList from '../../../components/DisputeList'
 import AdjudicatePopUp from '../../../components/AdjudicatePopUp'
 
 const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
-const { ACTIVE } = GAME_STATUS
+const { ACTIVE, COMPLETE } = GAME_STATUS
 
 const ThisGame = () => {
 
@@ -63,9 +63,11 @@ const GameComponent = ({ gameResult, user }) => {
                 setHasJoined(true)
                 setCurrentAssassin(assassin)
                 setAssassinStatus(assassin.status)
+                if (assassin.status === PURGATORY) setIsDidYouDiePopUpOpen(true)
                 setIsDisputePopUpOpen(assassin.status === ASSASSIN_STATUS.DISPUTE)
             }
         })
+
         gameResult.graveyard.forEach((deadGuy) => {
             if (user._id === deadGuy.user) {
                 setHasJoined(true)
@@ -163,9 +165,12 @@ const GameComponent = ({ gameResult, user }) => {
                                         break
                                 }
                                 if (currentAssassin.status === PURGATORY || currentAssassin.status === DISPUTE) {
-                                    for (var k = 0; k <= assassinsWithNames.length; k++) {
+                                    for (var k = 0; k < assassinsWithNames.length; k++) {
                                         const killer = assassinsWithNames[k]
+                                        console.log('KILLERRRR: ' + k)
+                                        console.log(killer)
                                         if (killer.target === currentAssassin.user) {
+                                            console.log('hey')
                                             setKiller(killer)
                                             break
                                         }
@@ -222,7 +227,7 @@ const GameComponent = ({ gameResult, user }) => {
     const [roleSelection, setRoleSelection] = useState('assassin')
     const [target, setTarget] = useState(null)
     const [currentAssassin, setCurrentAssassin] = useState(null)
-    const [assassinStatus, setAssassinStatus] = useState(ALIVE)
+    const [assassinStatus, setAssassinStatus] = useState(null)
     const [killer, setKiller] = useState(null)
     const [isDead, setIsDead] = useState(false)
     const [currentDispute, setCurrentDispute] = useState(null)
@@ -235,6 +240,7 @@ const GameComponent = ({ gameResult, user }) => {
     const [isStartPopUpOpen, setIsStartPopUpOpen] = useState(false)
     const [isAdjudicatePopUpOpen, setIsAdjudicatePopUpOpen] = useState(false)
     const [isDisputePopUpOpen, setIsDisputePopUpOpen] = useState(false)
+    const [isDidYouDiePopUpOpen, setIsDidYouDiePopUpOpen] = useState(false)
 
 
     function handleRoleSelect(id) {
@@ -386,7 +392,10 @@ const GameComponent = ({ gameResult, user }) => {
             {/* DID YOU DIE? */}
 
             <AdjudicatePopUp isOpen={isAdjudicatePopUpOpen} dispute={currentDispute} closeCallback={(() => setIsAdjudicatePopUpOpen(false))} />
-            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
+            <DidYouDiePopUp isOpen={isDidYouDiePopUpOpen} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} callback={(() => { 
+                setIsDidYouDiePopUpOpen(false) 
+                setCurrentAssassin(null)
+                })} />
             <DisputePopUp isOpen={isDisputePopUpOpen} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)} targetCancelCallback={handleTargetCancelDispute} killerCancelCallback={handleKillerCancelDispute} />
             <BinaryPopup
                 isWarningStyle
@@ -515,7 +524,7 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* GRAVEYARD */}
-                <div className={'my-20 ' + (gameResult.game_status === ACTIVE.STATUS ? 'block' : 'hidden')}>
+                <div className={'my-20 ' + (gameResult.game_status === ACTIVE.STATUS || gameResult.game_status === COMPLETE.STATUS ? 'block' : 'hidden')}>
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
                         GRAVEYARD:
                     </div>

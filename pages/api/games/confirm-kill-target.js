@@ -19,25 +19,25 @@ const handler = nextConnect()
 
         try {
 
-            const game2 = await Game.findById(dispute.game)
+            const game2 = await Game.findById(gameId)
             const isGameEnding = (game2.assassins.length <= 2)
 
             var killerQuery
             if (isGameEnding === true) {
-                killerQuery = { $push: { 'assassins.$.kills': target.user } }
+                killerQuery = { $push: { 'assassins.$.kills': target.user }, $set: { 'assassins.$.target': '' }  }
             } else {
                 killerQuery = { $push: { 'assassins.$.kills': target.user }, $set: { 'assassins.$.target': target.target } }
             }
 
             // Update Killer kills array to include Target and Assign Killer to dead Target's Target
             const killerGame = await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': killer.user }, killerQuery, { new: true })
-            if (!killerGame) return res.status(400).json({ success: false, errorMessage: 'Could not update game1 in confirm-kill-target.js' })
+            if (!killerGame) return res.status(400).json({ success: false, errorMessage: 'Could not update killerGame in confirm-kill-target.js' })
 
             // Push new dead guy to Graveyard array
             const deadGuy = {
                 user: target.user,
                 kills: target.kills,
-                death_rank: (game1.graveyard.length + 1)
+                death_rank: (game2.graveyard.length + 1)
             }
 
             var gameQuery

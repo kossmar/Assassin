@@ -34,6 +34,8 @@ export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId
             const { data } = await res.json()
             mutate(`/api/games/${gameId}`, data, false)
 
+            callback()
+
         } catch (error) {
             console.log("Could not confirm kill (target) - client side: " + error)
         }

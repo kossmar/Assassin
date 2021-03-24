@@ -18,6 +18,7 @@ const handler = nextConnect()
             const gameForTarget = await Game.findById(dispute.game)
             console.log('gameForTarget')
             console.log(gameForTarget)
+
             var target
 
             for (let x = 0; x < gameForTarget.assassins.length; x++) {
@@ -32,8 +33,22 @@ const handler = nextConnect()
 
             if (!target) return res.status(400).json({ success: false, errorMessage: "Could not find assassin object for target's id" })
 
+            const isGameEnding = (gameForTarget.assassins.length <= 2)
+
+            var killersNewTarget
+
+            if (isGameEnding === true) {
+                killersNewTarget = ''
+            } else {
+                killersNewTarget = target.target
+            }
+
+            const killerQuery = { $push: { 'assassins.$.kills': dispute.target.user }, $set: { 'assassins.$.target': killersNewTarget, 'assassins.$.status': ALIVE, 'assassin.$.dispute': '' } }
+
+
+
             // Update Killer kills array to include Target and Assign Killer to dead Target's Target
-            const game1 = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.killer.user }, { $push: { 'assassins.$.kills': dispute.target.user }, $set: { 'assassins.$.target': target.target, 'assassins.$.status': ALIVE, 'assassin.$.dispute': '' } }, { new: true })
+            const game1 = await Game.findOneAndUpdate({ _id: dispute.game, 'assassins.user': dispute.killer.user }, killerQuery, { new: true })
             if (!game1) return res.status(400).json({ success: false, errorMessage: 'Could not update game1 in kill-target.js' })
 
             // Push new dead guy to Graveyard array
@@ -43,8 +58,15 @@ const handler = nextConnect()
                 death_rank: (game1.graveyard.length + 1)
             }
 
+            var gameQuery
+            if (isGameEnding === true) {
+                gameQuery = { $push: { graveyard: deadGuy }, $pull: { assassins: { user: target.user }, disputes: dispute._id }, $set: { game_status: COMPLETE.STATUS } }
+            } else {
+                gameQuery = { $push: { graveyard: deadGuy }, $pull: { assassins: { user: target.user }, disputes: dispute._id } }
+            }
+
             // Remove Target from Assassins array, Push new dead guy to Graveyard array, and remove dispute from disputes array
-            const game = await Game.findByIdAndUpdate(dispute.game, { $push: { graveyard: deadGuy }, $pull: { assassins: { user: target.user }, disputes: dispute._id } }, { new: true })
+            const game = await Game.findByIdAndUpdate(dispute.game, gameQuery, { new: true })
             if (!game) return res.status(400).json({ success: false, errorMessage: 'Could not update game in adjudicate-kill.js' })
 
             // Delete dispute
