@@ -2,13 +2,14 @@ import nextConnect from 'next-connect'
 import Game from '../../../models/Game'
 import User from '../../../models/User'
 
-import { ASSASSIN_STATUS } from '../../../constants'
+import { ASSASSIN_STATUS, GAME_STATUS } from '../../../constants'
 
 const { DEAD } = ASSASSIN_STATUS
+const { COMPLETE } = GAME_STATUS
 
 // TODO: Assign Killer to dead Target's Target
 
-const handler = nextConnect()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+const handler = nextConnect()
     .put(async (req, res) => {
         const { gameId, target, killer } = req.body
         console.log("CONFIRM KILL BODY (from target) - server side:")
@@ -17,11 +18,20 @@ const handler = nextConnect()
         console.log(killer)
 
         try {
-            // Update Target Status to DEAD
-            // await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': target._id }, { $set: { 'assassins.$.status': DEAD } }, { new: true })
 
-            // Update Killer kills array to include Target
-            const game1 = await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': killer.user }, { $push: { 'assassins.$.kills': target.user } }, { new: true })
+            const game2 = await Game.findById(dispute.game)
+            const isGameEnding = (game2.assassins.length <= 2)
+
+            var killerQuery
+            if (isGameEnding === true) {
+                killerQuery = { $push: { 'assassins.$.kills': target.user } }
+            } else {
+                killerQuery = { $push: { 'assassins.$.kills': target.user }, $set: { 'assassins.$.target': target.target } }
+            }
+
+            // Update Killer kills array to include Target and Assign Killer to dead Target's Target
+            const killerGame = await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': killer.user }, killerQuery, { new: true })
+            if (!killerGame) return res.status(400).json({ success: false, errorMessage: 'Could not update game1 in confirm-kill-target.js' })
 
             // Push new dead guy to Graveyard array
             const deadGuy = {
@@ -29,11 +39,16 @@ const handler = nextConnect()
                 kills: target.kills,
                 death_rank: (game1.graveyard.length + 1)
             }
-            await Game.findByIdAndUpdate(gameId, { $push: { graveyard: deadGuy } }, { new: true })
 
-            // Remove Target from Assassins array
-            const game = await Game.findOneAndUpdate({ _id: gameId }, { $pull: { assassins: { user: target.user } } })
+            var gameQuery
+            if (isGameEnding === true) {
+                gameQuery = { $push: { graveyard: deadGuy }, $pull: { assassins: { user: target.user } }, $set: { game_status: COMPLETE.STATUS } }
+            } else {
+                gameQuery = { $push: { graveyard: deadGuy }, $pull: { assassins: { user: target.user } } }
+            }
 
+            // Remove Target from Assassins array, add new dead guy to Graveyard array,
+            const game = await Game.findByIdAndUpdate(gameId, gameQuery, { new: true })
             if (!game) return res.status(400).json({ success: false })
 
             res.status(200).json({ success: true, data: game })
