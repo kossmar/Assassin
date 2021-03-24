@@ -1,14 +1,40 @@
 import React from 'react'
-import { killTarget, adjudicateDisputeSave } from '../lib/dispute-worker'
+import { killTarget, saveTarget } from '../lib/dispute-worker'
 
 export default function AdjudicatePopUp({ isOpen, dispute, closeCallback }) {
 
     async function handleDecideSave() {
-        adjudicateDisputeSave(dispute)
+        saveTarget(dispute)
+            .then(success => {
+                switch (success) {
+                    case true:
+                        closeCallback()
+                        break
+                    case false:
+                        // TODO: insert some error message here
+                        console.log('could not successfully adjudicate dispute (save)')
+                    default:
+                        break
+                }
+            })
     }
 
     async function handleDecideKill() {
         killTarget(dispute)
+            .then(success => {
+                switch (success) {
+                    case true:
+                        // TODO: insert some success thing here
+                        closeCallback()
+                        break
+                    case false:
+                        // TODO: insert some error message here
+                        console.log('could not successfully adjudicate dispute (save)')
+                        break
+                    default:
+                        break
+                }
+            })
     }
 
     function handleCancel() {
@@ -44,7 +70,7 @@ export default function AdjudicatePopUp({ isOpen, dispute, closeCallback }) {
                                         <div>
                                             {dispute.target.display_name}
                                         </div>
-                                        <textarea className='border w-full mt-4' value={dispute.target.comment} rows={4} disabled={true}/>
+                                        <textarea className='border w-full mt-4' value={dispute.target.comment} rows={4} disabled={true} />
                                     </div>
                                 </div>
 

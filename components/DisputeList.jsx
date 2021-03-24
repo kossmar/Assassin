@@ -6,6 +6,7 @@ export default function DisputeList({ disputesArr, callback }) {
     const [disputes, setDisputes] = useState([])
 
     useEffect(() => {
+        console.log('im alive')
         getDisputes(disputesArr)
             .then((foundDisputes) => {
                 setDisputes(foundDisputes)

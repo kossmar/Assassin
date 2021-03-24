@@ -484,12 +484,6 @@ const GameComponent = ({ gameResult, user }) => {
                     </div>
                 </div>
 
-                {/* TARGET */}
-                {((currentAssassin != null && gameResult.game_status === ACTIVE.STATUS) &&
-                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY || assassinStatus === ASSASSIN_STATUS.DISPUTE)} />
-                )}
-
-
                 {/* EDIT GAME DETAILS */}
                 <div className={(isEditing ? 'block' : 'hidden')}>
 
@@ -501,8 +495,14 @@ const GameComponent = ({ gameResult, user }) => {
 
                 </div>
 
+                {/* TARGET */}
+                {((currentAssassin != null && gameResult.game_status === ACTIVE.STATUS) &&
+                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY || assassinStatus === ASSASSIN_STATUS.DISPUTE)} />
+                )}
+
+
                 {/* DISPUTES */}
-                {((gameResult.status === ACTIVE && gameResult.disputes.length > 0) &&
+                {((gameResult.game_status === ACTIVE.STATUS && gameResult.disputes.length > 0 && isModerator) &&
                     <DisputeList disputesArr={gameResult.disputes} callback={handleDisputeListCallback} />
                 )}
 
