@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { ASSASSIN_ICON_USE } from '../constants'
-import { useDetectOutsideClick } from '../lib/hooks/useDetectOutsideClick'
 
 export default function AssassinIcon({ assassin, name, image = '/images/assassin.png', kills, isWinning, displayKills, isInteractive = false, clickCallback, isSelected = false, id, isProfile, state, disabled = false }) {
 

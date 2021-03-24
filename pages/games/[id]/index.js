@@ -17,8 +17,12 @@ import SinglePopup from '../../../components/SinglePopup'
 import GameStatus from '../../../components/GameStatus'
 import Target from '../../../components/Target'
 import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
+import DisputePopUp from '../../../components/DisputePopUp'
+import DisputeList from '../../../components/DisputeList'
+import AdjudicatePopUp from '../../../components/AdjudicatePopUp'
 
 const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
+const { ACTIVE } = GAME_STATUS
 
 const ThisGame = () => {
 
@@ -59,6 +63,7 @@ const GameComponent = ({ gameResult, user }) => {
                 setHasJoined(true)
                 setCurrentAssassin(assassin)
                 setAssassinStatus(assassin.status)
+                setIsDisputePopUpOpen(assassin.status === ASSASSIN_STATUS.DISPUTE)
             }
         })
         gameResult.graveyard.forEach((deadGuy) => {
@@ -132,8 +137,32 @@ const GameComponent = ({ gameResult, user }) => {
                                     }
                                 }
 
-                                // If current user is in PURGATORY, find killer - to be passed to DID YOU DIE popup
-                                if (currentAssassin.status = PURGATORY) {
+                                switch (currentAssassin.status) {
+                                    // If current user is in PURGATORY, set killer
+                                    case PURGATORY:
+                                        for (var k = 0; k < assassinsWithNames.length; k++) {
+                                            const killer = assassinsWithNames[k]
+                                            if (killer.target === currentAssassin.user) {
+                                                setKiller(killer)
+                                                break
+                                            }
+                                        }
+                                        break
+
+                                    // If current user is in DISPUTE, only set killer if killer is also in dispute, otherwise you would be setting an assassin who hasn't struck yet.
+                                    case DISPUTE:
+                                        for (var k = 0; k < assassinsWithNames.length; k++) {
+                                            const killer = assassinsWithNames[k]
+                                            if (killer.target === currentAssassin.user && killer.status === DISPUTE) {
+                                                setKiller(killer)
+                                                break
+                                            }
+                                        }
+                                        break
+                                    default:
+                                        break
+                                }
+                                if (currentAssassin.status === PURGATORY || currentAssassin.status === DISPUTE) {
                                     for (var k = 0; k <= assassinsWithNames.length; k++) {
                                         const killer = assassinsWithNames[k]
                                         if (killer.target === currentAssassin.user) {
@@ -196,6 +225,7 @@ const GameComponent = ({ gameResult, user }) => {
     const [assassinStatus, setAssassinStatus] = useState(ALIVE)
     const [killer, setKiller] = useState(null)
     const [isDead, setIsDead] = useState(false)
+    const [currentDispute, setCurrentDispute] = useState(null)
 
 
     // Pop Up State
@@ -203,6 +233,8 @@ const GameComponent = ({ gameResult, user }) => {
     const [isConfirmLeaveOpen, setIsConfirmLeaveOpen] = useState(false)
     const [isJoinPopupOpen, setIsJoinPopupOpen] = useState(false)
     const [isStartPopUpOpen, setIsStartPopUpOpen] = useState(false)
+    const [isAdjudicatePopUpOpen, setIsAdjudicatePopUpOpen] = useState(false)
+    const [isDisputePopUpOpen, setIsDisputePopUpOpen] = useState(false)
 
 
     function handleRoleSelect(id) {
@@ -317,11 +349,24 @@ const GameComponent = ({ gameResult, user }) => {
         } else {
             startGame(gameResult)
         }
+    }
 
+    function handleTargetCancelDispute() {
+        setIsDisputePopUpOpen(false)
+        setCurrentAssassin(null)
+    }
+
+    function handleKillerCancelDispute() {
+        setIsDisputePopUpOpen(false)
     }
 
     function handlePauseClicked() {
         // Restrict some things
+    }
+
+    function handleDisputeListCallback(dispute) {
+        setCurrentDispute(dispute)
+        setIsAdjudicatePopUpOpen(true)
     }
 
     const formValidate = () => {
@@ -339,8 +384,10 @@ const GameComponent = ({ gameResult, user }) => {
             </Head>
 
             {/* DID YOU DIE? */}
-            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
 
+            <AdjudicatePopUp isOpen={isAdjudicatePopUpOpen} dispute={currentDispute} closeCallback={(() => setIsAdjudicatePopUpOpen(false))} />
+            <DidYouDiePopUp isOpen={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} />
+            <DisputePopUp isOpen={isDisputePopUpOpen} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)} targetCancelCallback={handleTargetCancelDispute} killerCancelCallback={handleKillerCancelDispute} />
             <BinaryPopup
                 isWarningStyle
                 message={"Are you sure you want to delete this game?"}
@@ -403,10 +450,10 @@ const GameComponent = ({ gameResult, user }) => {
                 <GameStatus status={gameResult.game_status} />
                 <div className={'text-center text-red-600 ' + (isDead ? 'block' : 'hidden')}>
                     OOPS... YOU'RE DEAD
-                </div>  
+                </div>
 
                 {/* GAME DETAILS */}
-                <div className={'w-96 mx-auto py-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
+                <div className={'w-96 mx-auto pt-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
                     <div className='border-yellow-200 border-2 bg-gray-100 space-y-10 py-10 rounded-xl'>
                         <div>
                             <div className='font-bold'>
@@ -437,24 +484,6 @@ const GameComponent = ({ gameResult, user }) => {
                     </div>
                 </div>
 
-                {/* TARGET */}
-                {(currentAssassin != null &&
-                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY)} />
-                )}
-
-
-
-                {/* MODERATOR */}
-                <div className='my-10'>
-                    <div className='mt-16= w-2/6 mx-auto text-center font-bold underline text-2xl'>
-                        MODERATORS:
-                    </div>
-                    {game.moderators.map((moderator) => (
-                        <AssassinIcon key={moderator._id} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
-                    ))}
-                </div>
-
-
                 {/* EDIT GAME DETAILS */}
                 <div className={(isEditing ? 'block' : 'hidden')}>
 
@@ -466,6 +495,17 @@ const GameComponent = ({ gameResult, user }) => {
 
                 </div>
 
+                {/* TARGET */}
+                {((currentAssassin != null && gameResult.game_status === ACTIVE.STATUS) &&
+                    <Target target={target} gameId={gameResult._id} disabled={(assassinStatus === ASSASSIN_STATUS.PURGATORY || assassinStatus === ASSASSIN_STATUS.DISPUTE)} />
+                )}
+
+
+                {/* DISPUTES */}
+                {((gameResult.game_status === ACTIVE.STATUS && gameResult.disputes.length > 0 && isModerator) &&
+                    <DisputeList disputesArr={gameResult.disputes} callback={handleDisputeListCallback} />
+                )}
+
                 {/* ASSASSINS */}
                 <div className='my-20'>
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
@@ -475,16 +515,26 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
                 {/* GRAVEYARD */}
-                <div className='my-20'>
+                <div className={'my-20 ' + (gameResult.game_status === ACTIVE.STATUS ? 'block' : 'hidden')}>
                     <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
                         GRAVEYARD:
                     </div>
-                    <Leaderboard assassins={game.graveyard} forModerator={isModerator} status={gameResult.game_status} />
+                    <Leaderboard assassins={game.graveyard} forModerator={isModerator} status={gameResult.game_status} graveyard={true} />
+                </div>
+
+                {/* MODERATOR */}
+                <div className='my-10'>
+                    <div className='mt-16= w-2/6 mx-auto text-center font-bold underline text-2xl'>
+                        MODERATORS:
+                    </div>
+                    {game.moderators.map((moderator, index) => (
+                        <AssassinIcon key={(moderator._id + index.toString())} name={moderator.display_name} image={(moderator.profile_image ? moderator.profile_image : '/images/moderator.png')} />
+                    ))}
                 </div>
 
                 {/* REQUESTS */}
                 <div className={"my-20 w-96 mx-auto py-16 space-y-10 text-center " + (isModerator ? 'block' : 'hidden')}>
-                    <div className='w-2/6 mx-auto text-center font-bold underline'>
+                    <div className='w-2/6 mx-auto text-center font-bold underline text-2xl'>
                         Requests:
                     </div>
                     <div className='border-blue-100 border-2 bg-gray-100 rounded-xl p-4'>

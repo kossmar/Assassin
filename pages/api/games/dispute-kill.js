@@ -1,12 +1,13 @@
 import Dispute from '../../../models/Dispute'
 import Game from '../../../models/Game'
 import nextConnect from 'next-connect'
+import { ASSASSIN_STATUS } from '../../../constants'
+
+const { DISPUTE } = ASSASSIN_STATUS
 
 const handler = nextConnect()
     .post(async (req, res) => {
         const { gameId, targetId, comment, killerId } = req.body
-        console.log('DISPUTE-KILL BODY:')
-        console.log(req.body)
 
         const disputeObj = {
             game: gameId,
@@ -38,6 +39,7 @@ const handler = nextConnect()
 
                 if (assassin.user === targetId || assassin.user === killerId) {
                     assassin.dispute = dispute._id
+                    assassin.status = DISPUTE
                     updatedAssassinsArr.push(assassin)
                     continue
                 }

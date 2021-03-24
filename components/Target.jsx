@@ -110,7 +110,7 @@ export default function Target({ target, gameId, disabled }) {
 
     return (
         <>
-            <div className='bg-red-500 rounded-2xl w-96 mx-auto py-10'>
+            <div className='bg-red-500 rounded-2xl w-96 mx-auto py-10 my-20'>
                 <div className='text-center font-bold text-2xl'>
 
                     {/* STATUS MESSAGE */}

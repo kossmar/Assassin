@@ -9,11 +9,12 @@ const handler = nextConnect()
         const { gameId, target } = req.body
         console.log(target)
         try {
+
             const game = await Game.findOneAndUpdate({ _id: gameId, 'assassins.user': target.user }, { $set: { 'assassins.$.status': ALIVE } }, { new: true })
             if (!game) return res.status(400).json({ success: false })
 
-            console.log(game)
             res.status(200).json({ success: true, data: game })
+
         } catch (error) {
             console.log('Failed to cancel kill - server side' + error)
             res.status(400).json({ success: false })

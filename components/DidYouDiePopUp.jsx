@@ -148,7 +148,7 @@ export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId
                             </div>
 
                             <div className="grid grid-cols-2">
-                                {/* CONFIRM */}
+                                {/* SUBMIT */}
                                 <div className='px-4'>
                                     <div onClick={handleSubmitDisputeClick} className={"my-2 cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-green-400 bg-green-400 hover:bg-green-300 hover:border-2 text-white"}>
                                         <button className="place-self-center">
@@ -157,11 +157,11 @@ export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId
                                     </div>
                                 </div>
 
-                                {/* DISPUTE */}
+                                {/* CANCEL */}
                                 <div onClick={handleCancelDisputeClick} className={"my-2 cursor-pointer flex place-content-center w-36 h-10 rounded-md mx-auto border-red-400 bg-red-400 hover:bg-red-300 hover:border-2 text-white"}>
                                     <button className="place-self-center">
                                         CANCEL
-                            </button>
+                                    </button>
                                 </div>
                             </div>
                         </div>
