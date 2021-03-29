@@ -49,6 +49,8 @@ export default function Leaderboard({ assassins, forModerator, status, graveyard
     }
 
     // HTML 
+    // TODO: Separate the return statement into separate statements for GRAVEYARD, ASSASSINS, and LOADING
+    // TODO: Sort Assassins based on kills
     return (
         <div>
             <div className={'mt-8 grid w-5/6 mx-auto grid-cols-3'}>
@@ -61,7 +63,7 @@ export default function Leaderboard({ assassins, forModerator, status, graveyard
                     ?
                     assassinList.map((assassin, index) => {
                         return (
-                            <div key={assassin.user} className='grid grid-cols-2'>
+                            <div key={assassin.user} className={'grid ' + (graveyard ? 'grid-cols-1' : 'grid-cols-2')}>
                                 <AssassinIcon key={index} name={assassin.display_name} image={(assassin.profile_image ? assassin.profile_image : '/images/assassin.png')} kills={assassin.kills} displayKills={displayKills} isWinning={(index === 0 ? true : false)} />
                                 {((forModerator && status != GAME_STATUS.CREATED.STATUS && !graveyard) &&
                                     <img src='/images/arrow.png' className='ml-4 place-self-center' />

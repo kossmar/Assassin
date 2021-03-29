@@ -20,6 +20,7 @@ import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
 import DisputePopUp from '../../../components/DisputePopUp'
 import DisputeList from '../../../components/DisputeList'
 import AdjudicatePopUp from '../../../components/AdjudicatePopUp'
+import Winner from '../../../components/Winner'
 
 const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
 const { ACTIVE, COMPLETE } = GAME_STATUS
@@ -392,10 +393,10 @@ const GameComponent = ({ gameResult, user }) => {
             {/* DID YOU DIE? */}
 
             <AdjudicatePopUp isOpen={isAdjudicatePopUpOpen} dispute={currentDispute} closeCallback={(() => setIsAdjudicatePopUpOpen(false))} />
-            <DidYouDiePopUp isOpen={isDidYouDiePopUpOpen} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} callback={(() => { 
-                setIsDidYouDiePopUpOpen(false) 
+            <DidYouDiePopUp isOpen={isDidYouDiePopUpOpen} killer={killer} currentAssassin={currentAssassin} gameId={gameResult._id} callback={(() => {
+                setIsDidYouDiePopUpOpen(false)
                 setCurrentAssassin(null)
-                })} />
+            })} />
             <DisputePopUp isOpen={isDisputePopUpOpen} killer={killer} target={target} currentAssassin={currentAssassin} disputeId={(currentAssassin && currentAssassin.dispute)} targetCancelCallback={handleTargetCancelDispute} killerCancelCallback={handleKillerCancelDispute} />
             <BinaryPopup
                 isWarningStyle
@@ -515,13 +516,23 @@ const GameComponent = ({ gameResult, user }) => {
                     <DisputeList disputesArr={gameResult.disputes} callback={handleDisputeListCallback} />
                 )}
 
-                {/* ASSASSINS */}
-                <div className='my-20'>
-                    <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
-                        ASSASSINS:
+
+                {(gameResult.assassins.length > 1
+                    ?
+                    // ASSASSINS 
+                    <div className='my-20'>
+                        <div className='fmt-10 w-2/6 mx-auto text-center font-bold underline text-2xl'>
+                            ASSASSINS:
+                        </div>
+                        <Leaderboard assassins={game.assassins} forModerator={isModerator} status={gameResult.game_status} />
                     </div>
-                    <Leaderboard assassins={game.assassins} forModerator={isModerator} status={gameResult.game_status} />
-                </div>
+                    :
+                    // WINNER
+                    <Winner assassin={game.assassins[0]} />
+                )}
+
+
+
 
                 {/* GRAVEYARD */}
                 <div className={'my-20 ' + (gameResult.game_status === ACTIVE.STATUS || gameResult.game_status === COMPLETE.STATUS ? 'block' : 'hidden')}>
@@ -654,6 +665,6 @@ const GameComponent = ({ gameResult, user }) => {
                 </div>
 
             </Layout>
-        </div>
+        </div >
     )
 }
