@@ -4,6 +4,11 @@ export const page = {
     rules: "rules"
 }
 
+export const ROLE = {
+    ASSASSIN: 'assassin',
+    MODERATOR: 'moderator'
+}
+
 export const GAME_STATUS = {
     CREATED: {
         STATUS: 'CREATED',

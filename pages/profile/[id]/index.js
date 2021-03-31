@@ -8,6 +8,7 @@ import { mutate } from 'swr'
 import dbConnect from '../../../utils/dbConnect'
 import User from '../../../models/User'
 import Game from '../../../models/Game'
+import { ASSASSIN_ICON_USE } from '../../../constants'
 
 const Profile = ({ games }) => {
 
@@ -98,7 +99,7 @@ const Profile = ({ games }) => {
 
                         {/* USER IMAGE */}
                         <div onClick={(isEditing ? handleImageSelect : null)} className="ml-10 sm:mx-auto justify-center">
-                            <AssassinIcon isInteractive={(isEditing ? true : false)} isProfile={true} image={(profileImage && profileImage)} />
+                            <AssassinIcon isInteractive={(isEditing ? true : false)} state={ASSASSIN_ICON_USE.PROFILE} image={(profileImage && profileImage)} />
                             <div className="flex justify-center">
                                 <input className="hidden" onChange={handleImageUploaded} ref={inputRef} type="file" id="file" name="file"></input>
                             </div>
@@ -144,7 +145,7 @@ const Profile = ({ games }) => {
                         <div className="mx-6">
                             <div className='font-bold mb-4'> CURRENT </div>
                             {games.current.map((game) => (
-                                <GameButton key={game._id} name={game.game_name} id={game._id} />
+                                <GameButton key={game._id} name={game.game_details.game_name} id={game._id} />
                             ))}
                         </div>
 
@@ -152,7 +153,7 @@ const Profile = ({ games }) => {
                         <div className="mx-6">
                             <div className='font-bold mb-4'> PAST </div>
                             {games.previous.map((game) => (
-                                <GameButton key={game._id} name={game.game_name} id={game._id} isComplete={true} />
+                                <GameButton key={game._id} name={game.game_details.game_name} id={game._id} isComplete={true} />
                             ))}
                         </div>
                     </div>
@@ -181,6 +182,8 @@ export async function getServerSideProps({ query }) {
         game._id = game._id.toString()
         return game
     })
+    console.log('GRONK')
+    console.log(currentGames)
 
     const previousResult = await Game.find({ _id: { $in: [...games.previous] } })
     const previousGames = previousResult.map((doc) => {

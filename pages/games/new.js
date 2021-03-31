@@ -153,7 +153,7 @@ export default function NewGame() {
         })
 
         const newGame = {
-            ...gameDetails,
+            game_details: gameDetails,
             creator: user._id,
             moderators: (selectedRole === 'moderator' ? [user._id] : []),
             assassins: assassinsArr,
