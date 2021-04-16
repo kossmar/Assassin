@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import GameComponent from '../../../components/GameComponent'
 import Layout from "../../../components/Layout"
 import { useRouter } from 'next/router'
 import { useGame } from '../../../lib/hooks/useGame'

@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import Head from "next/head"
-import Layout from "../../../components/Layout"
-import EditGameDetails from '../../../components/EditGameDetails'
-import { ASSASSIN_STATUS, GAME_STATUS, ROLE, page, ASSASSIN_ICON_USE } from "../../../constants"
-import Leaderboard from "../../../components/Leaderboard"
-import Invite from "../../../components/Invite"
-import ChooseRole from '../../../components/ChooseRole'
-import AssassinIcon from '../../../components/AssassinIcon'
-import { saveGameDetails, deleteGame, sendJoinRequest, leaveGame, startGame } from '../../../lib/game-worker'
-import BinaryPopup from '../../../components/BinaryPopup'
-import JoinRequest from '../../../components/JoinRequest'
-import SinglePopup from '../../../components/SinglePopup'
-import GameStatus from '../../../components/GameStatus'
-import Target from '../../../components/Target'
-import DidYouDiePopUp from '../../../components/DidYouDiePopUp'
-import DisputePopUp from '../../../components/DisputePopUp'
-import DisputeList from '../../../components/DisputeList'
-import AdjudicatePopUp from '../../../components/AdjudicatePopUp'
-import Winner from '../../../components/Winner'
+import Layout from "./Layout"
+import EditGameDetails from './EditGameDetails'
+import { ASSASSIN_STATUS, GAME_STATUS, ROLE, page, ASSASSIN_ICON_USE } from '../constants'
+import Leaderboard from "./Leaderboard"
+import Invite from "./Invite"
+import ChooseRole from './ChooseRole'
+import AssassinIcon from './AssassinIcon'
+import { saveGameDetails, deleteGame, sendJoinRequest, leaveGame, startGame } from '../lib/game-worker'
+import BinaryPopup from './BinaryPopup'
+import JoinRequest from './JoinRequest'
+import SinglePopup from './SinglePopup'
+import GameStatus from './GameStatus'
+import Target from './Target'
+import DidYouDiePopUp from './DidYouDiePopUp'
+import DisputePopUp from './DisputePopUp'
+import DisputeList from './DisputeList'
+import AdjudicatePopUp from './AdjudicatePopUp'
+import Winner from './Winner'
 
 const { DEAD, DISPUTE, PURGATORY, ALIVE } = ASSASSIN_STATUS
 const { ACTIVE, COMPLETE } = GAME_STATUS
