@@ -11,8 +11,6 @@ export default function Home({ props }) {
   
   const user = useUser()
 
-  console.log("USER: " + user)
-
   useEffect(() => {
 
   }, [])

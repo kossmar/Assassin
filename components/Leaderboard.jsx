@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import AssassinIcon from './AssassinIcon'
-import { GAME_STATUS } from '../constants'
+import { ASSASSIN_ICON_USE, GAME_STATUS } from '../constants'
 
 
 export default function Leaderboard({ assassins, forModerator, status, graveyard }) {
@@ -11,7 +11,7 @@ export default function Leaderboard({ assassins, forModerator, status, graveyard
 
     //STATE
     const [assassinList, setAssassinList] = useState(null)
-    const displayKills = false
+    const displayKills = true
 
 
     // USE EFFECT
@@ -50,37 +50,33 @@ export default function Leaderboard({ assassins, forModerator, status, graveyard
 
     // HTML 
     // TODO: Separate the return statement into separate statements for GRAVEYARD, ASSASSINS, and LOADING
-    // TODO: Sort Assassins based on kills
-    return (
-        <div>
-            <div className={'mt-8 grid w-5/6 mx-auto grid-cols-3'}>
-                {/* {assassinList.sort((a, b) => {
-                    return b.kills.length - a.kills.length
-                }).map((assassin, index) => {
-                    return (<AssassinIcon key={assassin.user} name={assassin.user} image={assassin.image} kills={assassin.kills} displayKills={displayKills} isWinning={(index===0 ? true : false)} />)
-                })} */}
-                {(assassinList
-                    ?
-                    assassinList.map((assassin, index) => {
-                        return (
-                            <div key={assassin.user} className={'grid ' + (graveyard ? 'grid-cols-1' : 'grid-cols-2')}>
-                                <AssassinIcon key={index} name={assassin.display_name} image={(assassin.profile_image ? assassin.profile_image : '/images/assassin.png')} kills={assassin.kills} displayKills={displayKills} isWinning={(index === 0 ? true : false)} />
-                                {((forModerator && status != GAME_STATUS.CREATED.STATUS && !graveyard) &&
-                                    <img src='/images/arrow.png' className='ml-4 place-self-center' />
-                                )}
-                            </div>
-                        )
-                    })
+    // TODO: Sort Assassins based on kills if not moderator
 
-                    :
-                    <div className='text-center col-span-3'>
-                        LOADING...
-                    </div>
-                )}
-
+    if (!assassinList) {
+        return (
+            <div className='text-center col-span-3'>
+                LOADING...
             </div>
-        </div>
-    )
+        )
+    } else {
+        return (
+            <div>
+                <div className={'mt-8 grid w-5/6 mx-auto grid-cols-3'}>
+
+                    {assassinList.map((assassin, index) => (
+
+                        <div key={assassin.user} className={'grid ' + (graveyard ? 'grid-cols-1' : 'grid-cols-2')}>
+                            <AssassinIcon key={index} name={assassin.display_name} image={(assassin.profile_image ? assassin.profile_image : '/images/assassin.png')} kills={assassin.kills.length} displayKills={displayKills} isWinning={(false)} state={ASSASSIN_ICON_USE.DISPLAY} />
+                            {((forModerator && status != GAME_STATUS.CREATED.STATUS && !graveyard) &&
+                                <img src='/images/arrow.png' className='ml-4 place-self-center' />
+                            )}
+                        </div>
+                    ))}
+
+                </div>
+            </div>
+        )
+    }
 }
 
 Leaderboard.defaultProps = {
