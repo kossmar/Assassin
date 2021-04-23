@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Head from "next/head"
 import Layout from "../../../common/components/Layout"
 import EditGameDetails from './EditGameDetails'
@@ -18,11 +18,17 @@ import DisputePopUp from './dispute/DisputePopUp'
 import DisputeList from './dispute/DisputeList'
 import AdjudicatePopUp from './dispute/AdjudicatePopUp'
 import Winner from './Winner'
+import { useGameContext } from '../contexts/GameContext'
+import PlayerStatus from './PlayerStatus'
+import GameDetails from './GameDetails'
+import EditSaveButtons from './EditSaveButtons'
 
 const { DISPUTE, PURGATORY } = ASSASSIN_STATUS
 const { ACTIVE, COMPLETE } = GAME_STATUS
 
 const GameComponent = ({ gameResult, user }) => {
+
+    const [gameContext, , , updateUserState] = useGameContext()
 
     const [gameDetails, setGameDetails] = useState(gameResult.game_details)
     const [isEditing, setIsEditing] = useState(false)
@@ -338,58 +344,9 @@ const GameComponent = ({ gameResult, user }) => {
             <Layout page={page.rules}>
                 <section id="top" />
 
-                <GameStatus status={gameResult.game_status} />
-                
-                <div className={'text-center text-red-600 ' + (isDead ? 'block' : 'hidden')}>
-                    OOPS... YOU'RE DEAD
-                </div>
-
-                {/* GAME DETAILS */}
-                {/* TODO: turn into component */}
-                {/* TODO: use Detail-specific state to load this */}
-                <div className={'w-96 mx-auto pt-16 space-y-10 text-center ' + (isEditing ? 'hidden' : 'block')}>
-                    <div className='border-yellow-200 border-2 bg-gray-100 space-y-10 py-10 rounded-xl'>
-                        <div>
-                            <div className='font-bold'>
-                                NAME:
-                            </div>
-                            <div>
-                                {gameDetails.game_name}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className='font-bold'>
-                                WEAPONS:
-                            </div>
-                            <div>
-                                {gameDetails.weapons}
-                            </div>
-                        </div>
-
-                        <div>
-                            <div className='font-bold'>
-                                SAFE ZONES:
-                            </div>
-                            <div>
-                                {gameDetails.safe_zones}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* EDIT GAME DETAILS */}
-                {/* TODO: Turn into component */}
-                <div className={(isEditing ? 'block' : 'hidden')}>
-
-                    {/* Name, Weapons, Safe Zones */}
-                    {/* // TODO: change to reflect changes for Detail-specific state creation */}
-                    <EditGameDetails onChange={updateDetails} details={gameDetails} />
-
-                    {/* CHOOSE ROLE */}
-                    <ChooseRole onClick={handleRoleSelect} selectedRole={roleSelection} />
-
-                </div>
+                <GameStatus />
+                <PlayerStatus />
+                <GameDetails />
 
                 {/* TARGET */}
                 {/* TODO: move render control to Target component after context creation */}
@@ -481,11 +438,11 @@ const GameComponent = ({ gameResult, user }) => {
 
                 {/* INVITES */}
                 {/* TODO: control rendering inside component after context creation */}
-                <div className={(hasJoined ? 'block' : 'hidden')}>
-                    <div>
-                        <Invite gameId={gameResult._id} />
-                    </div>
-                </div>
+                {/* <div className={(hasJoined ? 'block' : 'hidden')}>
+                    <div> */}
+                <Invite gameId={gameResult._id} />
+                {/* </div>
+                </div> */}
 
 
                 {/* BUTTONS */}
@@ -495,23 +452,7 @@ const GameComponent = ({ gameResult, user }) => {
                     {/* MODERATOR BUTTONS */}
                     <div className={'w-2/5 mx-auto space-y-4 ' + (isModerator || isCreator ? 'block' : 'hidden')}>
 
-                        {/* EDIT  */}
-                        <div className={(isEditing ? 'hidden' : 'block')}>
-                            <a href='#top'>
-                                <button onClick={handleEditClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                                    EDIT
-                                </button>
-                            </a>
-                        </div>
-
-                        {/* SAVE */}
-                        <div className={(isEditing ? 'block' : 'hidden')}>
-                            <a href='#top'>
-                                <button onClick={handleSaveClick} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                                    SAVE
-                                </button>
-                            </a>
-                        </div>
+                        <EditSaveButtons />
 
                         {/* BEGIN */}
                         <div className={(gameResult.game_status === GAME_STATUS.CREATED.STATUS ? 'block' : 'hidden')}>

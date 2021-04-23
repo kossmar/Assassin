@@ -35,9 +35,6 @@ export async function saveGameDetails(gameDetailsObj, gameId) {
 
     // TODO: Add error message so popup can trigger on network call failure
 
-    console.log('GAME DETAILS OBJ')
-    console.log(gameDetailsObj)
-
     const body = JSON.stringify({
         gameDetailsObj: gameDetailsObj
     })

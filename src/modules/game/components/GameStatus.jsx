@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { GAME_STATUS } from '../../../common/constants'
+import { useGameContext } from '../contexts/GameContext'
 
-export default function GameStatus({ status }) {
+export default function GameStatus() {
+
+    const [gameContext] = useGameContext()
 
     useEffect(() => {
         // Select the appropriate game status message
-        switch (status) {
+        switch (gameContext.game.game_status) {
             case GAME_STATUS.ACTIVE.STATUS:
                 setStatusMessage(GAME_STATUS.ACTIVE.MESSAGE)
                 break
@@ -19,7 +22,7 @@ export default function GameStatus({ status }) {
                 setStatusMessage(GAME_STATUS.PAUSED.MESSAGE)
                 break
         }
-    })
+    }, [gameContext.game])
 
     const [statusMessage, setStatusMessage] = useState("Let's Party")
 

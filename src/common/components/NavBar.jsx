@@ -15,7 +15,7 @@ export default function NavBar({ page, user }) {
                 setProfileImage(imageURL)
             }
         }
-    })
+    }, [user])
 
     const dropdownRef = useRef(null)
     const [profileDropdownOpen, setProfileDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
