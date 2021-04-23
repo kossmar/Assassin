@@ -5,7 +5,7 @@ export default function Invite({ isForAssassins = true, gameId }) {
 
     const [gameContext] = useGameContext()
 
-    const inviteLink = 'https://assassingame.com/game/' + gameContext.game.gameId
+    const inviteLink = 'https://assassingame.com/game/' + gameContext.game._id
 
     if (gameContext.userState.hasJoined) {
         return (

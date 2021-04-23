@@ -29,7 +29,7 @@ const ThisGame = () => {
     } else {
         return (
             <>
-                <GameContextProvider gameResult={gameResult}>
+                <GameContextProvider gameResult={gameResult} user={user}>
                     <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
                 </GameContextProvider>
             </>

@@ -5,7 +5,7 @@ import { useGameContext } from "../contexts/GameContext"
 export default function EditSaveButtons() {
 
     const [gameContext, handleRoleSelect, updateDetails, updateUserState] = useGameContext()
-
+    // TODO: add onClick back to button
     if (gameContext.userState.isEditing) {
         return (
             <>
@@ -29,5 +29,5 @@ export default function EditSaveButtons() {
                 </a>
             </>
         )
-    } 
+    }
 }
