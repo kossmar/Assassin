@@ -52,7 +52,7 @@ export function GameContextProvider({ children, gameResult, user }) {
         setUserState(updatedUserState)
         setPopupState(updatedPopupState)
 
-    })
+    }, [gameResult])
 
     const value = useMemo(() => {
 
@@ -78,16 +78,25 @@ export function GameContextProvider({ children, gameResult, user }) {
             })
         }
 
-        function updateUserState(stateName, newValue) {
+        function updateUserState(updatedStateObject) {
             setUserState((prevValue) => {
                 return {
                     ...prevValue,
-                    [stateName]: newValue,
+                    ...updatedStateObject,
                 }
             })
         }
 
-        return [{ game, popupState, gameDetails, userState }, handleRoleSelect, updateDetails, updateUserState]
+        function updatePopupState(updatedStateObject) {
+            setPopupState((prevValue) => {
+                return {
+                    ...prevValue,
+                    ...updatedStateObject
+                }
+            })
+        }
+
+        return [{ game, popupState, gameDetails, userState }, handleRoleSelect, updateDetails, updateUserState, updatePopupState]
     }, [gameDetails, userState, popupState])
 
     return <GameContext.Provider value={value} children={children} />

@@ -50,7 +50,7 @@ export async function getDisputes(disputes) {
             resolve(data)
 
         } catch (error) {
-            console.log("Failed to get current Dispute - game-worker.js: " + error)
+            console.log("Failed to get current Dispute - dispute-worker.js: " + error)
         }
     })
 }

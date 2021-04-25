@@ -10,7 +10,7 @@ export default function Rules() {
                 <title>Assassin/rules</title>
             </Head>
             <Layout page={page.rules}>
-                DICKS
+                RULES
             </Layout>
         </div>
     )

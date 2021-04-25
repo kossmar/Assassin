@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useGame } from '../../../modules/game/hooks/useGame'
 import { useUser } from '../../../modules/auth/hooks/useUser'
 import { GameContextProvider } from '../../../modules/game/contexts/GameContext'
+import GamePopupManager from '../../../modules/game/components/GamePopupManager'
 
 const ThisGame = () => {
 
@@ -30,7 +31,11 @@ const ThisGame = () => {
         return (
             <>
                 <GameContextProvider gameResult={gameResult} user={user}>
-                    <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
+                    <GamePopupManager user={user}>
+                        <Layout>
+                            <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
+                        </Layout>
+                    </GamePopupManager>
                 </GameContextProvider>
             </>
         )
