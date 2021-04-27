@@ -1,5 +1,7 @@
 import React from 'react'
 import { useGameContext } from '../contexts/GameContext'
+import JoinRequest from './JoinRequest'
+import { ROLE } from '../../../common/constants'
 
 export default function JoinRequestList() {
 
@@ -8,7 +10,7 @@ export default function JoinRequestList() {
 
     if (userState.isModerator) {
         return (
-            <>
+            <div className='w-1/2 mx-auto'>
                 <div className='w-2/6 mx-auto text-center font-bold underline text-2xl'>
                     Requests:
                 </div>
@@ -17,7 +19,7 @@ export default function JoinRequestList() {
                         <div className='w-2/6 mx-auto text-center font-bold'>
                             Assassins
                         </div>
-                        <div className={'font-bold text-gray-400 ' + (game.join_requests.assassins.length === 0 ? '' : 'hidden')}>
+                        <div className={'font-bold text-gray-400 text-center' + (game.join_requests.assassins.length === 0 ? '' : 'hidden')}>
                             NONE
                         </div>
                         {game.join_requests.assassins.map((request) => (
@@ -28,7 +30,7 @@ export default function JoinRequestList() {
                         <div className='mt-4 w-2/6 mx-auto text-center font-bold'>
                             Moderators
                         </div>
-                        <div className={'font-bold text-gray-400 ' + (game.join_requests.moderators.length === 0 ? '' : 'hidden')}>
+                        <div className={'font-bold text-gray-400 text-center ' + (game.join_requests.moderators.length === 0 ? '' : 'hidden')}>
                             NONE
                         </div>
                         {game.join_requests.moderators.map(request => (
@@ -38,7 +40,7 @@ export default function JoinRequestList() {
                         ))}
                     </div>
                 </div>
-            </>
+            </div>
         )
     } else return null
 }

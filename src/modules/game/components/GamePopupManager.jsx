@@ -70,8 +70,7 @@ export default function GamePopupManager({ user, children }) {
                 })}
                 secondOptionTitle="NO"
                 secondCallback={(() => {
-                    setIsConfirmLeaveOpen(false)
-                    updatePopupState({ confirm: false })
+                    updatePopupState({ leave: false })
                 })}
             />
 
@@ -102,7 +101,7 @@ export default function GamePopupManager({ user, children }) {
             />
 
             {children}
-            
+
         </main>
     )
 }

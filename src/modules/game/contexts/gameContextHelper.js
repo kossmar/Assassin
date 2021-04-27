@@ -3,11 +3,19 @@ import { ROLE, GAME_STATUS, ASSASSIN_STATUS } from '../../../common/constants'
 const { PURGATORY, DISPUTE } = ASSASSIN_STATUS
 
 export function updateUserAndPopupState(gameResult, user, userState, popupState) {
+//         setHasJoined(false)
+//         setRoleSelection(ROLE.ASSASSIN)
+//         setIsModerator(false)
+
 
     // Check if User is game creator
     const updatedUserState = { ...userState }
     const updatedPopupState = { ...popupState }
 
+    updatedUserState.hasJoined = false
+    updatedUserState.roleSelection = ROLE.ASSASSIN
+    updatedUserState.isModerator = false
+    
     if (gameResult.creator === user._id) {
         updatedUserState.isCreator = true
     }

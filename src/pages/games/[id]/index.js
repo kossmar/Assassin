@@ -33,7 +33,7 @@ const ThisGame = () => {
                 <GameContextProvider gameResult={gameResult} user={user}>
                     <GamePopupManager user={user}>
                         <Layout>
-                            <GameComponent key={gameResult._id} gameResult={gameResult} user={user} />
+                            <GameComponent />
                         </Layout>
                     </GamePopupManager>
                 </GameContextProvider>

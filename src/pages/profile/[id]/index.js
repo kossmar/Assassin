@@ -84,7 +84,6 @@ const Profile = ({ games }) => {
     }
 
     const handleImageSelect = () => {
-        console.log(inputRef)
         inputRef.current.click()
     }
 
@@ -174,7 +173,6 @@ export async function getServerSideProps({ query }) {
     const id = query.id
     const user = await User.findOne({ _id: id })
     const games = user.games
-    console.log("DUNKS: " + games)
 
     const currentResult = await Game.find({ _id: { $in: [...games.current] } })
     const currentGames = currentResult.map((doc) => {
@@ -182,8 +180,6 @@ export async function getServerSideProps({ query }) {
         game._id = game._id.toString()
         return game
     })
-    console.log('GRONK')
-    console.log(currentGames)
 
     const previousResult = await Game.find({ _id: { $in: [...games.previous] } })
     const previousGames = previousResult.map((doc) => {

@@ -15,10 +15,12 @@ export default async function handler(req, res) {
                 const game = await Game.create(
                     req.body.game
                 ) /* create a new model in the database */
-                const user = await User.findByIdAndUpdate(req.body.userId, {current: game._id}, {
+                const user = await User.findByIdAndUpdate(req.body.userId, { $push: { 'games.current': game._id } }, {
                     new: true,
                     runValidators: true,
-                })                
+                })
+                if (!user) return res.status(400).json({ success: false })
+
                 res.status(201).json({ success: true, data: game })
 
             } catch (error) {
