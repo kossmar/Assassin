@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { mutate } from 'swr'
 import UserIcon from '../../../common/components/UserIcon'
-import { ASSASSIN_ICON_USE, ASSASSIN_STATUS, GAME_STATUS } from '../../../common/constants'
+import { ASSASSIN_ICON_USE, ASSASSIN_STATUS, GAME_STATUS } from '../../../constants'
 import { useGameContext } from '../contexts/GameContext'
 
 const { ACTIVE } = GAME_STATUS

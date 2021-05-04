@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Head from "next/head"
 import Layout from "../../common/components/Layout"
 import EditGameDetails from '../../modules/game/components/EditGameDetails'
-import { page, GAME_STATUS } from '../../common/constants'
+import { page, GAME_STATUS } from '../../constants'
 import ChooseRole from '../../modules/game/components/ChooseRole'
 import { useUser } from '../../modules/auth/hooks/useUser'
 import GameButton from '../../common/components/GameButton'

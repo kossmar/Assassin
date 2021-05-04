@@ -1,6 +1,6 @@
 import React from 'react'
 import { useGameContext } from '../contexts/GameContext'
-import { ASSASSIN_ICON_USE } from '../../../common/constants'
+import { ASSASSIN_ICON_USE } from '../../../constants'
 import UserIcon from '../../../common/components/UserIcon'
 
 export default function Moderators() {

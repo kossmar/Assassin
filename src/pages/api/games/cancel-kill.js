@@ -1,5 +1,5 @@
 import nextConnect from "next-connect"
-import { ASSASSIN_STATUS } from '../../../common/constants'
+import { ASSASSIN_STATUS } from '../../../constants'
 import Game from "../../../common/models/Game"
 
 const { ALIVE } = ASSASSIN_STATUS

@@ -1,6 +1,6 @@
 import Head from "next/head"
 import Layout from "../common/components/Layout"
-import { page } from '../common/constants'
+import { page } from '../constants'
 
 export default function Rules() {
 

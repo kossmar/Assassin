@@ -1,7 +1,7 @@
 import dbConnect from '../../../utils/dbConnect'
 import Game from '../../../common/models/Game'
 import nextConnect from 'next-connect'
-import { GAME_STATUS } from '../../../common/constants'
+import { GAME_STATUS } from '../../../constants'
 
 const handler = nextConnect()
     .put(async (req, res) => {

@@ -8,7 +8,7 @@ import { mutate } from 'swr'
 import dbConnect from '../../../utils/dbConnect'
 import User from '../../../common/models/User'
 import Game from '../../../common/models/Game'
-import { ASSASSIN_ICON_USE } from '../../../common/constants'
+import { ASSASSIN_ICON_USE } from '../../../constants'
 
 const Profile = ({ games }) => {
 

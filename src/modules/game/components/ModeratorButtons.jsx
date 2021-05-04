@@ -2,7 +2,7 @@ import React from 'react'
 import { useGameContext } from '../contexts/GameContext'
 import { startGame } from '../helpers/game-worker'
 import EditSaveButtons from './EditSaveButtons'
-import { GAME_STATUS } from '../../../common/constants'
+import { GAME_STATUS } from '../../../constants'
 import GameButton from '../../../common/components/GameButton'
 
 export default function ModeratorButtons() {

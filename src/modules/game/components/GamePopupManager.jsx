@@ -1,7 +1,7 @@
 import React from 'react'
 import BinaryPopup from '../../../common/components/BinaryPopup'
 import SinglePopup from '../../../common/components/SinglePopup'
-import { ROLE } from '../../../common/constants'
+import { ROLE } from '../../../constants'
 import { useGameContext } from '../contexts/GameContext'
 import { deleteGame, leaveGame, sendJoinRequest } from '../helpers/game-worker'
 import AdjudicatePopUp from './dispute/AdjudicatePopUp'

@@ -1,7 +1,7 @@
 import nextConnect from 'next-connect'
 import Game from '../../../common/models/Game'
 import User from '../../../common/models/User'
-import { ASSASSIN_STATUS } from '../../../common/constants'
+import { ASSASSIN_STATUS } from '../../../constants'
 
 const handler = nextConnect()
     .put(async (req, res) => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ASSASSIN_ICON_USE } from '../../common/constants'
+import { ASSASSIN_ICON_USE } from '../../constants'
 
 export default function UserIcon({ assassin, name, image = '/images/assassin.png', kills, isWinning, displayKills, isInteractive = false, clickCallback, isSelected = false, id, state, disabled = false }) {
     

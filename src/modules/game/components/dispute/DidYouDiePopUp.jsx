@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { mutate } from 'swr'
 import UserIcon from '../../../../common/components/UserIcon'
-import { DID_YOU_DIE } from '../../../../common/constants'
+import { DID_YOU_DIE } from '../../../../constants'
 
 export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId, callback }) {
 

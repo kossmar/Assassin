@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { GAME_STATUS } from '../../../common/constants'
+import { GAME_STATUS } from '../../../constants'
 import { useGameContext } from '../contexts/GameContext'
 
 export default function GameStatus() {

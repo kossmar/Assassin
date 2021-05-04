@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useGameContext } from '../../contexts/GameContext'
 import { getDisputes } from '../../helpers/dispute-worker'
-import { GAME_STATUS } from '../../../../common/constants' 
+import { GAME_STATUS } from '../../../../constants' 
 
 
 const { ACTIVE } = GAME_STATUS

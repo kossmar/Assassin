@@ -1,6 +1,6 @@
 import React from 'react'
 import UserIcon from '../../../common/components/UserIcon'
-import { ASSASSIN_ICON_USE } from '../../../common/constants'
+import { ASSASSIN_ICON_USE } from '../../../constants'
 
 const { ROLE } = ASSASSIN_ICON_USE
 export default function ChooseRole({ selectedRole, onClick }) {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useGameContext } from "../contexts/GameContext"
-import { ROLE } from '../../../common/constants'
+import { ROLE } from '../../../constants'
 import { saveGameDetails } from '../helpers/game-worker'
 
 

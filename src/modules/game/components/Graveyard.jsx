@@ -1,7 +1,7 @@
 import React from 'react'
 import { useGameContext } from '../contexts/GameContext'
 import Leaderboard from './Leaderboard'
-import { GAME_STATUS } from '../../../common/constants'
+import { GAME_STATUS } from '../../../constants'
 
 const { ACTIVE, COMPLETE } = GAME_STATUS
 

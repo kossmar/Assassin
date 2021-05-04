@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { useEffect } from 'react'
 import Layout from '../common/components/Layout'
-import { page } from "../common/constants"
+import { page } from "../constants"
 import { useUser } from '../modules/auth/hooks/useUser'
 
 export default function Home({ props }) {

@@ -12,21 +12,21 @@ export default function GameDetails() {
             <>
                 <div className={'w-96 mx-auto pt-16 space-y-10 text-center'}>
                     <div className='border-yellow-200 border-2 bg-gray-100 space-y-10 py-10 rounded-xl'>
-                        <div>
+                        <h1>
                             <div className='font-bold'>
                                 NAME:
                             </div>
                             <div>
-                                {gameContext.gameDetails.game_name}
+                                {gameContext.gameDetails.game_name ?? 'UNKNOWN'}
                             </div>
-                        </div>
+                        </h1>
 
                         <div>
                             <div className='font-bold'>
                                 WEAPONS:
                             </div>
                             <div>
-                                {gameContext.gameDetails.weapons}
+                                {gameContext.gameDetails.weapons ?? 'UNKNOWN'}
                             </div>
                         </div>
 
@@ -35,7 +35,7 @@ export default function GameDetails() {
                                 SAFE ZONES:
                             </div>
                             <div>
-                                {gameContext.gameDetails.safe_zones}
+                                {gameContext.gameDetails.safe_zones ?? 'UNKNOWN'}
                             </div>
                         </div>
                     </div>

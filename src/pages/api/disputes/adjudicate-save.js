@@ -1,7 +1,7 @@
 import nextConnect from 'next-connect'
 import Dispute from '../../../common/models/Dispute'
 import Game from '../../../common/models/Game'
-import { ASSASSIN_STATUS } from '../../../common/constants'
+import { ASSASSIN_STATUS } from '../../../constants'
 
 const { ALIVE } = ASSASSIN_STATUS
 

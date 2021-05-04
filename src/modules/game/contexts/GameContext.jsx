@@ -1,9 +1,9 @@
 import { Children, createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { ROLE } from '../../../common/constants'
+import { ROLE } from '../../../constants'
 import { updateUserAndPopupState } from './gameContextHelper'
 
 
-const GameContext = createContext()
+export const GameContext = createContext()
 
 export function useGameContext() {
     const context = useContext(GameContext)
@@ -19,8 +19,8 @@ export function useGameContext() {
 
 export function GameContextProvider({ children, gameResult, user }) {
 
-    const [game, setGame] = useState(gameResult)
-    const [gameDetails, setGameDetails] = useState(gameResult.game_details)
+    const [game, setGame] = useState({})
+    const [gameDetails, setGameDetails] = useState({})
     const [userState, setUserState] = useState({
         isEditing: false,
         isModerator: false,
@@ -48,10 +48,13 @@ export function GameContextProvider({ children, gameResult, user }) {
     })
 
     useEffect(() => {
-        const {updatedUserState, updatedPopupState} = updateUserAndPopupState(gameResult, user, userState, popupState)
-        setUserState(updatedUserState)
-        setPopupState(updatedPopupState)
-
+        if (gameResult) {
+            setGame(gameResult)
+            setGameDetails(gameResult.game_details)
+            const {updatedUserState, updatedPopupState} = updateUserAndPopupState(gameResult, user, userState, popupState)
+            setUserState(updatedUserState)
+            setPopupState(updatedPopupState)
+        }
     }, [gameResult])
 
     const value = useMemo(() => {

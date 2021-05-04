@@ -1,7 +1,7 @@
 import React from 'react'
 import { useGameContext } from '../contexts/GameContext'
 import JoinRequest from './JoinRequest'
-import { ROLE } from '../../../common/constants'
+import { ROLE } from '../../../constants'
 
 export default function JoinRequestList() {
 

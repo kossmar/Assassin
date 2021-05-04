@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import UserIcon from '../../../common/components/UserIcon'
-import { ASSASSIN_ICON_USE, GAME_STATUS } from '../../../common/constants'
+import { ASSASSIN_ICON_USE, GAME_STATUS } from '../../../constants'
 
 
 export default function Leaderboard({ assassins, forModerator, status, graveyard }) {

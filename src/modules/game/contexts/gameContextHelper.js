@@ -1,4 +1,4 @@
-import { ROLE, GAME_STATUS, ASSASSIN_STATUS } from '../../../common/constants'
+import { ROLE, GAME_STATUS, ASSASSIN_STATUS } from '../../../constants'
 
 const { PURGATORY, DISPUTE } = ASSASSIN_STATUS
 
