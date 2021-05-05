@@ -17,10 +17,10 @@ export function useGameContext() {
     return context
 }
 
-export function GameContextProvider({ children, gameResult, user }) {
+export function GameContextProvider({ children, gameResult, user, injectedUserState }) {
 
-    const [game, setGame] = useState({})
-    const [gameDetails, setGameDetails] = useState({})
+    const [game, setGame] = useState(gameResult)
+    const [gameDetails, setGameDetails] = useState(gameResult.game_details)
     const [userState, setUserState] = useState({
         isEditing: false,
         isModerator: false,
@@ -33,7 +33,8 @@ export function GameContextProvider({ children, gameResult, user }) {
         status: null,
         killer: null,
         isDead: false,
-        dispute: null
+        dispute: null,
+        ...injectedUserState
     })
 
     // Pop Up State
@@ -48,13 +49,14 @@ export function GameContextProvider({ children, gameResult, user }) {
     })
 
     useEffect(() => {
-        if (gameResult) {
-            setGame(gameResult)
-            setGameDetails(gameResult.game_details)
-            const {updatedUserState, updatedPopupState} = updateUserAndPopupState(gameResult, user, userState, popupState)
-            setUserState(updatedUserState)
-            setPopupState(updatedPopupState)
-        }
+        // TODO: not sure why I added this if statment. It broke the code and I didn't realize for a while so I must have been working on the mock context...
+        // if (gameResult) {
+        //     setGame(gameResult)
+        //     setGameDetails(gameResult.game_details)
+        const { updatedUserState, updatedPopupState } = updateUserAndPopupState(gameResult, user, userState, popupState)
+        setUserState(updatedUserState)
+        setPopupState(updatedPopupState)
+        // }
     }, [gameResult])
 
     const value = useMemo(() => {

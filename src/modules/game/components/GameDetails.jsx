@@ -17,27 +17,27 @@ export default function GameDetails() {
                                 NAME:
                             </div>
                             <div>
-                                {gameContext.gameDetails.game_name ?? 'UNKNOWN'}
+                                {gameContext.gameDetails?.game_name ?? 'tits'}
                             </div>
                         </h1>
 
-                        <div>
+                        <h1>
                             <div className='font-bold'>
                                 WEAPONS:
                             </div>
                             <div>
-                                {gameContext.gameDetails.weapons ?? 'UNKNOWN'}
+                                {gameContext.gameDetails?.weapons ?? 'dicks'}
                             </div>
-                        </div>
+                        </h1>
 
-                        <div>
+                        <h1>
                             <div className='font-bold'>
                                 SAFE ZONES:
                             </div>
                             <div>
-                                {gameContext.gameDetails.safe_zones ?? 'UNKNOWN'}
+                                {gameContext.gameDetails?.safe_zones ?? 'poopie'}
                             </div>
-                        </div>
+                        </h1>
                     </div>
                 </div>
             </>
