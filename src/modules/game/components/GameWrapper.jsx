@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from '../../../common/components/Layout'
 import { GameContextProvider } from '../../../modules/game/contexts/GameContext'
 import GamePopupManager from '../../../modules/game/components/GamePopupManager'
@@ -7,18 +7,16 @@ import gameContexts from '../../../test-utils/mock-game-contexts'
 
 export default function GameWrapper({ gameResult, user }) {
 
-    // const mockUser = {
-    //     _id: 123456,
-    //     email: 'default',
-    //     display_name: 'default',
-    //     profile_image: null,
-    //     games: null
+    // const [gameResult, setGameResult] = useState(game)
 
-    // }
-    // const game = gameResult ? gameResult : gameContexts.default_game_context_status_CREATED.game
-    // const userThing = user ? user : mockUser
+    // useEffect(() => {
+    //     console.log('HELLO')
+    //     setGameResult(game)
+    // }, [game])
 
 
+    console.log('GAME WRAPPER gameResult: ')
+    console.log(gameResult)
     if (!gameResult) {
         return (
             <>

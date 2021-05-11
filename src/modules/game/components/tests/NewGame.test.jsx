@@ -1,5 +1,6 @@
 import { screen, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+// import MyApp from '../../../../pages/_app'
 import NewGame from '../NewGame'
 
 
@@ -78,7 +79,7 @@ describe('when save button is pressed', () => {
         expect(errorArray).toHaveLength(2)
     })
 
-    test('pressing save returns a new game object with a mongo id', () => {
+    // test('pressing save returns a new game object with a mongo id', () => {
         //TODO: not sure how to meaningfully test the save button being pressed
         // could either try and test to see that a game is returned through a spy
         // but in terms of e2e might make more sense to try and test that navigation to game page occurs
@@ -89,6 +90,12 @@ describe('when save button is pressed', () => {
         //     code: 'ERR_UNHANDLED_REJECTION'
         //   }
 
+        // router.push({
+        //     route: '/api',
+        //     pathname: '/games/new',
+        // });
+
+        // render(<MyApp />)
         // const saveButton = screen.getByRole('button', { name: /save/i })
 
         // // find and clear inputs
@@ -109,5 +116,5 @@ describe('when save button is pressed', () => {
         // const name2 = screen.queryByRole('textbox', { name: /game name/i })
         // expect(name2).not.toBeInTheDocument()
 
-    })
+    // })
 })

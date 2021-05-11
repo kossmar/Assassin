@@ -2,9 +2,12 @@ import React from 'react'
 import { useGameContext } from "../contexts/GameContext"
 import { ROLE } from '../../../constants'
 import { saveGameDetails } from '../helpers/game-worker'
+import { useUser } from '../../auth/hooks/useUser'
 
 
 export default function EditSaveButtons() {
+
+    const user = useUser()
 
     const [gameContext, handleRoleSelect, updateDetails, updateUserState] = useGameContext()
     // TODO: add onClick back to button
@@ -26,7 +29,7 @@ export default function EditSaveButtons() {
 
         const errs = formValidate()
         if (Object.keys(errs).length === 0) {
-            saveGameDetails(gameDetailsObj, gameResult._id)
+            saveGameDetails(gameDetailsObj, gameContext.game._id)
         } else {
             // setErrors({ errs })
             console.log(errs)

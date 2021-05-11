@@ -15,33 +15,9 @@ const Game = (props) => {
     const router = useRouter()
     const { id } = router.query
 
-    // - - - - - - - - - - - - -
-
-    // TEST CODE: this is only to make sure that I am properly mocking axios calls. proper code is below in the commented out Dong function
-    // console.log('pork')
-    // console.log(id)
-    // const [gameResult, setGameResult] = useState(null)
-
-    // useEffect(() => {
-    // axios.get(`/api/games/${id}`).then(res => {
-    //     console.log('DONGLES')
-    //     console.log(res.data.data)
-    //     setGameResult(res.data.data)
-    // })
-    // }, [])
-
-    // if (gameResult != null) {
-    //     return <GameWrapper gameResult={gameResult} user={user} />
-    // } else {
-    //     return <p>Failed to load!</p>
-    // }
-
-    // - - - - - - - - - - - - - - 
-
-    // REAL CODE
-
     const { gameResult, error } = useGame(id)
-    console.log('gameResult return from useGame in index: \n' + JSON.stringify(gameResult))
+    console.log('gameResult return from useGame in index: ')
+    console.log(gameResult)
 
     if (error) {
         console.log('ERROR: ' + error)
@@ -52,24 +28,4 @@ const Game = (props) => {
 }
 
 export default Game
-
-// export async function getServerSideProps({ query }) {
-
-
-
-//     console.log(query.id)
-//     const thing = await fetcher(`/api/games/${query.id}`)
-//     console.log('FUCK')
-//     console.log(thing)
-
-//     return {
-//         props: {
-//             thing: null
-//         }
-//     }
-
-// }
-
-
-// const fetcher = (url) => axios.get(url).then(res => res.data.data)
 

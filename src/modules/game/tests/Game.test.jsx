@@ -1,20 +1,11 @@
 import { screen, render, waitFor } from '@testing-library/react'
-import router, { useRouter } from 'next/router'
-import gameContexts from '../../../test-utils/mock-game-contexts'
+import router from 'next/router'
 
 import Game from '../../../pages/games/[id]/index'
 
-const game = gameContexts.default_game_context_status_CREATED.game
-
 jest.mock('next/router', () => require('next-router-mock'));
 
-// global.fetch = jest.fn(() =>
-//   Promise.resolve({
-//     // json: () => Promise.resolve({ game }),
-//   })
-// );
-
-test('game hook calls correctly', async () => {
+test('game hook calls correctly and renders game page', async () => {
 
     router.push({
         route: '/api',
