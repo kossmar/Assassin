@@ -98,7 +98,7 @@ const Image = ({ image, name, children, callback, isRole = false, isSelected, di
                 </div>
 
                 {/* IMAGE CIRCLE*/}
-                <div className={'rounded-full border-8 border-transparent ' + (isRole ? (isSelected ? 'border-red-600' : 'border-transparent hover:border-red-400') : 'border-transparent')}
+                <button title={name} className={'rounded-full border-8 border-transparent ' + (isRole ? (isSelected ? 'border-red-600' : 'border-transparent hover:border-red-400') : 'border-transparent')}
                     onClick={(callback)}>
 
                     <main>{children}</main>
@@ -108,7 +108,7 @@ const Image = ({ image, name, children, callback, isRole = false, isSelected, di
                         <img src={image} className='object-cover place-self-center min-h-full min-w-full' />
                     </div>
 
-                </div>
+                </button>
                 <div className='font-bold italic'>{name}</div>
 
             </div>

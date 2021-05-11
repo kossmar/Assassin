@@ -16,14 +16,14 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
     updatedUserState.roleSelection = ROLE.ASSASSIN
     updatedUserState.isModerator = false
     
-    if (gameResult.creator === user._id) {
+    if (gameResult.creator === user?._id) {
         updatedUserState.isCreator = true
     }
 
     // Check if user has joined game
     for (let x = 0; x < gameResult.assassins.length; x++) {
         const assassin = gameResult.assassins[x]
-        if (user._id === assassin.user) {
+        if (user?._id === assassin.user) {
             updatedUserState.hasJoined = true
             updatedUserState.currentAssassin = assassin
             updatedUserState.status = assassin.status
@@ -40,7 +40,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
         // Check if User is in graveyard
         for (let x = 0; x < gameResult.graveyard.length; x++) {
             const deadGuy = gameResult.graveyard[x]
-            if (user._id === deadGuy.user) {
+            if (user?._id === deadGuy.user) {
                 // setHasJoined(true)
                 updatedUserState.hasJoined = true
                 // setIsDead(true)
@@ -53,7 +53,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
         const assassinsRequestArr = gameResult.join_requests.assassins
         for (let x = 0; x < assassinsRequestArr.length; x++) {
             const request = assassinsRequestArr[x]
-            if (user._id == request.user) {
+            if (user?._id == request.user) {
                 // setHasRequestedJoin(true)
                 updatedUserState.hasRequestedJoin = true
                 return
@@ -62,7 +62,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
         const moderatorsRequestArr = gameResult.join_requests.moderators
         for (let x = 0; x < moderatorsRequestArr.length; x++) {
             const request = moderatorsRequestArr[x]
-            if (user._id == request.user) {
+            if (user?._id == request.user) {
                 // setHasRequestedJoin(true)
                 updatedUserState.hasRequestedJoin = true
                 return
@@ -72,7 +72,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
         // Check if user is moderator
         for (let x = 0; x < gameResult.moderators.length; x++) {
             const moderator = gameResult.moderators[x]
-            if (user._id === moderator.user) {
+            if (user?._id === moderator.user) {
                 // setIsModerator(true)
                 updatedUserState.isModerator = true
                 // setRoleSelection(ROLE.MODERATOR)
@@ -94,7 +94,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
             // find the current user's assassin object
             const currentAssassin = gameResult.assassins[a]
 
-            if (currentAssassin.user === user._id) {
+            if (currentAssassin.user === user?._id) {
 
                 // setCurrentAssassin(currentAssassin)
                 updatedUserState.currentAssassin = currentAssassin
@@ -171,14 +171,14 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
 //         setIsModerator(false)
 
 //         // Check if User is game creator
-//         if (gameResult.creator === user._id) {
+//         if (gameResult.creator === user?._id) {
 //             setIsCreator(true)
 //         }
 
 //         // Check if user has joined game
 //         for (let x = 0; x < gameResult.assassins.length; x++) {
 //             const assassin = gameResult.assassins[x]
-//             if (user._id === assassin.user) {
+//             if (user?._id === assassin.user) {
 //                 setHasJoined(true)
 //                 setCurrentAssassin(assassin)
 //                 setAssassinStatus(assassin.status)
@@ -194,7 +194,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
 //             // Check if User is in graveyard
 //             for (let x = 0; x < gameResult.graveyard.length; x++) {
 //                 const deadGuy = gameResult.graveyard[x]
-//                 if (user._id === deadGuy.user) {
+//                 if (user?._id === deadGuy.user) {
 //                     setHasJoined(true)
 //                     setIsDead(true)
 //                     return
@@ -205,7 +205,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
 //             const assassinsRequestArr = gameResult.join_requests.assassins
 //             for (let x = 0; x < assassinsRequestArr.length; x++) {
 //                 const request = assassinsRequestArr[x]
-//                 if (user._id == request.user) {
+//                 if (user?._id == request.user) {
 //                     setHasRequestedJoin(true)
 //                     return
 //                 }
@@ -213,7 +213,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
 //             const moderatorsRequestArr = gameResult.join_requests.moderators
 //             for (let x = 0; x < moderatorsRequestArr.length; x++) {
 //                 const request = moderatorsRequestArr[x]
-//                 if (user._id == request.user) {
+//                 if (user?._id == request.user) {
 //                     setHasRequestedJoin(true)
 //                     return
 //                 }
@@ -222,7 +222,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
 //             // Check if user is moderator
 //             for (let x = 0; x < gameResult.moderators.length; x++) {
 //                 const moderator = gameResult.moderators[x]
-//                 if (user._id === moderator.user) {
+//                 if (user?._id === moderator.user) {
 //                     setIsModerator(true)
 //                     setRoleSelection(ROLE.MODERATOR)
 //                     setHasJoined(true)
@@ -241,7 +241,7 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
 //                 // find the current user's assassin object
 //                 const currentAssassin = gameResult.assassins[a]
 
-//                 if (currentAssassin.user === user._id) {
+//                 if (currentAssassin.user === user?._id) {
 
 //                     setCurrentAssassin(currentAssassin)
 

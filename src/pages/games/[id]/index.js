@@ -1,45 +1,75 @@
-import React, { useState, useEffect } from 'react'
-import GameComponent from '../../../modules/game/components/GameComponent'
-import Layout from "../../../common/components/Layout"
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useGame } from '../../../modules/game/hooks/useGame'
 import { useUser } from '../../../modules/auth/hooks/useUser'
-import { GameContextProvider } from '../../../modules/game/contexts/GameContext'
-import GamePopupManager from '../../../modules/game/components/GamePopupManager'
+import GameWrapper from '../../../modules/game/components/GameWrapper'
+import axios from 'axios'
 
-const ThisGame = () => {
+const Game = (props) => {
 
-    const user = useUser({ redirectIfUnauthorized: '/login' })
+    // TODO: OKAY so I figured out how to user mock service worker in Next.js. Now I need to figure out how to use it with useSWR 
+
+    // const user = useUser({ redirectIfUnauthorized: '/login' })
+    const user = useUser()
 
     const router = useRouter()
     const { id } = router.query
 
-    const { gameResult, error } = useGame(id)
+    // - - - - - - - - - - - - -
 
-    if (error) return <p>Failed to load</p>
-    if (!gameResult || !user) {
-        return (
-            <>
-                <Layout>
-                    <div className='flex place-content-center text-center mx-auto w-1/3'>
-                        <p>Loading...</p>
-                    </div>
-                </Layout>
-            </>
-        )
+    // TEST CODE: this is only to make sure that I am properly mocking axios calls. proper code is below in the commented out Dong function
+    // console.log('pork')
+    // console.log(id)
+    // const [gameResult, setGameResult] = useState(null)
+
+    // useEffect(() => {
+    // axios.get(`/api/games/${id}`).then(res => {
+    //     console.log('DONGLES')
+    //     console.log(res.data.data)
+    //     setGameResult(res.data.data)
+    // })
+    // }, [])
+
+    // if (gameResult != null) {
+    //     return <GameWrapper gameResult={gameResult} user={user} />
+    // } else {
+    //     return <p>Failed to load!</p>
+    // }
+
+    // - - - - - - - - - - - - - - 
+
+    // REAL CODE
+
+    const { gameResult, error } = useGame(id)
+    console.log('gameResult return from useGame in index: \n' + JSON.stringify(gameResult))
+
+    if (error) {
+        console.log('ERROR: ' + error)
+        return <p>Failed to load!</p>
     } else {
-        return (
-            <>
-                <GameContextProvider gameResult={gameResult} user={user}>
-                    <GamePopupManager user={user}>
-                        <Layout>
-                            <GameComponent />
-                        </Layout>
-                    </GamePopupManager>
-                </GameContextProvider>
-            </>
-        )
+        return <GameWrapper gameResult={gameResult} user={user} />
     }
 }
 
-export default ThisGame
+export default Game
+
+// export async function getServerSideProps({ query }) {
+
+
+
+//     console.log(query.id)
+//     const thing = await fetcher(`/api/games/${query.id}`)
+//     console.log('FUCK')
+//     console.log(thing)
+
+//     return {
+//         props: {
+//             thing: null
+//         }
+//     }
+
+// }
+
+
+// const fetcher = (url) => axios.get(url).then(res => res.data.data)
+

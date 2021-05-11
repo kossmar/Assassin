@@ -6,8 +6,6 @@ const { ROLE } = ASSASSIN_ICON_USE
 export default function ChooseRole({ selectedRole, onClick }) {
 
     function handleClick(id) {
-        console.log(id)
-
         onClick(id)
     }
 

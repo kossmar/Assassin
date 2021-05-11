@@ -2,6 +2,7 @@ import { ASSASSIN_STATUS, GAME_STATUS, ROLE } from "../constants";
 
 const default_game_context_status_CREATED = {
     game: {
+        _id:'123456',
         creator: 'default',
         creator_role: 'default',
         game_details: {
@@ -9,10 +10,10 @@ const default_game_context_status_CREATED = {
             weapons: 'default',
             safe_zones: 'default',
         },
-        moderators: ['default'],
+        moderators: ['moderator'],
         assassins: [
             {
-                user: 'default',
+                user: 'buddy',
                 target: null,
                 is_waiting: false,
                 kills: [],
@@ -21,7 +22,7 @@ const default_game_context_status_CREATED = {
                 rank_index: null // seems useless
             },
             {
-                user: 'default',
+                user: 'guy',
                 target: null,
                 is_waiting: false,
                 kills: [],
@@ -32,7 +33,7 @@ const default_game_context_status_CREATED = {
         ],
         graveyard: [
             {
-                user: 'default',
+                user: 'dead',
                 kills: [],
                 death_rank: 1 // equals graveyard.length + 1
             }
@@ -42,11 +43,11 @@ const default_game_context_status_CREATED = {
         join_requests: {
             assassins: [
                 {
-                    user: 'default',
+                    user: 'join boy',
                     role: ROLE.ASSASSIN
                 }
             ],
-            moderators: ['default'],
+            moderators: [],
         },
         disputes: [],
         winner: null,

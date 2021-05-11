@@ -8,17 +8,6 @@ const gameDetails = {
     safe_zones: ''
 }
 
-const gameResult = mockGameContexts.default_game_context_status_CREATED.game
-const user = {
-    email: 'default',
-    display_name: 'default',
-    profile_image: null,
-    games: {
-        current: ['default'],
-        previous: ['default']
-    }
-}
-
 const game = mockGameContexts.default_game_context_status_CREATED.game 
 
 test('inputs display properly on render', () => {
@@ -32,8 +21,4 @@ test('inputs display properly on render', () => {
     expect(name).toHaveTextContent('')
     expect(weapons).toHaveTextContent('')
     expect(safeZones).toHaveTextContent('')
-})
-
-test('error displays if textbox is left empty', () => {
-
 })

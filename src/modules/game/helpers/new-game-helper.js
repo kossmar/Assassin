@@ -83,10 +83,10 @@ export function addNewGameToHardCodedAsassins(gameId) {
 
 export function formValidate(gameDetails, selectedRole) {
     let err = {}
-    if (!gameDetails.game_name) err.name = 'Game Name is required'
-    if (!gameDetails.weapons) err.owner_name = 'Weapons are required'
-    if (!gameDetails.safe_zones) err.species = 'Safe Zones are required'
-    if (!selectedRole) err.image_url = 'You must select a role for yourself'
+    if (!gameDetails.game_name) err.game_name = 'Game Name is required'
+    if (!gameDetails.weapons) err.weapons = 'Weapons are required'
+    if (!gameDetails.safe_zones) err.safe_zones = 'Safe Zones are required'
+    if (!selectedRole) err.role = 'You must select a role for yourself'
     return err
 }
 

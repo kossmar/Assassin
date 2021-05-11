@@ -7,7 +7,6 @@ export default function Assassins() {
 
     const [gameContext] = useGameContext()
     const { game, userState } = gameContext
-    console.log(game)
     if (game.assassins.length > 1) {
         return (
             <div className='my-20'>
