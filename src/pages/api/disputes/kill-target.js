@@ -14,13 +14,14 @@ const handler = nextConnect()
 
         try {
 
-            // 
+            // find game
             const gameForTarget = await Game.findById(dispute.game)
             console.log('gameForTarget')
             console.log(gameForTarget)
 
             var target
 
+            // find target's assassin profile
             for (let x = 0; x < gameForTarget.assassins.length; x++) {
                 const assassin = gameForTarget.assassins[x]
                 console.log('thisAssassin')
@@ -37,14 +38,14 @@ const handler = nextConnect()
 
             var killersNewTarget
 
+            // set killer's new target
             if (isGameEnding === true) {
                 killersNewTarget = ''
             } else {
                 killersNewTarget = target.target
             }
 
-            const killerQuery = { $push: { 'assassins.$.kills': dispute.target.user }, $set: { 'assassins.$.target': killersNewTarget, 'assassins.$.status': ALIVE, 'assassin.$.dispute': '' } }
-
+            const killerQuery = { $push: { 'assassins.$.kills': dispute.target.user }, $set: { 'assassins.$.target': killersNewTarget, 'assassins.$.status': ALIVE, 'assassins.$.dispute': '' } }
 
 
             // Update Killer kills array to include Target and Assign Killer to dead Target's Target

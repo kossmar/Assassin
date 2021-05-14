@@ -7,12 +7,15 @@ import { useGameContext } from '../contexts/GameContext'
 const { ACTIVE } = GAME_STATUS
 
 
+
 export default function Target() {
 
     const [gameContext] = useGameContext()
 
     const target = gameContext.userState.target
     const gameId = gameContext.game._id
+    const userStatus = gameContext.userState.status
+
     let disabled = false
     if (gameContext.userState.assassinStatus === ASSASSIN_STATUS.PURGATORY || gameContext.userState.assassinStatus === ASSASSIN_STATUS.DISPUTE) {
         disabled = true
@@ -32,18 +35,20 @@ export default function Target() {
         if (target) {
             setName(target.display_name)
             setImage((target.profile_image ? target.profile_image : '/images/assassin.png'))
+
             if (state != ASSASSIN_ICON_USE.TARGET.CONFIRM) {
-                setState(() => {
-                    console.log(target.status)
-                    switch (target.status) {
-                        case ASSASSIN_STATUS.ALIVE:
-                            console.log('DONK')
-                            return ASSASSIN_ICON_USE.TARGET.ALIVE
-                        case ASSASSIN_STATUS.PURGATORY:
-                            console.log('PLONK')
-                            return ASSASSIN_ICON_USE.TARGET.WAITING
-                    }
-                })
+                if (userStatus === ASSASSIN_STATUS.PURGATORY) {
+                    setState(ASSASSIN_ICON_USE.WAITING)
+                } else {
+                    setState(() => {
+                        switch (target.status) {
+                            case ASSASSIN_STATUS.ALIVE:
+                                return ASSASSIN_ICON_USE.TARGET.ALIVE
+                            case ASSASSIN_STATUS.PURGATORY:
+                                return ASSASSIN_ICON_USE.TARGET.WAITING
+                        }
+                    })
+                }
             }
         }
     }, [target])
@@ -73,8 +78,7 @@ export default function Target() {
                 throw new Error(res.status)
             }
 
-            const { data } = await res.json()
-            mutate(`/api/games/${gameId}`, data, false)
+            mutate(`/api/games/${gameId}`)
             setState(WAITING)
 
         } catch (error) {
@@ -111,8 +115,7 @@ export default function Target() {
                         throw new Error(res.status)
                     }
 
-                    const { data } = await res.json()
-                    mutate(`/api/games/${gameId}`, data, false)
+                    mutate(`/api/games/${gameId}`)
 
                 } catch (error) {
                     console.log("Failed to confirm kill by assassin - client side: ")
@@ -123,7 +126,7 @@ export default function Target() {
         }
     }
 
-    if (gameContext.userState.currentAssassin != null && gameContext.game.game_status === ACTIVE.STATUS) {
+    if (!gameContext.userState.isDead && gameContext.userState.currentAssassin != null && gameContext.game.game_status === ACTIVE.STATUS && !gameContext.userState.isModerator) {
         return (
             <>
                 <div className='bg-red-500 rounded-2xl w-96 mx-auto py-10 my-20'>

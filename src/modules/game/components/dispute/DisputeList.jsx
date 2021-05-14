@@ -13,11 +13,15 @@ export default function DisputeList({ disputesArr }) {
     const [disputes, setDisputes] = useState([])
 
     useEffect(() => {
+        console.log('HEY BABY')
+        console.log(gameContext.game.disputes.length)
         if (gameContext.game.disputes.length > 0) {
             getDisputes(gameContext.game.disputes)
             .then((foundDisputes) => {
                 setDisputes(foundDisputes)
             })
+        } else {
+            setDisputes([])
         }
     }, [gameContext.game.disputes])
 

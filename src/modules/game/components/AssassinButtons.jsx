@@ -6,11 +6,15 @@ export default function AssassinButtons() {
 
     const [gameContext, , , , updatePopupState] = useGameContext()
 
+    const hasRequestedJoin = gameContext.userState.hasRequestedJoin
+    const hasJoined = gameContext.userState.hasJoined
+    const isCreator = gameContext.userState.isCreator
+    const isModerator = gameContext.userState.isModerator
     return (
         <div>
             <JoinButton
-                hasJoined={gameContext.userState.hasJoined}
-                hasRequestedJoin={gameContext.userState.hasRequestedJoin}
+                hasJoined={hasJoined}
+                hasRequestedJoin={hasRequestedJoin}
                 onClick={(() => {
                     updatePopupState({ join: true })
                 })}
@@ -20,7 +24,7 @@ export default function AssassinButtons() {
                 text='LEAVE GAME'
                 color='bg-red-500'
                 borderColor='border-red-200'
-                disabled={(gameContext.userState.hasJoined === false || gameContext.userState.isCreator === true || gameContext.userState.isModerator === true)}
+                disabled={(!hasJoined || isCreator || isModerator)}
                 onClick={(() => {
                     updatePopupState({ leave: true })
                 })}

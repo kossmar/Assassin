@@ -24,7 +24,8 @@ export async function startGame(game) {
         }
 
         const { data } = await res.json()
-        mutate(`/api/games/${game._id}`, data, false)
+        mutate(`/api/games/${game._id}`)
+        // mutate(`/api/games/${game._id}`, data)
 
     } catch (error) {
         console.log("Failed to start game: " + error)

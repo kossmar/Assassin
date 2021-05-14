@@ -6,8 +6,6 @@ import ChooseRole from '../components/ChooseRole'
 export default function GameDetails() {
 
     const [gameContext, handleRoleSelect, updateDetails] = useGameContext()
-    console.log('GAME DETAILS game:')
-    console.log(gameContext.game)
 
     if (!gameContext.userState.isEditing) {
         return (

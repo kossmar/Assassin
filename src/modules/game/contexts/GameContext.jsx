@@ -1,4 +1,4 @@
-import { Children, createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { ROLE } from '../../../constants'
 import { updateUserAndPopupState } from './gameContextHelper'
 
@@ -49,11 +49,6 @@ export function GameContextProvider({ children, gameResult, user, injectedUserSt
     })
 
     useEffect(() => {
-        console.log('GAME CONTEXT USE EFFECT RAN')
-        // TODO: not sure why I added this if statment. It broke the code and I didn't realize for a while so I must have been working on the mock context...
-        // if (gameResult) {
-        //     setGame(gameResult)
-        //     setGameDetails(gameResult.game_details)
         const { updatedUserState, updatedPopupState } = updateUserAndPopupState(gameResult, user, userState, popupState)
         setUserState(updatedUserState)
         setPopupState(updatedPopupState)
@@ -95,6 +90,7 @@ export function GameContextProvider({ children, gameResult, user, injectedUserSt
         }
 
         function updatePopupState(updatedStateObject) {
+            console.log(updatedStateObject)
             setPopupState((prevValue) => {
                 return {
                     ...prevValue,

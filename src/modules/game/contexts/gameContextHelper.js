@@ -1,11 +1,11 @@
 import { ROLE, GAME_STATUS, ASSASSIN_STATUS } from '../../../constants'
 
-const { PURGATORY, DISPUTE } = ASSASSIN_STATUS
+const { PURGATORY, DISPUTE, ALIVE, DEAD } = ASSASSIN_STATUS
 
 export function updateUserAndPopupState(gameResult, user, userState, popupState) {
-//         setHasJoined(false)
-//         setRoleSelection(ROLE.ASSASSIN)
-//         setIsModerator(false)
+    //         setHasJoined(false)
+    //         setRoleSelection(ROLE.ASSASSIN)
+    //         setIsModerator(false)
 
 
     // Check if User is game creator
@@ -15,7 +15,8 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
     updatedUserState.hasJoined = false
     updatedUserState.roleSelection = ROLE.ASSASSIN
     updatedUserState.isModerator = false
-    
+    updatedPopupState.dispute = false
+
     if (gameResult.creator === user?._id) {
         updatedUserState.isCreator = true
     }
@@ -28,8 +29,10 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
             updatedUserState.currentAssassin = assassin
             updatedUserState.status = assassin.status
 
-            if (assassin.status === PURGATORY) updatedPopupState.didYouDie = true
-            if (assassin.status === DISPUTE) updatedPopupState.dispute = true
+            // if (assassin.status === PURGATORY) updatedPopupState.didYouDie = true
+            updatedPopupState.didYouDie = (assassin.status === PURGATORY)
+            // if (assassin.status === DISPUTE) updatedPopupState.dispute = true
+            updatedPopupState.dispute = (assassin.status === DISPUTE)
             break
         }
     }
@@ -45,6 +48,8 @@ export function updateUserAndPopupState(gameResult, user, userState, popupState)
                 updatedUserState.hasJoined = true
                 // setIsDead(true)
                 updatedUserState.isDead = true
+                updatedUserState.status = DEAD
+                // TODO: redundant to have both of these
                 return
             }
         }

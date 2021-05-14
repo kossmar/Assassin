@@ -5,7 +5,7 @@ export default function PlayerStatus() {
 
     const [gameContext] = useGameContext()
 
-    if (gameContext.game.isDead) {
+    if (gameContext.userState.isDead) {
         return (
             <>
                 <div className={'text-center text-red-600'}>

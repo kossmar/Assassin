@@ -3,7 +3,7 @@ import { mutate } from 'swr'
 import UserIcon from '../../../../common/components/UserIcon'
 import { DID_YOU_DIE } from '../../../../constants'
 
-export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId, callback }) {
+export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId, confirmCallback }) {
 
 
     const [isCommentOpen, setIsCommentOpen] = useState(false)
@@ -31,10 +31,11 @@ export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId
                 throw new Error(res.status)
             }
 
-            const { data } = await res.json()
-            mutate(`/api/games/${gameId}`, data, false)
+            // const { data } = await res.json()
+            // mutate(`/api/games/${gameId}`, data, false)
+            mutate(`/api/games/${gameId}`)
 
-            callback()
+            confirmCallback()
 
         } catch (error) {
             console.log("Could not confirm kill (target) - client side: " + error)
@@ -70,8 +71,9 @@ export default function DidYouDiePopUp({ isOpen, killer, currentAssassin, gameId
                 // TODO: Add error message
             }
 
-            const { data } = await res.json()
-            mutate(`/api/games/${gameId}`, data, false)
+            // const { data } = await res.json()
+            // mutate(`/api/games/${gameId}`, data, false)
+            mutate(`/api/games/${gameId}`)
 
 
         } catch (error) {

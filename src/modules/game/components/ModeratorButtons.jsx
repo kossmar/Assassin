@@ -15,6 +15,7 @@ export default function ModeratorButtons() {
         if (game.moderators.length < 1) {
             updatePopupState({ start: true })
         } else {
+            console.log('START CLICKED')
             startGame(game)
         }
     }
@@ -35,15 +36,15 @@ export default function ModeratorButtons() {
                         text='BEGIN'
                         color='bg-green-500'
                         borderColor='border-green-200'
-                        disabled={(game.game_status === GAME_STATUS.CREATED.STATUS)}
-                        onClick={(() => { handleStartClicked })}
+                        disabled={!(game.game_status === GAME_STATUS.CREATED.STATUS)}
+                        onClick={handleStartClicked}
                     />
 
                     <GameButton
                         text='PAUSE'
                         color='bg-yellow-500'
                         borderColor='border-yellow-200'
-                        disabled={!(game.game_status === GAME_STATUS.PAUSED.STATUS || game.game_status === GAME_STATUS.CREATED.STATUS)}
+                        disabled={(game.game_status != GAME_STATUS.COMPLETE)}
                         onClick={(() => { handlePauseClicked })}
                     />
 
@@ -60,36 +61,4 @@ export default function ModeratorButtons() {
             </>
         )
     } else return null
-
 }
-
-        //       {/* MODERATOR BUTTONS */}
-        //       <div className={'w-2/5 mx-auto space-y-4 ' + (gameContext.userState.isModerator || gameContext.userState.isCreator ? 'block' : 'hidden')}>
-
-        //       <EditSaveButtons />
-
-        //       {/* BEGIN */}
-        //       <div className={(gameResult.game_status === GAME_STATUS.CREATED.STATUS ? 'block' : 'hidden')}>
-        //           <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-green-200 hover:border-black text-white font-bold bg-green-500'
-        //               onClick={handleStartClicked}>
-        //               BEGIN
-        //           </button>
-        //       </div>
-
-        //       {/* PAUSE */}
-        //       <div className={(gameResult.game_status === GAME_STATUS.PAUSED.STATUS || gameResult.game_status === GAME_STATUS.CREATED.STATUS ? 'hidden' : 'block')}>
-        //           <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-yellow-200 hover:border-black text-white font-bold bg-yellow-500'
-        //               onClick={handlePauseClicked}>
-        //               PAUSE
-        //           </button>
-        //       </div>
-
-        //       {/* DELETE */}
-        //       <div>
-        //           <button className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'
-        //               onClick={(() => { setIsConfirmDeleteOpen(true) })} >
-        //               DELETE
-        //           </button>
-        //       </div>
-
-        //   </div>

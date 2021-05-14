@@ -12,20 +12,27 @@ export default function GamePopupManager({ user, children }) {
 
     const [gameContext, handleRoleSelect, updateDetails, updateUserState, updatePopupState] = useGameContext()
     const { game, userState, popupState } = gameContext
+
+    // TODO: Conditionally render instead of using 'hidden'
+
     return (
         <main>
             <AdjudicatePopUp
                 isOpen={popupState.adjudicate}
-                dispute={userState.currentDispute}
-                closeCallback={(() =>
-                    updatePopupState({ adjudicate: false })
-                )} />
+                dispute={userState.dispute}
+                closeCallback={(() => {
+                    console.log('closeCallback called in game popup manager')
+                    updatePopupState({ adjudicate: false }) // why not working?
+                    updateUserState({ dispute: null})
+                    // TODO: should probably clear userState dispute
+                })} />
 
             <DidYouDiePopUp
                 isOpen={popupState.didYouDie}
                 killer={userState.killer}
                 currentAssassin={userState.currentAssassin}
-                gameId={game._id} callback={(() => {
+                gameId={game._id}
+                confirmCallback={(() => {
                     updatePopupState({ didYouDie: false })
                     updateUserState({ currentAssassin: null })
                 })} />
@@ -96,7 +103,7 @@ export default function GamePopupManager({ user, children }) {
                 isOpen={popupState.start}
                 optionTitle={"OK"}
                 callback={(() => {
-                    updatePopupState({start: false})
+                    updatePopupState({ start: false })
                 })}
             />
 

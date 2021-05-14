@@ -16,8 +16,8 @@ const Game = (props) => {
     const { id } = router.query
 
     const { gameResult, error } = useGame(id)
-    console.log('gameResult return from useGame in index: ')
-    console.log(gameResult)
+    // console.log('gameResult return from useGame in index: ')
+    // console.log(gameResult)
 
     if (error) {
         console.log('ERROR: ' + error)

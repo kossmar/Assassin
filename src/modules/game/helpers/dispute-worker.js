@@ -107,7 +107,7 @@ export async function killTarget(dispute) {
             }
 
             const { data, success } = await res.json()
-            mutate(`/api/games/${data._id}`, data, false)
+            mutate(`/api/games/${dispute.game}`)
             resolve(success)
 
         } catch (error) {
@@ -138,7 +138,8 @@ export async function saveTarget(dispute) {
             }
 
             const { data, success } = await res.json()
-            mutate(`/api/games/${data._id}`, data, false)
+            // TODO: consider feeding game id from other source as waiting for the response is going to slow down the refresh, I think
+            mutate(`/api/games/${data._id}`)
             resolve(success)
 
         } catch (error) {

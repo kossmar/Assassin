@@ -2,7 +2,7 @@ import React from 'react'
 import { ASSASSIN_ICON_USE } from '../../constants'
 
 export default function UserIcon({ assassin, name, image = '/images/assassin.png', kills, isWinning, displayKills, isInteractive = false, clickCallback, isSelected = false, id, state, disabled = false }) {
-    
+
     const { ROLE, TARGET, DISPLAY, PROFILE } = ASSASSIN_ICON_USE
 
     function handleClick() {
@@ -63,6 +63,18 @@ export default function UserIcon({ assassin, name, image = '/images/assassin.png
                 </>
             )
 
+        case (TARGET.WAITING):
+        case (TARGET.CONFIRM):
+            return (
+                <>
+                    <Image name={name} image={image}>
+                        {/* TARGET.WAITING X */}
+                        <div className={'absolute ml-6 mt-6'}>
+                            <img src='/images/cross.png' />
+                        </div>
+                    </Image>
+                </>
+            )
         case (TARGET.CONFIRM || TARGET.WAITING):
             return (
                 <>

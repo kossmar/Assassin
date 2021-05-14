@@ -7,11 +7,13 @@ import { page, GAME_STATUS } from '../../../constants'
 import ChooseRole from '../../../modules/game/components/ChooseRole'
 import GameButton from '../../../common/components/GameButton'
 import { postNewGame, addNewGameToHardCodedAsassins, formValidate, createAssassins } from '../../../modules/game/helpers/new-game-helper'
+import { useUser } from '../../auth/hooks/useUser'
 
 
 export default function NewGame() {
 
     const router = useRouter()
+    const user = useUser()
 
     const [errors, setErrors] = useState({})
     const [message, setMessage] = useState('')

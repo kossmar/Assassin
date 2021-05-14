@@ -1,6 +1,6 @@
 import React from 'react'
 import { useGameContext } from "../contexts/GameContext"
-import { ROLE } from '../../../constants'
+import { GAME_STATUS, ROLE } from '../../../constants'
 import { saveGameDetails } from '../helpers/game-worker'
 import { useUser } from '../../auth/hooks/useUser'
 
@@ -46,30 +46,35 @@ export default function EditSaveButtons() {
         return err
     }
 
-    if (gameContext.userState.isEditing) {
-        return (
-            <>
-                {/* SAVE */}
-                <a href='#top'>
-                    <button
-                        className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'
-                        onClick={handleSaveClick}
-                    >
-                        SAVE
-                    </button>
-                </a>
-            </>
-        )
+    if (gameContext.game.game_status !== GAME_STATUS.COMPLETE.STATUS) {
+        if (gameContext.userState.isEditing) {
+            return (
+                <>
+                    {/* SAVE */}
+                    <a href='#top'>
+                        <button
+                            className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'
+                            onClick={handleSaveClick}
+                        >
+                            SAVE
+                        </button>
+                    </a>
+                </>
+            )
+        } else {
+            return (
+                <>
+                    {/* EDIT  */}
+                    <a href='#top'>
+                        <button onClick={() => updateUserState({ isEditing: true })} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
+                            EDIT
+                        </button>
+                    </a>
+                </>
+            )
+        }
     } else {
-        return (
-            <>
-                {/* EDIT  */}
-                <a href='#top'>
-                    <button onClick={() => updateUserState({ isEditing: true })} className='flex w-44 justify-center mx-auto px-10 py-2 rounded-md border-2 border-blue-200 hover:border-black text-white font-bold bg-blue-500'>
-                        EDIT
-                    </button>
-                </a>
-            </>
-        )
+        return null
     }
+
 }

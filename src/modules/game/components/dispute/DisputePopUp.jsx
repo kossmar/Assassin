@@ -72,6 +72,7 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
         // TODO: add a confirmation thing
         killTarget(dispute)
             .then(() => {
+                console.log('targetCancelCallback called')
                 targetCancelCallback()
             })
     }
@@ -105,7 +106,7 @@ export default function DisputePopUp({ killer, target, currentAssassin, disputeI
                                     <div className='place-content-center flex'>
                                         <button className='w-44 px-10 py-2 rounded-md border-2 border-red-200 hover:border-black text-white font-bold bg-red-500'
                                             onClick={handleTargetCancelDispute}>
-                                            CANCEL
+                                            ADMIT DEATH
                                         </button>
                                     </div>
                                 </div>

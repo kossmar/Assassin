@@ -7,16 +7,6 @@ import gameContexts from '../../../test-utils/mock-game-contexts'
 
 export default function GameWrapper({ gameResult, user }) {
 
-    // const [gameResult, setGameResult] = useState(game)
-
-    // useEffect(() => {
-    //     console.log('HELLO')
-    //     setGameResult(game)
-    // }, [game])
-
-
-    console.log('GAME WRAPPER gameResult: ')
-    console.log(gameResult)
     if (!gameResult) {
         return (
             <>
