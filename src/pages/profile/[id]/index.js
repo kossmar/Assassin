@@ -111,7 +111,7 @@ const Profile = ({ games }) => {
                             </div>
                             <input className={'border my-2 pl-2 mx-auto text-center ' + (isEditing ? 'block' : 'hidden')} type="text" defaultValue={(user ? user.username : "not logged in")}></input>
                             <div className="w-64">
-                                "I will eat your dad for a good show you son of a bitch"
+                                "I will eat your dad for a good show you son of a _INSERT_EXPLETIVE_"
                             </div>
                         </div>
 

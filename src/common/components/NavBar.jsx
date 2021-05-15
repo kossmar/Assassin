@@ -22,21 +22,21 @@ export default function NavBar({ page, user }) {
     const [menuDropdownOpen, setMenuDropdownOpen] = useDetectOutsideClick(dropdownRef, false)
     const [profileImage, setProfileImage] = useState(null)
 
-    const thing = useEffect(() => {
+    // const thing = useEffect(() => {
 
-        let div = document.querySelector("#fixed");
+    //     let div = document.querySelector("#fixed");
 
-        while (div.scrollHeight > div.clientHeight) {
-            let style = window.getComputedStyle(div, null).getPropertyValue('font-size');
-            let fontSize = parseFloat(style);
+    //     while (div.scrollHeight > div.clientHeight) {
+    //         let style = window.getComputedStyle(div, null).getPropertyValue('font-size');
+    //         let fontSize = parseFloat(style);
 
-            if (fontSize <= 1) {
-                break;
-            }
+    //         if (fontSize <= 1) {
+    //             break;
+    //         }
 
-            div.style.fontSize = "" + (fontSize - 1) + "px";
-        }
-    }, [])
+    //         div.style.fontSize = "" + (fontSize - 1) + "px";
+    //     }
+    // }, [])
 
     function handleProfileClick() {
         (menuDropdownOpen && setMenuDropdownOpen(false))
@@ -182,11 +182,6 @@ export default function NavBar({ page, user }) {
                                 <Link href={(user ? `/profile/${user._id}` : '/login')}>
                                     <a className="text-gray-500 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
                                         Profile
-                                    </a>
-                                </Link>
-                                <Link href="/">
-                                    <a className="text-gray-500 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                                        My Games
                                     </a>
                                 </Link>
                                 <Link href="/api/logout">
