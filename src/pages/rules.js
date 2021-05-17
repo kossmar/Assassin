@@ -79,7 +79,7 @@ export default function Rules() {
                     <ul className='text-gray-600 pl-5 list-disc'>
                         <li>
                             Safe Zones are an optional rule that allow the game to be played more civilly
-                        </li>
+    a                    </li>
                         <li>
                             A target cannot be killed in a safe zone. If an assassin attempts a hit in a safe zone, this will simply inform the target who their assassin is, making them more difficult to kill
                         </li>
@@ -88,7 +88,7 @@ export default function Rules() {
                         </li>
                     </ul>
                 </div>
-                
+
                 <div className='py-10 px-5'>
                     <h1 className='underline font-bold'>
                         Disputes
@@ -97,11 +97,11 @@ export default function Rules() {
                         <li>
                             Disputes wil be settled by the moderator
                         </li>
-                        
+
                     </ul>
                 </div>
 
-                
+
 
 
             </Layout>
